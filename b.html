@@ -230,8 +230,11 @@
   .cap-for .for { display:block; font-family:var(--mono); font-weight:500; font-size:9px; letter-spacing:0.3em; text-indent:0.15em; text-transform:uppercase; color:var(--text-muted); margin-bottom:2px; }
   .cap-body { flex:1; min-height:0; position:relative; padding:18px 22px 8px; display:flex; flex-direction:column; overflow-y:auto; scrollbar-width:none; }
   .cap-body::-webkit-scrollbar { display:none; }
-  /* Watermark removed from the capture page: a background mark on a keyboard-heavy input screen fights the
-     iOS keyboard (drifts / half-clips). The brand watermark stays on the calm Today feed, where it is stable. */
+  /* Watermark: lives in the content area, shown only on the empty ready state. cap-body clips it, so as the
+     keyboard lifts the composer and the content area shrinks, the mark rises then meets the ceiling and just
+     sits there (the Grok behaviour) instead of drifting off-screen. */
+  .cap-mark { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:188px; height:188px; pointer-events:none; z-index:-1; color:var(--mark-ink); display:none; }
+  #view-capture[data-state="ready"] .cap-mark { display:block; }
   .cap-mark svg { width:100%; height:100%; }
   .cap-state { display:none; flex-direction:column; width:100%; }
   #view-capture[data-state="ready"] .cs-ready { display:flex; flex:1; }
@@ -499,6 +502,7 @@
       <span></span>
     </header>
     <div class="cap-body">
+      <div class="cap-mark" aria-hidden="true"><svg viewBox="0 0 2000 2000" fill="currentColor"><use href="#tn-mark"/></svg></div>
 
       <!-- READY: choose straight away -->
       <div class="cap-state cs-ready">
@@ -666,6 +670,7 @@
     closeDrawer(); clearTimers(); resetChat();
     if (listenEyebrow) listenEyebrow.textContent = 'Listening';
     clearComposer();
+    capture.setAttribute('data-leave','0'); capture.style.bottom='';
     setState('ready'); syncComposerMode();
     setView('capture');
   }
