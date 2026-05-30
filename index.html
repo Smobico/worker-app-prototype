@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#FAFAF7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>ThetaNote -- Shift Loop (pick a structure)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --surface-base:#FAFAF7; --surface-raised:#FFFFFF; --text-primary:#0F1A2E;
+    --text-secondary:#3A4564; --text-muted:#5C6680; --border-default:#DAD9D2;
+    --accent-fill:#E8A87C; --accent-ink:#8A4F22; --accent-soft:rgba(232,168,124,0.16);
+    --border-focus:#2670B8;
+    --sans:"Inter",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    --mono:"DM Mono",ui-monospace,monospace;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100dvh; background:var(--surface-base); color:var(--text-primary);
+    font-family:var(--sans); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    text-rendering:optimizeLegibility; -webkit-tap-highlight-color:transparent;
+    padding: calc(env(safe-area-inset-top,0px) + 40px) 22px calc(env(safe-area-inset-bottom,0px) + 32px);
+    display:flex; flex-direction:column; }
+  .lede { margin-bottom: 28px; }
+  .eyebrow { font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:0.22em; text-indent:0.11em; text-transform:uppercase; color:var(--accent-ink); margin:0 0 8px; }
+  h1 { font-family:var(--sans); font-weight:600; font-size:26px; letter-spacing:-0.02em; margin:0 0 8px; }
+  .sub { font-size:14px; line-height:1.5; color:var(--text-secondary); margin:0; max-width:40ch; }
+  .cards { display:flex; flex-direction:column; gap:14px; }
+  a.card { display:block; text-decoration:none; color:inherit; background:var(--surface-raised);
+    border:1px solid var(--border-default); border-radius:16px; padding:18px 18px;
+    box-shadow:0 1px 2px rgba(15,26,46,0.04); transition:border-color 140ms, background 140ms, transform 140ms; }
+  a.card:active { transform:scale(0.99); }
+  a.card:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
+  .card-tag { font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--accent-ink); }
+  .card-name { font-size:18px; font-weight:600; letter-spacing:-0.01em; margin:6px 0 4px; display:flex; align-items:center; gap:8px; }
+  .card-desc { font-size:13px; line-height:1.5; color:var(--text-muted); margin:0; }
+  .go { margin-left:auto; color:var(--text-muted); }
+  .go svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; display:block; }
+  .note { margin-top:24px; font-size:12px; line-height:1.5; color:var(--text-muted); }
+  .note strong { color:var(--text-secondary); font-weight:600; }
+</style>
+</head>
+<body>
+  <div class="lede">
+    <p class="eyebrow">ThetaNote &middot; shift loop</p>
+    <h1>Three structures to feel</h1>
+    <p class="sub">Same capture flow and friction in each. Only the structure differs. Tap each, work through it, tell me which one fits.</p>
+  </div>
+
+  <div class="cards">
+    <a class="card" href="b.html">
+      <div class="card-name">Tab-bar app <span class="card-tag">&middot; B</span><span class="go"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></div>
+      <p class="card-desc">Bottom nav, one job per screen (Today / CG / Tasks / More), capture in the centre. Most familiar and scalable.</p>
+    </a>
+    <a class="card" href="a.html">
+      <div class="card-name">Capture-first <span class="card-tag">&middot; A</span><span class="go"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></div>
+      <p class="card-desc">Home is the record button. Talk first, the feed sits below. Lowest friction, most voice-first.</p>
+    </a>
+    <a class="card" href="c.html">
+      <div class="card-name">Companion <span class="card-tag">&middot; C</span><span class="go"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></div>
+      <p class="card-desc">Home is CG: who you are with, what to watch for now, the feed, capture on a floating button. Richest clinically.</p>
+    </a>
+  </div>
+
+  <p class="note"><strong>Tip:</strong> Add to Home Screen for the full-screen app feel. Use the browser back arrow to return here and switch structures.</p>
+</body>
+</html>

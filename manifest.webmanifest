@@ -1,0 +1,14 @@
+{
+  "name": "ThetaNote Shift Loop",
+  "short_name": "ThetaNote",
+  "description": "TNA worker shift loop -- light pilot prototype",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAFAF7",
+  "theme_color": "#FAFAF7",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

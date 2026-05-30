@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en" class="tna-app">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
+<meta name="theme-color" content="#FAFAF7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ThetaNote">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>ThetaNote -- Shift Loop (light pilot, tab structure)</title>
+
+<!--
+  ============================================================
+  TNA worker shift loop PILOT -- v6-light, STRUCTURE B (tab-bar app)
+  ============================================================
+  Built 2026-05-30. Structure chosen by Wes after feeling the v1 pilot:
+  "rethink the whole structure" -> B tab-bar app (Today / CG / Capture /
+  Tasks / More), center capture button, each screen one job. Folds in
+  C companion content (CG tab) + A fast capture (center button).
+
+  NEW file family; locked v5-dark sextet untouched (rollback). Renders the
+  v5 vocabulary LIGHT. Data fictitious + initials-only (P7 de-id).
+  Donors: working/lane_g_v5.html, design/v2/locked/surface_d1_5/6.html,
+  tokens.css v1.2. Mobbin brief: working/d1_capture_loop_mobbin_brief_2026-05-29.md
+  ============================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  /* ---- Light tokens (mirror design/v2/tokens.css v1.2 :root; no recolour) ---- */
+  :root {
+    --surface-base:   #FAFAF7;
+    --surface-raised: #FFFFFF;
+    --surface-muted:  #EEEEE7;
+    --text-primary:   #0F1A2E;
+    --text-secondary: #3A4564;
+    --text-muted:     #5C6680;
+    --border-default: #DAD9D2;
+    --border-strong:  #B8B6AC;
+    --border-focus:   #2670B8;
+
+    --accent-fill:    #E8A87C;   /* peach -- fills only */
+    --accent-ink:     #8A4F22;   /* peach -- text + rails, AA on warm-white */
+    --accent-soft:    rgba(232, 168, 124, 0.16);
+    --accent-glow:    rgba(232, 168, 124, 0.30);
+    --line-warm:      rgba(138, 79, 34, 0.16);
+
+    --confirmed-ink:  #2C5A40;
+    --mic-listening:  #2F8F9E;
+    --mic-listening-ink: #135A66;
+
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --mono: "DM Mono", ui-monospace, monospace;
+
+    --motion-fast: 140ms;
+    --motion-med:  260ms;
+    --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+
+    --safe-top:    env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --tabbar-h:    64px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--surface-base); font-family: var(--sans); color: var(--text-primary);
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility; font-feature-settings: "cv02","cv03","cv04","cv11";
+    -webkit-tap-highlight-color: transparent; overscroll-behavior: none;
+  }
+
+  .app { position: fixed; inset: 0; overflow: hidden; background: var(--surface-base); }
+  .app::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: 0.5;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.6 0.85' numOctaves='3' seed='5'/><feColorMatrix values='0 0 0 0 0.32  0 0 0 0 0.18  0 0 0 0 0.06  0 0 0 0.03 0'/></filter><rect width='100%25' height='100%25' filter='url(%23p)'/></svg>");
+    background-size: 240px 240px;
+  }
+  .app::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    background: radial-gradient(ellipse at 50% 26%, rgba(232,168,124,0.10) 0%, transparent 60%);
+  }
+
+  /* ---- Panels (one per tab) ---- */
+  .panel { position: absolute; inset: 0; z-index: 1; display: none; flex-direction: column; min-height: 0; }
+  .app[data-tab="today"] #tab-today,
+  .app[data-tab="cg"]    #tab-cg,
+  .app[data-tab="tasks"] #tab-tasks,
+  .app[data-tab="more"]  #tab-more { display: flex; }
+
+  /* ---- Chrome top bar (per panel) ---- */
+  .top {
+    flex-shrink: 0; padding: calc(var(--safe-top) + 10px) 16px 10px;
+    display: grid; grid-template-columns: 44px 1fr 44px; gap: 8px; align-items: center;
+    border-bottom: 1px solid var(--border-default);
+  }
+  .top-btn { width: 44px; height: 44px; background: transparent; border: 0; border-radius: 50%; color: var(--text-secondary); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }
+  .top-btn:active, .top-btn:focus-visible { background: var(--surface-muted); color: var(--text-primary); }
+  .top-btn:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
+  .top-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .top-btn .badge { position: absolute; top: 9px; right: 9px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent-fill); border: 1.5px solid var(--surface-base); }
+  .top-title { font-family: var(--sans); font-weight: 600; font-size: 17px; color: var(--text-primary); letter-spacing: -0.01em; text-align: center; margin: 0; }
+  .top-date { grid-column: 2; font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); text-align: center; margin-top: 1px; }
+
+  /* ---- Scrollable panel body (clears the tab bar) ---- */
+  .body {
+    flex: 1; min-height: 0; padding: 16px 20px calc(var(--tabbar-h) + var(--safe-bottom) + 16px);
+    overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .body::-webkit-scrollbar { display: none; }
+
+  .eyebrow { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.22em; text-indent: 0.11em; text-transform: uppercase; color: var(--accent-ink); margin: 0; text-align: left; }
+
+  /* ---- Events feed (Today) ---- */
+  .events-head { display: grid; grid-template-columns: 48px 1fr auto; gap: 10px; align-items: baseline; padding: 4px 0 12px; }
+  .events-count { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); }
+  .events-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line-warm); }
+  .event-row { display: grid; grid-template-columns: 48px 1fr auto; gap: 10px; align-items: start; padding: 13px 0; border-bottom: 1px dashed var(--line-warm); min-height: 44px; cursor: pointer; }
+  .event-row:last-child { border-bottom: 0; }
+  .event-row:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; border-radius: 6px; }
+  .event-time { font-family: var(--mono); font-size: 11px; color: var(--text-muted); letter-spacing: 0.02em; padding-top: 1px; font-variant-numeric: tabular-nums; }
+  .event-body { font-family: var(--sans); font-size: 13px; line-height: 1.45; color: var(--text-primary); margin: 0; }
+  .prov { display: inline-flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 8px; line-height: 1; letter-spacing: 0.16em; text-indent: 0.08em; text-transform: uppercase; padding: 5px 8px; border-radius: 999px; white-space: nowrap; border: 1px solid transparent; align-self: center; }
+  .prov--voice { background: var(--surface-muted); color: var(--text-secondary); }
+  .prov--worker { background: rgba(90,148,118,0.18); color: var(--confirmed-ink); box-shadow: inset 0 1px 0 rgba(255,255,255,0.5); }
+  .prov--med { background: var(--surface-muted); color: var(--text-secondary); }
+  .event-new { animation: rowIn var(--motion-med) var(--ease-out); }
+  @keyframes rowIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+  /* ---- CG tab: participant companion ---- */
+  .cg-hero { padding: 6px 0 14px; border-bottom: 1px solid var(--line-warm); margin-bottom: 4px; }
+  .cg-hero-name { font-family: var(--sans); font-weight: 600; font-size: 28px; letter-spacing: -0.02em; color: var(--text-primary); margin: 0; }
+  .cg-hero-tags { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-secondary); margin: 4px 0 0; }
+  .section { padding: 16px 0; border-bottom: 1px solid var(--line-warm); display: flex; flex-direction: column; gap: 10px; }
+  .section:last-child { border-bottom: 0; }
+  .note { font-family: var(--sans); font-size: 14px; line-height: 1.5; color: var(--text-secondary); margin: 0; max-width: 46ch; }
+  .row-item { background: transparent; border: 0; display: grid; grid-template-columns: 1fr auto; column-gap: 12px; align-items: center; padding: 10px 0; width: 100%; min-height: 44px; text-align: left; cursor: pointer; font-family: inherit; }
+  .row-item:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; border-radius: 6px; }
+  .row-item-name { font-family: var(--sans); font-size: 15px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.005em; }
+  .row-item-meta { font-family: var(--sans); font-size: 12px; color: var(--text-muted); line-height: 1.45; }
+  .row-chev { width: 14px; height: 14px; color: var(--text-muted); }
+  .row-chev svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .reminders-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  .reminders-list li { font-family: var(--sans); font-size: 14px; line-height: 1.5; color: var(--text-secondary); padding-left: 14px; border-left: 3px solid var(--accent-ink); }
+
+  /* ---- Tasks tab: med swipe-to-ack + quick log ---- */
+  .ma-E { display: grid; grid-template-columns: auto 1fr auto; column-gap: 10px; align-items: center; padding: 13px 14px; background: var(--surface-raised); border: 1px solid var(--border-default); border-radius: 8px; min-height: 52px; position: relative; cursor: pointer; user-select: none; -webkit-user-select: none; box-shadow: 0 1px 2px rgba(15,26,46,0.04); transition: border-color var(--motion-fast) var(--ease-out), background var(--motion-fast); }
+  .ma-E:active { background: var(--surface-muted); }
+  .ma-E:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
+  .ma-E-tick { width: 15px; height: 15px; color: var(--confirmed-ink); }
+  .ma-E-tick svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .ma-E-text { font-family: var(--sans); font-size: 13px; color: var(--text-primary); line-height: 1.3; }
+  .ma-E-text .who { color: var(--text-muted); font-family: var(--mono); font-size: 11px; margin-left: 4px; }
+  .ma-E-hint { font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em; text-indent: 0.09em; text-transform: uppercase; color: var(--accent-ink); font-weight: 600; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+  .ma-E-hint svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .ma-E.acked { border-color: var(--confirmed-ink); cursor: default; background: rgba(90,148,118,0.08); }
+  .ma-E.acked .ma-E-hint { color: var(--confirmed-ink); }
+  .ma-undo { align-self: flex-end; margin-top: 8px; background: transparent; border: 0; color: var(--text-secondary); font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer; padding: 8px 10px; min-height: 40px; border-radius: 8px; display: none; }
+  .ma-undo.show { display: inline-flex; align-items: center; gap: 6px; }
+  .ma-undo:active, .ma-undo:focus-visible { color: var(--text-primary); background: var(--surface-muted); }
+  .ma-undo:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
+
+  .ql-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .ql-tile { background: var(--surface-raised); border: 1px solid var(--border-default); border-radius: 12px; padding: 16px 12px; min-height: 88px; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 12px; cursor: pointer; font-family: var(--sans); box-shadow: 0 1px 2px rgba(15,26,46,0.04); transition: border-color var(--motion-fast), background var(--motion-fast); }
+  .ql-tile:active, .ql-tile:focus-visible { border-color: var(--accent-ink); background: var(--accent-soft); }
+  .ql-tile:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
+  .ql-ico { width: 26px; height: 26px; color: var(--accent-ink); }
+  .ql-ico svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .ql-label { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+
+  /* ---- More tab: settings-list ---- */
+  .more-list { list-style: none; margin: 0; padding: 0; }
+  .more-item { width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--line-warm); display: grid; grid-template-columns: 24px 1fr auto; gap: 12px; align-items: center; padding: 16px 2px; min-height: 56px; text-align: left; cursor: pointer; font-family: var(--sans); font-size: 15px; font-weight: 500; color: var(--text-primary); }
+  .more-item:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; border-radius: 6px; }
+  .more-item .mi-ico { width: 20px; height: 20px; color: var(--text-secondary); }
+  .more-item .mi-ico svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .more-item .row-chev { color: var(--text-muted); }
+
+  /* ============ BOTTOM TAB BAR ============ */
+  .tabbar {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 5;
+    height: calc(var(--tabbar-h) + var(--safe-bottom));
+    padding: 0 4px calc(var(--safe-bottom));
+    display: grid; grid-template-columns: repeat(5, 1fr); align-items: center;
+    background: var(--surface-raised); border-top: 1px solid var(--border-default);
+    box-shadow: 0 -2px 14px -8px rgba(15,26,46,0.10);
+  }
+  .tab-btn { background: transparent; border: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 0 6px; height: var(--tabbar-h); justify-content: center; color: var(--text-muted); font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .tab-btn svg { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .tab-btn:focus-visible { outline: 2px solid var(--border-focus); outline-offset: -2px; border-radius: 8px; }
+  .app[data-tab="today"] .tab-btn[data-tab="today"],
+  .app[data-tab="cg"]    .tab-btn[data-tab="cg"],
+  .app[data-tab="tasks"] .tab-btn[data-tab="tasks"],
+  .app[data-tab="more"]  .tab-btn[data-tab="more"] { color: var(--text-primary); }
+  .tab-cap { justify-self: center; align-self: center; width: 58px; height: 58px; margin-top: -22px; border-radius: 50%; background: var(--accent-fill); color: var(--text-primary); border: 3px solid var(--surface-raised); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px -6px rgba(138,79,34,0.5), inset 0 1px 0 rgba(255,255,255,0.4); transition: transform var(--motion-fast) var(--ease-out); }
+  .tab-cap:active { transform: scale(0.94); }
+  .tab-cap:focus-visible { outline: 3px solid var(--border-focus); outline-offset: 3px; }
+  .tab-cap svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ============ CAPTURE (modal over everything) ============ */
+  #view-capture {
+    position: absolute; inset: 0; z-index: 10; background: var(--surface-base);
+    display: flex; flex-direction: column; min-height: 0;
+    transform: translateY(100%); transition: transform var(--motion-med) var(--ease-out);
+  }
+  .app[data-view="capture"] #view-capture { transform: translateY(0); }
+  .cap-top { flex-shrink: 0; padding: calc(var(--safe-top) + 10px) 8px 6px; display: grid; grid-template-columns: 44px 1fr 44px; gap: 8px; align-items: center; }
+  .cap-time-row { flex-shrink: 0; padding: 0 20px 14px; border-bottom: 1px solid var(--border-default); display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .cap-time-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); }
+  .cap-time-btn { background: transparent; border: 0; cursor: pointer; font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; color: var(--accent-ink); border-bottom: 1px dashed var(--accent-ink); padding: 4px 2px; min-height: 32px; }
+  .cap-time-btn:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
+  .cap-for { font-family: var(--sans); font-weight: 600; font-size: 17px; color: var(--text-primary); text-align: center; margin: 0; }
+  .cap-for .for { display: block; font-family: var(--mono); font-weight: 500; font-size: 9px; letter-spacing: 0.3em; text-indent: 0.15em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; }
+
+  .cap-body { flex: 1; min-height: 0; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 24px; overflow-y: auto; scrollbar-width: none; }
+  .cap-body::-webkit-scrollbar { display: none; }
+  .cap-state { display: none; flex-direction: column; align-items: center; gap: 24px; width: 100%; }
+  #view-capture[data-state="ready"]     .cs-ready    { display: flex; }
+  #view-capture[data-state="listening"] .cs-listening{ display: flex; }
+  #view-capture[data-state="draft"]     .cs-draft    { display: flex; }
+
+  .prompt { text-align: center; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+  .prompt-eyebrow { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.24em; text-indent: 0.12em; text-transform: uppercase; color: var(--accent-ink); margin: 0; }
+  .prompt-line { font-family: var(--sans); font-weight: 600; font-size: 23px; line-height: 1.28; letter-spacing: -0.018em; color: var(--text-primary); margin: 0; text-wrap: balance; max-width: 15ch; }
+  .prompt-sub { font-family: var(--sans); font-size: 13px; line-height: 1.5; color: var(--text-secondary); margin: 0; max-width: 30ch; }
+
+  .mic-zone { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 8px 0; }
+  .mic { width: 108px; height: 108px; border-radius: 50%; background: radial-gradient(circle at 50% 30%, #fff 0%, var(--surface-muted) 100%); border: 1px solid var(--border-default); color: var(--text-primary); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 0 6px var(--accent-glow), 0 14px 30px -12px rgba(138,79,34,0.4), inset 0 1px 0 rgba(255,255,255,0.8); transition: transform var(--motion-fast) var(--ease-out), box-shadow var(--motion-fast) var(--ease-out); }
+  .mic:active { transform: translateY(1px) scale(0.98); }
+  .mic:focus-visible { outline: 3px solid var(--border-focus); outline-offset: 6px; }
+  .mic svg { width: 38px; height: 38px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .mic-cap { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+  .mic-cap-em { font-family: var(--sans); font-weight: 600; font-size: 15px; color: var(--text-primary); }
+  .mic-cap-sub { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); }
+  .btn-typeswitch { background: transparent; border: 0; color: var(--text-secondary); font-family: var(--sans); font-weight: 500; font-size: 13px; cursor: pointer; padding: 10px 14px; min-height: 44px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; }
+  .btn-typeswitch:active, .btn-typeswitch:focus-visible { color: var(--text-primary); background: var(--surface-muted); }
+  .btn-typeswitch:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
+  .btn-typeswitch svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+  .wave { display: flex; align-items: center; justify-content: center; gap: 4px; height: 64px; }
+  .wave span { width: 4px; border-radius: 999px; background: var(--mic-listening); height: 14px; animation: w 1s ease-in-out infinite; }
+  .wave span:nth-child(2){animation-delay:.1s} .wave span:nth-child(3){animation-delay:.2s}
+  .wave span:nth-child(4){animation-delay:.3s} .wave span:nth-child(5){animation-delay:.15s}
+  .wave span:nth-child(6){animation-delay:.25s} .wave span:nth-child(7){animation-delay:.05s}
+  .wave span:nth-child(8){animation-delay:.35s} .wave span:nth-child(9){animation-delay:.2s}
+  @keyframes w { 0%,100%{height:12px} 50%{height:48px} }
+  .listening-meta { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; color: var(--mic-listening-ink); display: inline-flex; align-items: center; gap: 8px; }
+  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mic-listening); }
+  .live-text { font-family: var(--mono); font-size: 14px; line-height: 1.65; color: var(--text-secondary); text-align: left; width: 100%; max-width: 52ch; min-height: 96px; }
+  .live-text .cursor { border-right: 2px solid var(--mic-listening); animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { border-color: transparent; } }
+  .btn-stop { background: var(--text-primary); color: var(--surface-base); border: 0; border-radius: 999px; padding: 12px 28px; font-family: var(--sans); font-weight: 600; font-size: 14px; cursor: pointer; min-height: 48px; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-stop:active, .btn-stop:focus-visible { filter: brightness(1.15); }
+  .btn-stop:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
+  .btn-stop .sq { width: 12px; height: 12px; background: currentColor; border-radius: 2px; }
+
+  .draft-head { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+  .draft-text { font-family: var(--mono); font-weight: 400; font-size: 15px; line-height: 1.65; color: var(--text-primary); width: 100%; max-width: 52ch; background: var(--surface-raised); border: 1px solid var(--border-default); border-radius: 12px; padding: 14px; resize: none; min-height: 196px; box-shadow: inset 0 1px 2px rgba(15,26,46,0.04); }
+  .draft-text:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
+  .draft-hint { font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); align-self: flex-start; }
+  .draft-2nd { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px; }
+  .btn-ghost { background: transparent; border: 0; cursor: pointer; font-family: var(--sans); font-size: 13px; font-weight: 500; padding: 10px 12px; min-height: 44px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; }
+  .btn-ghost svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .btn-ghost--add { color: var(--accent-ink); } .btn-ghost--add:active, .btn-ghost--add:focus-visible { background: var(--accent-soft); }
+  .btn-ghost--redo { color: var(--text-muted); } .btn-ghost--redo:active, .btn-ghost--redo:focus-visible { color: var(--text-secondary); }
+  .btn-ghost:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
+
+  .cap-dock { flex-shrink: 0; padding: 12px 20px calc(14px + var(--safe-bottom)); border-top: 1px solid var(--border-default); display: none; align-items: center; justify-content: space-between; gap: 12px; }
+  #view-capture[data-state="draft"] .cap-dock { display: flex; }
+  .btn-discard { background: transparent; border: 0; color: var(--text-muted); font-family: var(--sans); font-weight: 500; font-size: 14px; cursor: pointer; padding: 10px 12px; min-height: 44px; border-radius: 8px; }
+  .btn-discard:active, .btn-discard:focus-visible { color: var(--text-secondary); }
+  .btn-discard:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
+  .btn-confirm { background: var(--text-primary); color: var(--surface-base); border: 0; border-radius: 999px; padding: 13px 26px; font-family: var(--sans); font-weight: 600; font-size: 15px; cursor: pointer; min-height: 48px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 6px 14px -8px rgba(15,26,46,0.5); }
+  .btn-confirm:active, .btn-confirm:focus-visible { filter: brightness(1.15); }
+  .btn-confirm:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
+  .btn-confirm svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ---- Wrap-up sheet ---- */
+  .backdrop { position: absolute; inset: 0; z-index: 12; background: rgba(15,26,46,0.4); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); opacity: 0; pointer-events: none; transition: opacity var(--motion-med) var(--ease-out); }
+  .app[data-sheet="open"] .backdrop { opacity: 1; pointer-events: auto; }
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 13; background: var(--surface-base); border-top: 1px solid var(--line-warm); border-radius: 22px 22px 0 0; padding: 8px 22px calc(24px + var(--safe-bottom)); display: flex; flex-direction: column; gap: 14px; box-shadow: 0 -10px 30px -10px rgba(15,26,46,0.25); transform: translateY(100%); transition: transform var(--motion-med) var(--ease-out); }
+  .app[data-sheet="open"] .sheet { transform: translateY(0); }
+  .sheet-handle { width: 38px; height: 4px; border-radius: 999px; background: var(--border-strong); margin: 4px auto; }
+  .sheet-eyebrow { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent-ink); text-align: center; margin: 0; }
+  .sheet-title { font-family: var(--sans); font-weight: 600; font-size: 19px; letter-spacing: -0.01em; color: var(--text-primary); text-align: center; margin: 0; }
+  .sheet-body { font-family: var(--sans); font-size: 13px; line-height: 1.55; color: var(--text-secondary); text-align: center; margin: 0 auto; max-width: 30ch; }
+  .sheet-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+  .btn-commit { background: var(--text-primary); color: var(--surface-base); border: 0; border-radius: 14px; padding: 14px; font-family: var(--sans); font-weight: 600; font-size: 15px; cursor: pointer; min-height: 48px; }
+  .btn-commit:active, .btn-commit:focus-visible { filter: brightness(1.15); }
+  .btn-cancel { background: transparent; border: 0; color: var(--text-secondary); font-family: var(--sans); font-weight: 500; font-size: 14px; padding: 12px; cursor: pointer; border-radius: 8px; min-height: 44px; }
+  .btn-commit:focus-visible, .btn-cancel:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+    .wave span { height: 30px; }
+  }
+  /* ---- Structure C: companion (single home + floating capture) ---- */
+  .tabbar, #tab-cg, #tab-tasks, #tab-more { display: none !important; }
+  #tab-today { display: flex !important; }
+  #tab-today .body { padding-bottom: calc(var(--safe-bottom) + 104px); }
+  .fab { position: absolute; right: 20px; bottom: calc(24px + var(--safe-bottom)); z-index: 6; width: 60px; height: 60px; border-radius: 50%; background: var(--accent-fill); color: var(--text-primary); border: 0; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 8px 22px -6px rgba(138,79,34,0.55), inset 0 1px 0 rgba(255,255,255,0.4); transition: transform var(--motion-fast) var(--ease-out); }
+  .fab:active { transform: scale(0.94); }
+  .fab:focus-visible { outline: 3px solid var(--border-focus); outline-offset: 3px; }
+  .fab svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<div class="app" id="app" data-tab="today" data-view="home" data-sheet="closed">
+
+  <!-- ============ TODAY ============ -->
+  <section class="panel" id="tab-today" aria-label="CG">
+    <header class="top">
+      <button class="top-btn" type="button" id="btn-menu" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <h1 class="top-title">CG</h1>
+      <button class="top-btn" type="button" aria-label="Notifications"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg><span class="badge" aria-hidden="true"></span></button>
+    </header>
+    <div class="body">
+      <div class="cg-hero"><h2 class="cg-hero-name">CG</h2><p class="cg-hero-tags">Autism L3 &middot; BSP active</p></div>
+      <div class="section"><p class="eyebrow">Watch for right now</p><ul class="reminders-list"><li>Deep pressure helps CG regulate. Offer the weighted blanket before things build.</li><li>Firm and warm voice works for CG. Calm, not stern.</li><li>Father visits Sundays. Give space afterward, separation can unsettle him.</li></ul></div>
+      <div class="section"><p class="eyebrow">Medication note</p><div class="ma-E" id="med-ack" role="button" tabindex="0" aria-label="Aripiprazole 5 mg, administered by AC at 08:15. Tap to acknowledge."><span class="ma-E-tick" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8l3.5 3.5L13 5"/></svg></span><span class="ma-E-text">Aripiprazole 5 mg<span class="who">AC &middot; 08:15</span></span><span class="ma-E-hint" id="med-hint">tap to acknowledge</span></div><button class="ma-undo" id="med-undo" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><path d="M3 12a9 9 0 109-9 9 9 0 00-7 3.3M3 4v4h4"/></svg> Undo</button></div>
+      <p class="eyebrow" style="margin:8px 0 4px">Today</p>
+      <ul class="events-list" id="events-list">
+        <li class="event-row" tabindex="0"><span class="event-time">09:42</span><p class="event-body">Settled at the table after a short pace around the lounge. Accepted a drink.</p><span class="prov prov--voice">Voice</span></li>
+        <li class="event-row" tabindex="0"><span class="event-time">08:15</span><p class="event-body">Aripiprazole 5 mg given with breakfast by AC.</p><span class="prov prov--med">Med</span></li>
+        <li class="event-row" tabindex="0"><span class="event-time">07:50</span><p class="event-body">Woke calm, good eye contact, chose his green jumper himself.</p><span class="prov prov--worker">Confirmed</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ CG (companion) ============ -->
+  <section class="panel" id="tab-cg" aria-label="CG">
+    <header class="top"><span></span><h1 class="top-title">CG</h1><span></span></header>
+    <div class="body">
+      <div class="cg-hero">
+        <h2 class="cg-hero-name">CG</h2>
+        <p class="cg-hero-tags">Autism L3 &middot; BSP active</p>
+      </div>
+      <div class="section">
+        <p class="eyebrow">Watch for right now</p>
+        <ul class="reminders-list">
+          <li>Deep pressure helps CG regulate. Offer the weighted blanket before things build.</li>
+          <li>Firm and warm voice works for CG. Calm, not stern.</li>
+          <li>Father visits Sundays. Give space afterward, separation can unsettle him.</li>
+        </ul>
+      </div>
+      <div class="section">
+        <p class="eyebrow">Behaviours of concern</p>
+        <button class="row-item" type="button"><span><span class="row-item-name">Pinch and grab</span><br><span class="row-item-meta">Escalation topography. Deep pressure helps.</span></span><span class="row-chev"><svg viewBox="0 0 16 16"><path d="M6 4l4 4-4 4"/></svg></span></button>
+        <button class="row-item" type="button"><span><span class="row-item-name">Pacing and flapping</span><br><span class="row-item-meta">Early sign. Offer regulation early.</span></span><span class="row-chev"><svg viewBox="0 0 16 16"><path d="M6 4l4 4-4 4"/></svg></span></button>
+      </div>
+      <div class="section">
+        <p class="eyebrow">Communication and sensory</p>
+        <p class="note">Nonverbal. Reads through eyes, face and body. Tactile seeking, needs deep pressure to settle.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TASKS ============ -->
+  <section class="panel" id="tab-tasks" aria-label="Tasks">
+    <header class="top"><span></span><h1 class="top-title">Tasks</h1><span></span></header>
+    <div class="body">
+      <div class="section">
+        <p class="eyebrow">Medication note</p>
+        <div class="ma-E" id="med-ack" role="button" tabindex="0" aria-label="Aripiprazole 5 mg, administered by AC at 08:15. Tap to acknowledge.">
+          <span class="ma-E-tick" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8l3.5 3.5L13 5"/></svg></span>
+          <span class="ma-E-text">Aripiprazole 5 mg<span class="who">AC &middot; 08:15</span></span>
+          <span class="ma-E-hint" id="med-hint">tap to acknowledge</span>
+        </div>
+        <button class="ma-undo" id="med-undo" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><path d="M3 12a9 9 0 109-9 9 9 0 00-7 3.3M3 4v4h4"/></svg> Undo</button>
+      </div>
+      <div class="section" style="border-bottom:0">
+        <p class="eyebrow">Quick log</p>
+        <div class="ql-grid">
+          <button class="ql-tile" type="button" data-type="Food"><span class="ql-ico"><svg viewBox="0 0 24 24"><path d="M5 3v8a3 3 0 006 0V3M8 3v18M16 3c-1.5 0-2.5 2-2.5 5s1 4 2.5 4 2.5-1 2.5-4-1-5-2.5-5zM16 16v5"/></svg></span><span class="ql-label">Food</span></button>
+          <button class="ql-tile" type="button" data-type="Behaviour"><span class="ql-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span><span class="ql-label">Behaviour</span></button>
+          <button class="ql-tile" type="button" data-type="Incident"><span class="ql-ico"><svg viewBox="0 0 24 24"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></span><span class="ql-label">Incident</span></button>
+          <button class="ql-tile" type="button" data-type="Medication"><span class="ql-ico"><svg viewBox="0 0 24 24"><path d="M10 4h4M12 4v4"/><rect x="6" y="8" width="12" height="12" rx="3"/><path d="M9 14h6"/></svg></span><span class="ql-label">Medication</span></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MORE ============ -->
+  <section class="panel" id="tab-more" aria-label="More">
+    <header class="top"><span></span><h1 class="top-title">More</h1><span></span></header>
+    <div class="body">
+      <ul class="more-list">
+        <li><button class="more-item" type="button" id="btn-wrapup"><span class="mi-ico"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span><span>Wrap up shift</span><span class="row-chev"><svg viewBox="0 0 16 16"><path d="M6 4l4 4-4 4"/></svg></span></button></li>
+        <li><button class="more-item" type="button"><span class="mi-ico"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg></span><span>Copy shift note</span><span class="row-chev"><svg viewBox="0 0 16 16"><path d="M6 4l4 4-4 4"/></svg></span></button></li>
+        <li><button class="more-item" type="button"><span class="mi-ico"><svg viewBox="0 0 24 24"><path d="M12 8v8M8 12h8"/><circle cx="12" cy="12" r="9"/></svg></span><span>Shift details</span><span class="row-chev"><svg viewBox="0 0 16 16"><path d="M6 4l4 4-4 4"/></svg></span></button></li>
+        <li><button class="more-item" type="button"><span class="mi-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1l2-1.5-2-3.5-2.4 1a7 7 0 00-1.7-1L16.5 3h-4l-.3 2.5a7 7 0 00-1.7 1l-2.4-1-2 3.5 2 1.5a7 7 0 000 2l-2 1.5 2 3.5 2.4-1a7 7 0 001.7 1l.3 2.5h4l.3-2.5a7 7 0 001.7-1l2.4 1 2-3.5-2-1.5a7 7 0 00.1-1z"/></svg></span><span>Settings</span><span class="row-chev"><svg viewBox="0 0 16 16"><path d="M6 4l4 4-4 4"/></svg></span></button></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ BOTTOM TAB BAR ============ -->
+  <nav class="tabbar" aria-label="Primary">
+    <button class="tab-btn" type="button" data-tab="today" aria-label="Today"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Today</button>
+    <button class="tab-btn" type="button" data-tab="cg" aria-label="CG"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>CG</button>
+    <button class="tab-cap" type="button" id="tab-capture-btn" aria-label="Capture a voice note"><svg viewBox="0 0 24 24"><path d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"/></svg></button>
+    <button class="tab-btn" type="button" data-tab="tasks" aria-label="Tasks"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Tasks</button>
+    <button class="tab-btn" type="button" data-tab="more" aria-label="More"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg>More</button>
+  </nav>
+
+  <!-- Floating capture button (companion structure) -->
+  <button class="fab" type="button" id="fab-c" aria-label="Capture a voice note"><svg viewBox="0 0 24 24"><path d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"/></svg></button>
+
+  <!-- ============ CAPTURE (modal) ============ -->
+  <section id="view-capture" data-state="listening" aria-label="Capture">
+    <header class="cap-top">
+      <button class="top-btn" type="button" aria-label="Back" id="cap-back"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+      <h2 class="cap-for"><span class="for">For</span>CG</h2>
+      <span></span>
+    </header>
+    <div class="cap-time-row"><span class="cap-time-label">When</span><button class="cap-time-btn" type="button" id="cap-time">about 15 min ago</button></div>
+    <div class="cap-body">
+      <div class="cap-state cs-listening">
+        <div class="prompt">
+          <p class="prompt-eyebrow" id="cap-eyebrow">A note from the floor</p>
+          <h3 class="prompt-line">Tell me what just happened with CG.</h3>
+        </div>
+        <div class="wave" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <span class="listening-meta"><span class="live-dot"></span><span id="listen-timer">0:00</span> &middot; listening</span>
+        <p class="live-text" id="live-text" aria-live="polite"></p>
+        <button class="btn-stop" type="button" id="btn-stop"><span class="sq" aria-hidden="true"></span> Done</button>
+        <button class="btn-typeswitch" type="button" id="btn-type"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg> Type instead</button>
+      </div>
+      <div class="cap-state cs-draft">
+        <div class="draft-head"><span class="eyebrow">Your note</span><span class="prov prov--voice">Voice</span></div>
+        <label class="draft-hint" for="draft-text">Tap to edit</label>
+        <textarea class="draft-text" id="draft-text" aria-label="Edit your note"></textarea>
+        <div class="draft-2nd">
+          <button class="btn-ghost btn-ghost--add" type="button" id="btn-addvoice"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Add more voice</button>
+          <button class="btn-ghost btn-ghost--redo" type="button" id="btn-redo"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 109-9 9 9 0 00-7 3.3M3 4v4h4"/></svg> Re-record</button>
+        </div>
+      </div>
+    </div>
+    <footer class="cap-dock">
+      <button class="btn-discard" type="button" id="btn-discard">Discard</button>
+      <button class="btn-confirm" type="button" id="btn-confirm"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg> Confirm and save</button>
+    </footer>
+  </section>
+
+  <!-- Wrap-up sheet -->
+  <div class="backdrop" id="backdrop"></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" id="sheet">
+    <div class="sheet-handle" aria-hidden="true"></div>
+    <p class="sheet-eyebrow">End of shift</p>
+    <h3 class="sheet-title" id="sheet-title">Wrap up this shift?</h3>
+    <p class="sheet-body">You captured 4 notes for CG today. The record is up to date. You can paste the shift note next.</p>
+    <div class="sheet-actions">
+      <button class="btn-commit" type="button" id="sheet-commit">Yes, wrap up</button>
+      <button class="btn-cancel" type="button" id="sheet-cancel">Not yet</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var app = document.getElementById('app');
+  var capture = document.getElementById('view-capture');
+  var TRANSCRIPT = "CG got a bit unsettled mid morning, pacing around the lounge and flapping his hands. I brought over the weighted blanket and sat with him, kept my voice calm and steady. After about ten minutes he settled and came to the table for a drink.";
+
+  function setTab(t) { app.setAttribute('data-tab', t); }
+  function setView(v) { app.setAttribute('data-view', v); }
+  function setState(s) { capture.setAttribute('data-state', s); }
+
+  // ---- Tab switching ----
+  Array.prototype.forEach.call(document.querySelectorAll('.tab-btn'), function (b) {
+    b.addEventListener('click', function () { setTab(b.getAttribute('data-tab')); });
+  });
+
+  // ---- Capture open/close ----
+  var eyebrow = document.getElementById('cap-eyebrow');
+  function clearTimers() {
+    if (timer) { clearInterval(timer); timer = null; }
+    if (typeTimer) { clearInterval(typeTimer); typeTimer = null; }
+  }
+  function openCapture(type) {
+    // tap = record immediately (Caro friction lens): no separate "press to dictate" step
+    eyebrow.textContent = type ? ('Logging ' + type) : 'A note from the floor';
+    setView('capture');
+    startListening();
+  }
+  document.getElementById('tab-capture-btn').addEventListener('click', function () { openCapture(null); });
+  document.getElementById('cap-back').addEventListener('click', function () { clearTimers(); setView('home'); });
+  Array.prototype.forEach.call(document.querySelectorAll('.ql-tile'), function (t) {
+    t.addEventListener('click', function () { openCapture(t.getAttribute('data-type')); });
+  });
+
+  // ---- Time row ----
+  var timeOpts = ['about 15 min ago', 'about 30 min ago', 'about 5 min ago', 'about 1 hr ago'];
+  var ti = 0;
+  document.getElementById('cap-time').addEventListener('click', function () { ti = (ti + 1) % timeOpts.length; this.textContent = timeOpts[ti]; });
+
+  // ---- Listening sim ----
+  var timer = null, secs = 0, typeTimer = null;
+  var liveText = document.getElementById('live-text');
+  var listenTimer = document.getElementById('listen-timer');
+  function fmt(s) { var m = Math.floor(s/60), r = s%60; return m + ':' + (r<10?'0':'') + r; }
+  function startListening() {
+    setState('listening'); secs = 0; listenTimer.textContent = '0:00';
+    liveText.innerHTML = '<span class="cursor">&nbsp;</span>';
+    timer = setInterval(function () { secs++; listenTimer.textContent = fmt(secs); }, 1000);
+    var words = TRANSCRIPT.split(' '), i = 0;
+    typeTimer = setInterval(function () {
+      i++; liveText.innerHTML = words.slice(0, i).join(' ') + '<span class="cursor">&nbsp;</span>';
+      if (i >= words.length) { clearInterval(typeTimer); typeTimer = null; }
+    }, 90);
+  }
+  function stopListening() {
+    if (timer) { clearInterval(timer); timer = null; }
+    if (typeTimer) { clearInterval(typeTimer); typeTimer = null; }
+    document.getElementById('draft-text').value = TRANSCRIPT;
+    setState('draft');
+  }
+  document.getElementById('btn-stop').addEventListener('click', stopListening);
+  document.getElementById('btn-redo').addEventListener('click', startListening);
+  document.getElementById('btn-addvoice').addEventListener('click', startListening);
+  document.getElementById('btn-type').addEventListener('click', function () {
+    clearTimers();
+    document.getElementById('draft-text').value = ''; setState('draft');
+    setTimeout(function () { document.getElementById('draft-text').focus(); }, 50);
+  });
+
+  // ---- Confirm -> Today feed ----
+  document.getElementById('btn-discard').addEventListener('click', function () { clearTimers(); setView('home'); });
+  document.getElementById('btn-confirm').addEventListener('click', function () {
+    var text = (document.getElementById('draft-text').value || '').trim();
+    if (text) {
+      var list = document.getElementById('events-list');
+      var li = document.createElement('li');
+      li.className = 'event-row event-new'; li.setAttribute('tabindex', '0');
+      var now = new Date(), hh = now.getHours(), mm = now.getMinutes();
+      var t = (hh<10?'0':'') + hh + ':' + (mm<10?'0':'') + mm;
+      li.innerHTML = '<span class="event-time">' + t + '</span><p class="event-body"></p><span class="prov prov--worker">Confirmed</span>';
+      li.querySelector('.event-body').textContent = text;
+      list.insertBefore(li, list.firstChild);
+    }
+    setView('home'); setState('ready'); setTab('today');
+  });
+
+  // ---- Medication: tap to acknowledge + undo (lowest motor cost; Caro friction lens) ----
+  (function () {
+    var card = document.getElementById('med-ack'), hint = document.getElementById('med-hint'), undo = document.getElementById('med-undo');
+    if (!card) return;
+    function acknowledge() {
+      card.classList.add('acked');
+      card.setAttribute('aria-label', 'Aripiprazole 5 mg, acknowledged');
+      hint.innerHTML = 'Acknowledged <svg viewBox="0 0 16 16" aria-hidden="true" style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round"><path d="M3 8l3.5 3.5L13 5"/></svg>';
+      undo.classList.add('show');
+    }
+    function revert() {
+      card.classList.remove('acked');
+      card.setAttribute('aria-label', 'Aripiprazole 5 mg, administered by AC at 08:15. Tap to acknowledge.');
+      hint.textContent = 'tap to acknowledge';
+      undo.classList.remove('show');
+    }
+    card.addEventListener('click', function () { if (!card.classList.contains('acked')) acknowledge(); });
+    card.addEventListener('keydown', function (e) { if ((e.key === 'Enter' || e.key === ' ') && !card.classList.contains('acked')) { e.preventDefault(); acknowledge(); } });
+    undo.addEventListener('click', revert);
+  })();
+
+  // ---- Swipe the capture header down to dismiss (thumb-reachable; no top-corner reach) ----
+  (function () {
+    var cap = document.getElementById('view-capture');
+    var grip = document.querySelector('.cap-top');
+    if (!cap || !grip) return;
+    var sy = 0, ddy = 0, dr = false;
+    grip.addEventListener('pointerdown', function (e) { dr = true; sy = e.clientY; ddy = 0; cap.style.transition = 'none'; });
+    grip.addEventListener('pointermove', function (e) { if (!dr) return; ddy = Math.max(0, e.clientY - sy); cap.style.transform = 'translateY(' + ddy + 'px)'; });
+    function rel() {
+      if (!dr) return; dr = false; cap.style.transition = ''; cap.style.transform = '';
+      if (ddy > 90) { clearTimers(); setView('home'); }
+      ddy = 0;
+    }
+    grip.addEventListener('pointerup', rel);
+    grip.addEventListener('pointercancel', rel);
+  })();
+
+  // ---- Wrap-up sheet ----
+  function openSheet() { app.setAttribute('data-sheet', 'open'); }
+  function closeSheet() { app.setAttribute('data-sheet', 'closed'); }
+  document.getElementById('btn-wrapup').addEventListener('click', openSheet);
+  document.getElementById('backdrop').addEventListener('click', closeSheet);
+  document.getElementById('sheet-cancel').addEventListener('click', closeSheet);
+  document.getElementById('sheet-commit').addEventListener('click', function () {
+    closeSheet();
+    document.getElementById('sheet-title').textContent = 'Shift wrapped. Nice work.';
+  });
+
+  // ---- Escape ----
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (app.getAttribute('data-sheet') === 'open') { closeSheet(); return; }
+    if (app.getAttribute('data-view') === 'capture') { setView('home'); }
+  });
+})();
+</script>
+<script>
+  /* Companion structure wiring: reuse the (hidden) tab-bar capture + wrap-up handlers */
+  (function () {
+    var f = document.getElementById('fab-c');
+    if (f) f.addEventListener('click', function () { document.getElementById('tab-capture-btn').click(); });
+    var m = document.getElementById('btn-menu');
+    if (m) m.addEventListener('click', function () { document.getElementById('btn-wrapup').click(); });
+  })();
+</script>
+</body>
+</html>
