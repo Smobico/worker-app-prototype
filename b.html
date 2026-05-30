@@ -476,7 +476,16 @@
   var listenTimer = document.getElementById('listen-timer');
   var eyebrow = document.getElementById('cap-eyebrow');
 
-  function setView(v) { app.setAttribute('data-view', v); }
+  // Give the capture body bottom-padding equal to the keyboard height so a focused field can scroll
+  // clear of the keyboard. Internal padding ONLY -- never resizes the sheet or app (that caused bleed).
+  function syncCaptureKeyboardPad(){
+    if(!window.visualViewport) return;
+    var body=document.querySelector('.cap-body'); if(!body) return;
+    var kb=Math.max(0, window.innerHeight - window.visualViewport.height);
+    body.style.paddingBottom = (app.getAttribute('data-view')==='capture' && kb>60) ? (kb + 24)+'px' : '';
+  }
+  if(window.visualViewport){ window.visualViewport.addEventListener('resize', syncCaptureKeyboardPad); }
+  function setView(v) { app.setAttribute('data-view', v); syncCaptureKeyboardPad(); }
   function setState(s) { capture.setAttribute('data-state', s); }
   function setDrawer(d) { app.setAttribute('data-drawer', d); }
   function closeDrawer() { setDrawer('none'); }
@@ -580,17 +589,19 @@
     function commit(){ var v=inp.value.trim(); if(!v) return; finishConvoStep(step,qtext,v,onAnswered); }
     add.addEventListener('click',commit);
     inp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); commit(); } });
-    // Scroll ONLY the capture body so the field sits near the top, BEFORE the keyboard opens; then focus
-    // without ever scrolling the page (preventScroll), and settle once more after the keyboard is up.
+    // Focus without scrolling the page (preventScroll). The keyboard height is added as bottom padding
+    // to the capture body so the field has room to scroll clear of the keyboard; then scroll ONLY the
+    // capture body to bring the field up. Two passes cover keyboard-open timing.
     var lift=function(){
       try {
+        syncCaptureKeyboardPad();
         var body=document.querySelector('.cap-body');
         if(body){ var r=inp.getBoundingClientRect(), br=body.getBoundingClientRect(); body.scrollTop += (r.top - br.top) - 80; }
       } catch(e){}
     };
-    lift();
     inp.focus({ preventScroll:true });
-    setTimeout(lift,300);
+    setTimeout(lift,330);
+    setTimeout(lift,560);
   }
   function finishConvoStep(step,qtext,answer,onAnswered){
     convoAnswers.push(answer);
