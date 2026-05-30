@@ -46,7 +46,7 @@
     --surface-base:#FAFAF7; --surface-raised:#FFFFFF; --surface-muted:#EEEEE7; --surface-sunk:#F2F1EA;
     --text-primary:#0F1A2E; --text-secondary:#3A4564; --text-muted:#5C6680;
     --border-default:#E2E1DA; --border-strong:#B8B6AC; --border-focus:#2670B8;
-    --accent-fill:#16306B; --accent-ink:#5C6680; --accent-soft:rgba(22,48,107,0.06); --accent-glow:rgba(47,143,158,0.16);
+    --accent-fill:#16306B; --accent-ink:#5C6680; --accent-soft:rgba(22,48,107,0.06); --accent-glow:rgba(47,143,158,0.16); --ink-deep:#0B1E45;
     --line-warm:rgba(15,26,46,0.08);
     --speak-bg:#16306B; --speak-ink:#FAFAF7;
     --pill-neutral-bg:#EEEEE7; --pill-neutral-ink:#3A4564;
@@ -68,7 +68,7 @@
     --surface-base:#0F1A2E; --surface-raised:#1A2540; --surface-muted:#243155; --surface-sunk:#152037;
     --text-primary:#FAFAF7; --text-secondary:#C8CCD9; --text-muted:#8A8FA3;
     --border-default:#2A3554; --border-strong:#3D4969; --border-focus:#6FA8DC;
-    --accent-fill:#FAFAF7; --accent-ink:#8A8FA3; --accent-soft:rgba(250,250,247,0.07); --accent-glow:rgba(63,182,199,0.20);
+    --accent-fill:#FAFAF7; --accent-ink:#8A8FA3; --accent-soft:rgba(250,250,247,0.07); --accent-glow:rgba(63,182,199,0.20); --ink-deep:#FAFAF7;
     --line-warm:rgba(250,250,247,0.10);
     --speak-bg:#FAFAF7; --speak-ink:#0F1A2E;
     --pill-neutral-bg:#243155; --pill-neutral-ink:#C8CCD9;
@@ -100,22 +100,34 @@
   .top-btn svg { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
   .top-btn .badge { position:absolute; top:8px; right:8px; width:7px; height:7px; border-radius:50%; background:var(--accent-fill); border:1.5px solid var(--surface-base); }
 
-  .home-head { flex-shrink:0; padding:14px 22px 8px; }
-  .home-title { font-family:var(--display); font-weight:700; font-size:32px; line-height:1.05; letter-spacing:-0.025em; color:var(--text-primary); margin:0; }
-  .home-sub { font-family:var(--mono); font-size:10.5px; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-muted); margin:8px 0 0; }
+  /* Shift context row (replaces "Today"): date + participant left, shift time far right */
+  .home-head { flex-shrink:0; padding:12px 22px 12px; display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+  .home-context { font-family:var(--sans); font-weight:700; font-size:18px; letter-spacing:-0.015em; color:var(--ink-deep); margin:0; }
+  .home-shift { font-family:var(--mono); font-size:12px; font-weight:500; letter-spacing:0.03em; color:var(--text-secondary); white-space:nowrap; }
 
-  .body { flex:1; min-height:0; position:relative; padding:18px 22px calc(var(--tabbar-h) + var(--safe-bottom) + 18px); overflow-y:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+  .body { flex:1; min-height:0; position:relative; padding:14px 20px calc(var(--tabbar-h) + var(--safe-bottom) + 20px); overflow-y:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
   .body::-webkit-scrollbar { display:none; }
-  .body-mark { position:absolute; left:50%; top:54%; transform:translate(-50%,-50%); width:200px; height:200px; pointer-events:none; z-index:0; color:var(--mark-ink); }
+  .body-mark { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:232px; height:232px; pointer-events:none; z-index:0; color:var(--mark-ink); }
   .body-mark svg { width:100%; height:100%; }
 
-  .events-list { position:relative; z-index:1; margin:0; padding:0; list-style:none; }
-  .event-row { display:grid; grid-template-columns:52px 1fr auto; gap:12px; align-items:start; padding:17px 0; border-bottom:1px solid var(--line-warm); min-height:44px; cursor:pointer; }
-  .event-row:first-child { padding-top:4px; }
-  .event-row:last-child { border-bottom:0; }
-  .event-row:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; border-radius:8px; }
-  .event-time { font-family:var(--mono); font-size:11px; color:var(--text-muted); letter-spacing:0.02em; padding-top:3px; font-variant-numeric:tabular-nums; }
-  .event-body { font-family:var(--note-font); font-size:16px; line-height:1.5; color:var(--text-primary); margin:0; }
+  /* Chat-bubble feed -- each logged note is a bubble; BOC / incident / medication get distinct formats */
+  .feed { position:relative; z-index:1; margin:0; padding:4px 0 0; list-style:none; display:flex; flex-direction:column; gap:16px; }
+  .msg { display:flex; flex-direction:column; align-items:flex-start; gap:5px; animation:rowIn var(--motion-med) var(--ease-out); }
+  .bubble { max-width:84%; background:var(--surface-raised); border:1px solid var(--border-default); border-radius:20px 20px 20px 7px; padding:12px 15px; box-shadow:0 1px 2px rgba(15,26,46,0.05); cursor:pointer; }
+  .bubble:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
+  .bubble-text { font-family:var(--note-font); font-size:15.5px; line-height:1.5; color:var(--text-primary); margin:0; }
+  .bubble-text.clamped { display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+  .bubble-more { background:transparent; border:0; padding:8px 0 0; margin:0; font-family:var(--sans); font-weight:600; font-size:13px; color:var(--accent-fill); cursor:pointer; min-height:32px; }
+  .bubble-more:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; border-radius:6px; }
+  .bubble-time { font-family:var(--mono); font-size:10px; letter-spacing:0.04em; color:var(--text-muted); padding-left:8px; font-variant-numeric:tabular-nums; }
+  .bubble-tag { display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9.5px; font-weight:600; letter-spacing:0.13em; text-transform:uppercase; margin:0 0 8px; }
+  .bubble-tag svg { width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+  .bubble--med { background:var(--surface-muted); border-color:transparent; box-shadow:none; }
+  .bubble--med .bubble-tag { color:var(--text-secondary); }
+  .bubble--boc { border:1.5px solid var(--accent-fill); }
+  .bubble--boc .bubble-tag { color:var(--accent-fill); }
+  .bubble--incident { border:1.5px solid var(--accent-fill); }
+  .bubble--incident .bubble-tag { color:var(--speak-ink); background:var(--accent-fill); border-radius:999px; padding:4px 10px; }
   .prov { display:inline-flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:8px; line-height:1; letter-spacing:0.14em; text-indent:0.07em; text-transform:uppercase; padding:5px 8px; border-radius:999px; white-space:nowrap; align-self:center; }
   .prov--voice, .prov--med { background:var(--pill-neutral-bg); color:var(--pill-neutral-ink); }
   .prov--worker { background:var(--pill-worker-bg); color:var(--pill-worker-ink); }
@@ -133,7 +145,7 @@
   .app[data-drawer="cg"] .tab-btn[data-act="cg"],
   .app[data-drawer="tasks"] .tab-btn[data-act="tasks"] { color:var(--text-primary); }
   .tab-newwrap { justify-self:center; align-self:center; display:flex; flex-direction:column; align-items:center; gap:5px; }
-  .tab-new { width:54px; height:54px; margin-top:-20px; border-radius:50%; background:var(--accent-fill); color:var(--speak-ink); border:3px solid var(--surface-raised); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 10px 22px -8px rgba(15,26,46,0.55), inset 0 1px 0 rgba(255,255,255,0.45); transition:transform var(--motion-fast) var(--ease-out); }
+  .tab-new { width:54px; height:54px; margin-top:-20px; border-radius:50%; background:#E8A87C; color:#0F1A2E; border:3px solid var(--surface-raised); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 10px 22px -8px rgba(138,79,34,0.5), inset 0 1px 0 rgba(255,255,255,0.55); transition:transform var(--motion-fast) var(--ease-out); }
   .tab-new:active { transform:scale(0.94); }
   .tab-new:focus-visible { outline:3px solid var(--border-focus); outline-offset:3px; }
   .tab-new svg { width:26px; height:26px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
@@ -340,15 +352,38 @@
       </div>
     </header>
     <div class="home-head">
-      <h1 class="home-title">Today</h1>
-      <p class="home-sub">Thu 30 May &middot; CG &middot; Morning shift</p>
+      <p class="home-context">Thursday 30 May &middot; CG</p>
+      <span class="home-shift">8am - 2pm</span>
     </div>
     <div class="body">
       <div class="body-mark" aria-hidden="true"><svg viewBox="0 0 2000 2000" fill="currentColor"><use href="#tn-mark"/></svg></div>
-      <ul class="events-list" id="events-list">
-        <li class="event-row" tabindex="0"><span class="event-time">09:42</span><p class="event-body">Settled at the table after a short pace around the lounge. Accepted a drink.</p><span class="prov prov--voice">Voice</span></li>
-        <li class="event-row" tabindex="0"><span class="event-time">08:15</span><p class="event-body">Aripiprazole 5 mg given with breakfast by AC.</p><span class="prov prov--med">Med</span></li>
-        <li class="event-row" tabindex="0"><span class="event-time">07:50</span><p class="event-body">Woke calm, good eye contact, chose his green jumper himself.</p><span class="prov prov--worker">Confirmed</span></li>
+      <ul class="feed" id="events-list">
+        <li class="msg msg--boc">
+          <div class="bubble bubble--boc" tabindex="0">
+            <span class="bubble-tag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 16H3z"/><path d="M12 9v4M12 17h.01"/></svg> Behaviour of concern</span>
+            <p class="bubble-text">Became unsettled in the lounge around 11:10, pacing and flapping and tapping at the window. Offered the weighted blanket early and brought him through to the quiet room with the lights low. He settled after about ten minutes of deep pressure. No pinching or contact, and he stayed calm right through to lunch.</p>
+          </div>
+          <span class="bubble-time">11:10</span>
+        </li>
+        <li class="msg">
+          <div class="bubble bubble--note" tabindex="0">
+            <p class="bubble-text">Settled at the table after a short pace around the lounge. Accepted a drink.</p>
+          </div>
+          <span class="bubble-time">09:42</span>
+        </li>
+        <li class="msg msg--med">
+          <div class="bubble bubble--med" tabindex="0">
+            <span class="bubble-tag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4h4M12 4v4"/><rect x="6" y="8" width="12" height="12" rx="3"/><path d="M9 14h6"/></svg> Medication &middot; AC</span>
+            <p class="bubble-text">Aripiprazole 5 mg given with breakfast.</p>
+          </div>
+          <span class="bubble-time">08:15</span>
+        </li>
+        <li class="msg">
+          <div class="bubble bubble--note" tabindex="0">
+            <p class="bubble-text">Woke calm, good eye contact, chose his green jumper himself.</p>
+          </div>
+          <span class="bubble-time">07:50</span>
+        </li>
       </ul>
     </div>
   </section>
@@ -699,14 +734,39 @@
   document.getElementById('btn-addvoice').addEventListener('click', function(){ resetConvo(); startListening(); });
   document.getElementById('btn-discard').addEventListener('click', function(){ clearTimers(); resetConvo(); setView('home'); });
 
-  function addFeedEntry(text, pillClass, pillLabel) {
+  // WhatsApp-style clamp: limit long bubbles to 4 lines, add a Read more / Show less toggle when they overflow
+  function setupClamp(el){
+    if(!el) return;
+    var bubble=el.parentNode; if(!bubble) return;
+    if(bubble.querySelector('.bubble-more')) return; // already processed
+    el.classList.add('clamped');
+    requestAnimationFrame(function(){
+      if(el.scrollHeight - el.clientHeight > 4){
+        var btn=document.createElement('button'); btn.type='button'; btn.className='bubble-more'; btn.textContent='Read more';
+        btn.addEventListener('click', function(e){ e.stopPropagation(); var c=el.classList.toggle('clamped'); btn.textContent=c?'Read more':'Show less'; });
+        bubble.appendChild(btn);
+      } else {
+        el.classList.remove('clamped');
+      }
+    });
+  }
+  function initClamps(){ Array.prototype.forEach.call(document.querySelectorAll('#events-list .bubble-text'), setupClamp); }
+  initClamps();
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(initClamps); }
+
+  function addFeedEntry(text, type) {
     var list=document.getElementById('events-list');
-    var li=document.createElement('li'); li.className='event-row event-new'; li.setAttribute('tabindex','0');
     var now=new Date(), hh=now.getHours(), mm=now.getMinutes();
     var t=(hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm;
-    li.innerHTML='<span class="event-time">'+t+'</span><p class="event-body"></p><span class="prov '+pillClass+'">'+pillLabel+'</span>';
-    li.querySelector('.event-body').textContent=text;
+    var isBoc=(type==='boc');
+    var li=document.createElement('li'); li.className='msg'+(isBoc?' msg--boc':'');
+    var bubble=document.createElement('div'); bubble.className='bubble '+(isBoc?'bubble--boc':'bubble--note'); bubble.setAttribute('tabindex','0');
+    if(isBoc){ var tag=document.createElement('span'); tag.className='bubble-tag'; tag.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 16H3z"/><path d="M12 9v4M12 17h.01"/></svg> Behaviour of concern'; bubble.appendChild(tag); }
+    var p=document.createElement('p'); p.className='bubble-text'; p.textContent=text; bubble.appendChild(p);
+    var time=document.createElement('span'); time.className='bubble-time'; time.textContent=t;
+    li.appendChild(bubble); li.appendChild(time);
     list.insertBefore(li, list.firstChild);
+    setupClamp(p);
     return li;
   }
   document.getElementById('btn-confirm').addEventListener('click', function(){
@@ -714,8 +774,8 @@
     var text=(document.getElementById('draft-text').value||'').trim();
     if (convoAnswers.length) text += ' (' + convoAnswers.join(', ') + ')';
     if (text) {
-      if (convoType==='boc') addFeedEntry(text, 'prov--boc', 'BOC');
-      else addFeedEntry(text, 'prov--worker', 'Confirmed');
+      if (convoType==='boc') addFeedEntry(text, 'boc');
+      else addFeedEntry(text, 'note');
     }
     resetConvo();
     setView('home');
