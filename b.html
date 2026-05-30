@@ -235,35 +235,30 @@
   #view-capture[data-state="listening"] .cs-listening { display:flex; align-items:center; gap:24px; }
   #view-capture[data-state="draft"] .cs-draft { display:flex; gap:20px; }
 
-  /* READY: framing prompt floats calm in the space; the three choices sit in the bottom bar */
-  .cs-ready { justify-content:center; align-items:center; }
-  .ready-prompt { text-align:center; display:flex; flex-direction:column; gap:10px; align-items:center; max-width:18ch; }
-  .ready-eyebrow { font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:0.24em; text-indent:0.12em; text-transform:uppercase; color:var(--accent-ink); margin:0; }
-  .ready-line { font-family:var(--display); font-weight:700; font-size:27px; line-height:1.2; letter-spacing:-0.02em; color:var(--text-primary); margin:0; text-wrap:balance; }
-  .cap-when { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:18px; }
-  .cap-when-label { font-family:var(--mono); font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-muted); }
-  .cap-when-btn { background:transparent; border:0; cursor:pointer; font-family:var(--mono); font-size:11px; letter-spacing:0.04em; color:var(--accent-ink); border-bottom:1px dashed var(--accent-ink); padding:4px 2px; min-height:32px; }
-  .cap-when-btn:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
+  /* READY: the prompt sits just above the composer; the composer holds Type / mic / Speak and rides the keyboard */
+  .cs-ready { flex:1; justify-content:flex-end; align-items:stretch; }
+  .ready-line { font-family:var(--sans); font-weight:700; font-size:23px; line-height:1.25; letter-spacing:-0.02em; color:var(--text-primary); margin:0 0 4px; padding:0 8px; }
 
   /* The composer bar -- Type field + mic + Speak, all in front of you (READY state only) */
   .composer { flex-shrink:0; padding:10px 16px calc(14px + var(--safe-bottom)); display:none; }
   #view-capture[data-state="ready"] .composer { display:block; }
-  .composer-bar { background:var(--surface-raised); border:1px solid var(--border-default); border-radius:26px; padding:6px 6px 6px 8px; box-shadow:0 6px 22px -12px rgba(15,26,46,0.30); }
+  .composer-bar { background:var(--surface-raised); border:1.5px solid var(--border-strong); border-radius:24px; padding:8px 8px 10px 12px; box-shadow:0 8px 26px -12px rgba(15,26,46,0.30); }
   .composer-field { display:flex; align-items:center; }
-  .composer-input { flex:1; min-width:0; border:0; background:transparent; outline:none; font-family:var(--note-font); font-size:16px; line-height:1.4; color:var(--text-primary); padding:12px 8px 8px 10px; }
+  .composer-input { flex:1; min-width:0; border:0; background:transparent; outline:none; font-family:var(--note-font); font-size:17px; line-height:1.4; color:var(--text-primary); padding:13px 8px 9px 4px; }
   .composer-input::placeholder { color:var(--text-muted); }
-  .composer-controls { display:flex; align-items:center; gap:8px; padding:2px 4px 2px 6px; }
-  .composer-chip { font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-secondary); background:var(--surface-muted); border:0; border-radius:999px; padding:7px 12px; min-height:34px; display:inline-flex; align-items:center; gap:6px; }
+  .composer-controls { display:flex; align-items:center; gap:9px; padding:4px 2px 2px 4px; }
+  .composer-chip { font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:0.06em; color:var(--text-secondary); background:var(--surface-muted); border:0; border-radius:999px; padding:8px 14px; min-height:36px; display:inline-flex; align-items:center; }
   .composer-spacer { flex:1; }
-  .composer-mic { width:42px; height:42px; border-radius:50%; background:transparent; border:0; color:var(--text-secondary); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; }
-  .composer-mic:active, .composer-mic:focus-visible { background:var(--surface-muted); color:var(--text-primary); }
+  .composer-mic { width:44px; height:44px; border-radius:50%; background:transparent; border:1.5px solid var(--border-strong); color:var(--text-primary); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:background var(--motion-fast); }
+  .composer-mic:active, .composer-mic:focus-visible { background:var(--surface-muted); }
   .composer-mic:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
-  .composer-mic svg { width:21px; height:21px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
-  .composer-speak { display:inline-flex; align-items:center; gap:8px; background:var(--speak-bg); color:var(--speak-ink); border:0; border-radius:999px; padding:11px 18px 11px 16px; font-family:var(--sans); font-weight:700; font-size:14px; cursor:pointer; min-height:44px; box-shadow:inset 0 1px 0 rgba(255,255,255,0.4); transition:transform var(--motion-fast) var(--ease-out); }
+  .composer-mic svg { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .composer[data-typing="1"] .composer-mic { display:none; }
+  .composer-speak { display:inline-flex; align-items:center; gap:7px; background:#E8A87C; color:#0F1A2E; border:0; border-radius:999px; padding:0 15px; height:44px; font-family:var(--sans); font-weight:700; font-size:13.5px; cursor:pointer; box-shadow:inset 0 1px 0 rgba(255,255,255,0.5); transition:transform var(--motion-fast) var(--ease-out); }
   .composer-speak:active { transform:scale(0.96); }
   .composer-speak:focus-visible { outline:3px solid var(--border-focus); outline-offset:2px; }
-  .composer-speak svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
-  .composer-hint { text-align:center; font-family:var(--mono); font-size:9px; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-muted); margin:9px 0 0; }
+  .composer-speak svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .composer-hint { text-align:center; font-family:var(--sans); font-weight:500; font-size:12px; color:var(--text-muted); margin:10px 0 2px; }
 
   /* LISTENING */
   .cs-listening { flex:1; }
@@ -463,7 +458,7 @@
   <section id="view-capture" data-state="ready" aria-label="New shift note">
     <header class="cap-top">
       <button class="top-btn" type="button" aria-label="Back" id="cap-back"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
-      <h2 class="cap-for"><span class="for">New note for</span>CG</h2>
+      <h2 class="cap-for">New note - CG</h2>
       <span></span>
     </header>
     <div class="cap-body">
@@ -471,11 +466,7 @@
 
       <!-- READY: choose straight away -->
       <div class="cap-state cs-ready">
-        <div class="ready-prompt">
-          <p class="ready-eyebrow" id="ready-eyebrow">A note from the floor</p>
-          <h3 class="ready-line" id="ready-line">What just happened with CG?</h3>
-          <div class="cap-when"><span class="cap-when-label">When</span><button class="cap-when-btn" type="button" id="cap-time">about 15 min ago</button></div>
-        </div>
+        <p class="ready-line" id="ready-line">What just happened?</p>
       </div>
 
       <!-- LISTENING -->
@@ -507,9 +498,9 @@
           <input class="composer-input" id="composer-input" type="text" inputmode="text" placeholder="Type what happened..." aria-label="Type your note">
         </div>
         <div class="composer-controls">
-          <span class="composer-chip">For CG</span>
+          <span class="composer-chip">CG</span>
           <span class="composer-spacer"></span>
-          <button class="composer-mic" type="button" id="composer-mic" aria-label="Dictate"><svg viewBox="0 0 24 24"><path d="M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"/><path d="M5.25 11.25a6.75 6.75 0 0013.5 0M12 18.75v3"/></svg></button>
+          <button class="composer-mic" type="button" id="composer-mic" aria-label="Dictate"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg></button>
           <button class="composer-speak" type="button" id="composer-speak"><svg viewBox="0 0 24 24"><path d="M5 9v6M9 5v14M13 8v8M17 10v4M21 11v2"/></svg> Speak</button>
         </div>
       </div>
@@ -534,7 +525,6 @@
   var timer = null, secs = 0, typeTimer = null;
   var liveText = document.getElementById('live-text');
   var listenTimer = document.getElementById('listen-timer');
-  var readyEyebrow = document.getElementById('ready-eyebrow');
   var listenEyebrow = document.getElementById('listen-eyebrow');
 
   // ---- Theme toggle (light default; dark = TNA warm-navy) ----
@@ -560,10 +550,10 @@
 
   // ---- View / state helpers ----
   function syncCaptureKeyboardPad(){
-    if(!window.visualViewport) return;
-    var body=document.querySelector('.cap-body'); if(!body) return;
-    var kb=Math.max(0, window.innerHeight - window.visualViewport.height);
-    body.style.paddingBottom = (app.getAttribute('data-view')==='capture' && kb>60) ? (kb + 24)+'px' : '';
+    var vv=window.visualViewport; if(!vv) return;
+    var inCap = app.getAttribute('data-view')==='capture';
+    var kb = inCap ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) : 0;
+    capture.style.bottom = (kb>60) ? kb+'px' : '';
   }
   if(window.visualViewport){ window.visualViewport.addEventListener('resize', syncCaptureKeyboardPad); }
   function setView(v) { app.setAttribute('data-view', v); syncCaptureKeyboardPad(); }
@@ -597,30 +587,41 @@
   });
 
   // ---- New shift note: open the chat-window in READY (Type / mic / Speak up front) ----
+  var compInput = document.getElementById('composer-input');
+  var compSpeak = document.getElementById('composer-speak');
+  var compMic = document.getElementById('composer-mic');
+  var readyComposer = document.getElementById('ready-composer');
+  // Empty -> mic + Speak (voice). Once you type, Speak becomes Send and the mic steps aside.
+  function syncComposerMode(){
+    var has = compInput.value.trim().length > 0;
+    if (readyComposer) readyComposer.setAttribute('data-typing', has ? '1' : '0');
+    compSpeak.innerHTML = has
+      ? '<svg viewBox="0 0 24 24"><path d="M5 12h12M12 6l6 6-6 6"/></svg> Send'
+      : '<svg viewBox="0 0 24 24"><path d="M5 9v6M9 5v14M13 8v8M17 10v4M21 11v2"/></svg> Speak';
+  }
   function openCapture(){
     closeDrawer(); clearTimers(); resetConvo();
-    readyEyebrow.textContent = 'A note from the floor';
     if (listenEyebrow) listenEyebrow.textContent = 'Listening';
     document.getElementById('draft-prov').textContent = 'Voice';
-    document.getElementById('composer-input').value = '';
+    compInput.value = '';
+    syncComposerMode();
     setState('ready'); setView('capture');
   }
   document.getElementById('btn-newnote').addEventListener('click', openCapture);
 
-  // From READY -> typing: tap the field, focus synchronously so iOS raises the keyboard
-  function startTyping(){
-    var seed = document.getElementById('composer-input').value || '';
-    var ta = document.getElementById('draft-text');
+  // Typing happens IN PLACE in the bottom composer (it rides up with the keyboard -- no new top box).
+  // Send moves the typed note into the review + gap-fill step.
+  function submitTyped(){
+    var v = compInput.value.trim(); if (!v) return;
     document.getElementById('draft-prov').textContent = 'Typed';
+    document.getElementById('draft-text').value = v;
+    compInput.blur();
     setState('draft');
-    ta.value = seed;
-    ta.focus({ preventScroll: true });
-    if (seed.trim().length >= 12) buildConvo();
+    buildConvo();
   }
-  document.getElementById('composer-input').addEventListener('focus', startTyping);
-  // From READY -> voice (mic icon OR Speak pill both start listening)
-  document.getElementById('composer-mic').addEventListener('click', function(){ document.getElementById('draft-prov').textContent='Voice'; startListening(); });
-  document.getElementById('composer-speak').addEventListener('click', function(){ document.getElementById('draft-prov').textContent='Voice'; startListening(); });
+  compInput.addEventListener('input', syncComposerMode);
+  compMic.addEventListener('click', function(){ document.getElementById('draft-prov').textContent='Voice'; startListening(); });
+  compSpeak.addEventListener('click', function(){ if (compInput.value.trim().length > 0) { submitTyped(); } else { document.getElementById('draft-prov').textContent='Voice'; startListening(); } });
 
   // ---- Conversational gap-fill: engine asks for whatever detail is missing ----
   var convoAnswers=[], convoBuilt=false, textConvoTimer=null, convoType='note';
@@ -716,8 +717,6 @@
 
   // ---- Capture back / time ----
   document.getElementById('cap-back').addEventListener('click', function(){ clearTimers(); setView('home'); });
-  var timeOpts = ['about 15 min ago','about 30 min ago','about 5 min ago','about 1 hr ago']; var ti = 0;
-  document.getElementById('cap-time').addEventListener('click', function(){ ti=(ti+1)%timeOpts.length; this.textContent = timeOpts[ti]; });
 
   // ---- Voice listening (mock transcript) ----
   function fmt(s){ var m=Math.floor(s/60), r=s%60; return m+':'+(r<10?'0':'')+r; }
