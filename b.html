@@ -48,7 +48,7 @@
     -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility;
     font-feature-settings:"cv02","cv03","cv04","cv11"; -webkit-tap-highlight-color:transparent; overscroll-behavior:none; }
 
-  .app { position:fixed; top:0; left:0; right:0; height:100%; overflow:hidden; background:var(--surface-base); }
+  .app { position:fixed; inset:0; overflow:hidden; background:var(--surface-base); }
   .app::before { content:""; position:absolute; inset:0; pointer-events:none; z-index:0; opacity:0.5;
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.6 0.85' numOctaves='3' seed='5'/><feColorMatrix values='0 0 0 0 0.32  0 0 0 0 0.18  0 0 0 0 0.06  0 0 0 0.03 0'/></filter><rect width='100%25' height='100%25' filter='url(%23p)'/></svg>");
     background-size:240px 240px; }
@@ -222,8 +222,7 @@
      behind the sheet when the keyboard reflows the viewport. */
   .app[data-view="capture"] .drawer,
   .app[data-view="capture"] .drawer-backdrop { display:none !important; }
-  /* top/height (not inset:0) so JS can shrink the sheet to the visible area above the iOS keyboard. */
-  #view-capture { position:absolute; top:0; left:0; right:0; height:100%; z-index:30; background:var(--surface-base); display:flex; flex-direction:column; min-height:0; transform:translateY(100%); transition:transform var(--motion-med) var(--ease-out); }
+  #view-capture { position:absolute; inset:0; z-index:30; background:var(--surface-base); display:flex; flex-direction:column; min-height:0; transform:translateY(100%); transition:transform var(--motion-med) var(--ease-out); }
   .app[data-view="capture"] #view-capture { transform:translateY(0); }
   .cap-top { flex-shrink:0; padding:calc(var(--safe-top) + 10px) 8px 6px; display:grid; grid-template-columns:44px 1fr 44px; gap:8px; align-items:center; }
   .cap-time-row { flex-shrink:0; padding:0 20px 14px; border-bottom:1px solid var(--border-default); display:flex; align-items:center; justify-content:center; gap:8px; }
@@ -477,23 +476,7 @@
   var listenTimer = document.getElementById('listen-timer');
   var eyebrow = document.getElementById('cap-eyebrow');
 
-  // Root keyboard handling: shrink the WHOLE app shell to the visible area above the iOS keyboard while
-  // capturing, so every layer (feed, drawers, capture sheet) is clipped above the keyboard and nothing
-  // can bleed through beneath the sheet.
-  function syncAppViewport(){
-    if(!window.visualViewport) return;
-    if(app.getAttribute('data-view')==='capture'){
-      app.style.height = window.visualViewport.height + 'px';
-      app.style.top = window.visualViewport.offsetTop + 'px';
-    } else {
-      app.style.height=''; app.style.top='';
-    }
-  }
-  if(window.visualViewport){
-    window.visualViewport.addEventListener('resize', syncAppViewport);
-    window.visualViewport.addEventListener('scroll', syncAppViewport);
-  }
-  function setView(v) { app.setAttribute('data-view', v); syncAppViewport(); }
+  function setView(v) { app.setAttribute('data-view', v); }
   function setState(s) { capture.setAttribute('data-state', s); }
   function setDrawer(d) { app.setAttribute('data-drawer', d); }
   function closeDrawer() { setDrawer('none'); }
@@ -597,16 +580,17 @@
     function commit(){ var v=inp.value.trim(); if(!v) return; finishConvoStep(step,qtext,v,onAnswered); }
     add.addEventListener('click',commit);
     inp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); commit(); } });
-    // The sheet now resizes itself above the keyboard (syncCaptureHeight), and the page is pinned
-    // (preventScroll) so nothing behind can show. Just reveal the field within the capture body once
-    // the keyboard has settled.
-    inp.focus({ preventScroll:true });
-    setTimeout(function(){
+    // Scroll ONLY the capture body so the field sits near the top, BEFORE the keyboard opens; then focus
+    // without ever scrolling the page (preventScroll), and settle once more after the keyboard is up.
+    var lift=function(){
       try {
         var body=document.querySelector('.cap-body');
         if(body){ var r=inp.getBoundingClientRect(), br=body.getBoundingClientRect(); body.scrollTop += (r.top - br.top) - 80; }
       } catch(e){}
-    }, 340);
+    };
+    lift();
+    inp.focus({ preventScroll:true });
+    setTimeout(lift,300);
   }
   function finishConvoStep(step,qtext,answer,onAnswered){
     convoAnswers.push(answer);
