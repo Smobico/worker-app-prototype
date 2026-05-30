@@ -388,7 +388,10 @@
   .rv-body::-webkit-scrollbar { display:none; }
   .rv-intro { font-family:var(--sans); font-size:13.5px; line-height:1.5; color:var(--text-secondary); margin:2px 2px 0; }
   /* Mono so the ALL-CAPS heading ASCII underline rows line up (locked D1.8 uses DM Mono for this exact reason). */
-  .rv-note { flex:1; min-height:300px; width:100%; border:1px solid var(--border-default); border-radius:14px; background:var(--surface-raised); padding:16px; font-family:var(--mono); font-size:12.5px; line-height:1.55; color:var(--text-primary); resize:none; white-space:pre; overflow-x:auto; box-shadow:0 1px 2px rgba(15,26,46,0.05); }
+  /* Mono so the ALL-CAPS heading ASCII underline rows line up (locked D1.8 uses DM Mono for this). pre-wrap (not
+     pre) so long prose lines wrap INSIDE the box instead of running off the right; blank lines + short heading
+     underlines are preserved. overflow-wrap breaks any single token longer than the box. */
+  .rv-note { flex:1; min-height:300px; width:100%; border:1px solid var(--border-default); border-radius:14px; background:var(--surface-raised); padding:16px; font-family:var(--mono); font-size:12.5px; line-height:1.55; color:var(--text-primary); resize:none; white-space:pre-wrap; overflow-wrap:break-word; word-break:break-word; box-shadow:0 1px 2px rgba(15,26,46,0.05); }
   .rv-note:focus { outline:none; border-color:var(--border-focus); box-shadow:0 0 0 3px rgba(38,112,184,0.12); }
   .rv-dock { flex-shrink:0; display:flex; flex-direction:column; gap:9px; padding:12px 20px calc(16px + var(--safe-bottom)); border-top:1px solid var(--border-default); }
   .rv-copy { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--accent-fill); color:var(--speak-ink); border:0; border-radius:14px; padding:15px; font-family:var(--sans); font-weight:700; font-size:15px; cursor:pointer; min-height:52px; box-shadow:0 8px 18px -10px rgba(15,26,46,0.5); }
