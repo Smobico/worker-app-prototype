@@ -226,25 +226,29 @@
   .cap-top { flex-shrink:0; padding:calc(var(--safe-top) + 12px) 10px 4px; display:grid; grid-template-columns:44px 1fr 44px; gap:8px; align-items:center; }
   .cap-for { font-family:var(--sans); font-weight:600; font-size:16px; color:var(--text-primary); text-align:center; margin:0; }
   .cap-for .for { display:block; font-family:var(--mono); font-weight:500; font-size:9px; letter-spacing:0.3em; text-indent:0.15em; text-transform:uppercase; color:var(--text-muted); margin-bottom:2px; }
-  .cap-body { flex:1; min-height:0; position:relative; padding:24px 24px 18px; display:flex; flex-direction:column; overflow-y:auto; scrollbar-width:none; }
+  .cap-body { flex:1; min-height:0; position:relative; padding:18px 22px 8px; display:flex; flex-direction:column; overflow-y:auto; scrollbar-width:none; }
   .cap-body::-webkit-scrollbar { display:none; }
   .cap-mark { position:absolute; left:50%; top:38%; transform:translate(-50%,-50%); width:170px; height:170px; pointer-events:none; color:var(--mark-ink); }
   .cap-mark svg { width:100%; height:100%; }
   .cap-state { display:none; flex-direction:column; width:100%; }
   #view-capture[data-state="ready"] .cs-ready { display:flex; flex:1; }
   #view-capture[data-state="listening"] .cs-listening { display:flex; align-items:center; gap:24px; }
-  #view-capture[data-state="draft"] .cs-draft { display:flex; gap:20px; }
+  #view-capture[data-state="chat"] .cs-chat,
+  #view-capture[data-state="done"] .cs-chat { display:flex; flex:1; }
 
   /* READY: the prompt sits just above the composer; the composer holds Type / mic / Speak and rides the keyboard */
   .cs-ready { flex:1; justify-content:flex-end; align-items:stretch; }
-  .ready-line { font-family:var(--sans); font-weight:700; font-size:23px; line-height:1.25; letter-spacing:-0.02em; color:var(--text-primary); margin:0 0 4px; padding:0 8px; }
+  .ready-line { font-family:var(--sans); font-weight:700; font-size:22px; line-height:1.2; letter-spacing:-0.02em; color:var(--text-primary); margin:0 0 6px; padding:0 6px; }
 
   /* The composer bar -- Type field + mic + Speak, all in front of you (READY state only) */
-  .composer { flex-shrink:0; padding:10px 16px calc(14px + var(--safe-bottom)); display:none; }
-  #view-capture[data-state="ready"] .composer { display:block; }
+  .composer { flex-shrink:0; padding:6px 16px calc(10px + var(--safe-bottom)); display:none; }
+  #view-capture[data-state="ready"] .composer,
+  #view-capture[data-state="chat"] .composer { display:block; }
+  #view-capture[data-state="chat"] .composer-hint { display:none; }
   .composer-bar { background:var(--surface-raised); border:1.5px solid var(--border-strong); border-radius:24px; padding:8px 8px 10px 12px; box-shadow:0 8px 26px -12px rgba(15,26,46,0.30); }
   .composer-field { display:flex; align-items:center; }
-  .composer-input { flex:1; min-width:0; border:0; background:transparent; outline:none; font-family:var(--note-font); font-size:17px; line-height:1.4; color:var(--text-primary); padding:13px 8px 9px 4px; }
+  .composer-input { flex:1; min-width:0; border:0; background:transparent; outline:none; font-family:var(--note-font); font-size:17px; line-height:1.4; color:var(--text-primary); padding:11px 8px 7px 4px; resize:none; max-height:140px; overflow-y:auto; scrollbar-width:none; }
+  .composer-input::-webkit-scrollbar { display:none; }
   .composer-input::placeholder { color:var(--text-muted); }
   .composer-controls { display:flex; align-items:center; gap:9px; padding:4px 2px 2px 4px; }
   .composer-chip { font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:0.06em; color:var(--text-secondary); background:var(--surface-muted); border:0; border-radius:999px; padding:8px 14px; min-height:36px; display:inline-flex; align-items:center; }
@@ -258,7 +262,9 @@
   .composer-speak:active { transform:scale(0.96); }
   .composer-speak:focus-visible { outline:3px solid var(--border-focus); outline-offset:2px; }
   .composer-speak svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
-  .composer-hint { text-align:center; font-family:var(--sans); font-weight:500; font-size:12px; color:var(--text-muted); margin:10px 0 2px; }
+  .composer-hint { text-align:center; font-family:var(--sans); font-weight:500; font-size:12px; color:var(--text-muted); margin:7px 0 2px; }
+  #view-capture[data-kb="1"] .composer { padding-bottom:8px; }
+  #view-capture[data-kb="1"] .composer-hint { display:none; }
 
   /* LISTENING */
   .cs-listening { flex:1; }
@@ -279,41 +285,19 @@
   .btn-stop:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
   .btn-stop .sq { width:12px; height:12px; background:currentColor; border-radius:2px; }
 
-  /* DRAFT + conversational gap-fill */
-  .draft-head { display:flex; align-items:center; justify-content:space-between; width:100%; }
-  .draft-hint { font-family:var(--mono); font-size:9px; letter-spacing:0.22em; text-transform:uppercase; color:var(--text-muted); align-self:flex-start; }
-  .draft-text { font-family:var(--note-font); font-weight:400; font-size:16px; line-height:1.5; color:var(--text-primary); width:100%; max-width:60ch; background:var(--surface-raised); border:1px solid var(--border-default); border-radius:14px; padding:15px; resize:none; min-height:140px; box-shadow:inset 0 1px 2px rgba(15,26,46,0.04); }
-  .draft-text:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
-  .draft-2nd { display:flex; align-items:center; justify-content:space-between; width:100%; gap:8px; }
-  .btn-ghost { background:transparent; border:0; cursor:pointer; font-family:var(--sans); font-size:13px; font-weight:500; padding:10px 12px; min-height:44px; border-radius:8px; display:inline-flex; align-items:center; gap:6px; }
-  .btn-ghost svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
-  .btn-ghost--add { color:var(--accent-ink); } .btn-ghost--add:active, .btn-ghost--add:focus-visible { background:var(--accent-soft); }
-  .btn-ghost--redo { color:var(--text-muted); } .btn-ghost--redo:active, .btn-ghost--redo:focus-visible { color:var(--text-secondary); }
-  .btn-ghost:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
-  .cap-convo { width:100%; max-width:60ch; display:flex; flex-direction:column; gap:14px; }
-  .cap-convo:empty { display:none; }
-  .convo-intro { font-family:var(--mono); font-size:9px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-muted); margin:0; }
-  .convo-step { display:flex; flex-direction:column; gap:10px; animation:rowIn var(--motion-med) var(--ease-out); }
-  .convo-q-text { margin:0; font-family:var(--note-font); font-size:16px; font-weight:500; line-height:1.4; color:var(--text-primary); }
-  .convo-chips { display:flex; flex-wrap:wrap; gap:8px; }
-  .convo-chip { font-family:var(--sans); font-size:13px; font-weight:600; color:var(--text-primary); background:var(--surface-raised); border:1.5px solid var(--border-strong); border-radius:999px; padding:9px 15px; min-height:40px; cursor:pointer; transition:transform var(--motion-fast) var(--ease-out), background var(--motion-fast), border-color var(--motion-fast); }
-  .convo-chip:active { transform:scale(0.96); background:var(--accent-soft); border-color:var(--accent-ink); }
-  .convo-chip:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
-  .convo-step--done { flex-direction:row; align-items:baseline; gap:8px; }
-  .convo-tick { width:15px; height:15px; fill:none; stroke:var(--confirmed-ink); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; transform:translateY(2px); }
-  .convo-done-a { font-family:var(--sans); font-weight:600; font-size:14px; color:var(--text-primary); }
-  .convo-done-q { font-family:var(--sans); font-size:13px; color:var(--text-muted); }
-  .convo-other-bar { width:100%; max-width:60ch; display:flex; flex-direction:column; gap:9px; padding:13px 15px; background:var(--accent-soft); border:1px solid var(--accent-ink); border-radius:16px; }
-  .convo-other-q { margin:0; font-family:var(--note-font); font-size:15px; font-weight:600; color:var(--text-primary); }
-  .convo-other { display:flex; gap:8px; }
-  .convo-other-input { flex:1; min-width:0; font-family:var(--note-font); font-size:14px; padding:9px 14px; border:1.5px solid var(--border-strong); border-radius:999px; background:var(--surface-raised); color:var(--text-primary); outline:none; }
-  .convo-other-input:focus { border-color:var(--border-focus); box-shadow:0 0 0 3px rgba(38,112,184,0.12); }
-  .convo-other-add { flex-shrink:0; font-family:var(--sans); font-weight:600; font-size:13px; padding:9px 17px; border:0; border-radius:999px; background:var(--accent-fill); color:var(--speak-ink); cursor:pointer; min-height:40px; }
-  .convo-other-add:active { filter:brightness(1.05); }
-  .convo-done { display:flex; align-items:center; gap:7px; font-family:var(--sans); font-size:14px; font-weight:700; color:var(--confirmed-ink); animation:rowIn var(--motion-med) var(--ease-out); }
-  .convo-done svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+  /* CHAT thread: your note + the engine's gap-fill questions, all as bubbles in one conversation */
+  .cs-chat { flex-direction:column; gap:12px; padding:6px 0 4px; }
+  .cbub { max-width:82%; padding:11px 15px; font-family:var(--note-font); font-size:15.5px; line-height:1.5; animation:rowIn var(--motion-med) var(--ease-out); }
+  .cbub--ai { align-self:flex-start; background:var(--surface-raised); border:1px solid var(--border-default); color:var(--text-primary); border-radius:18px 18px 18px 6px; box-shadow:0 1px 2px rgba(15,26,46,0.05); }
+  .cbub--me { align-self:flex-end; background:var(--accent-fill); color:var(--speak-ink); border-radius:18px 18px 6px 18px; }
+  .cq-chips { align-self:flex-start; display:flex; flex-wrap:wrap; gap:8px; max-width:92%; }
+  .cq-chip { font-family:var(--sans); font-size:13px; font-weight:600; color:var(--text-primary); background:var(--surface-raised); border:1.5px solid var(--border-strong); border-radius:999px; padding:9px 15px; min-height:40px; cursor:pointer; transition:transform var(--motion-fast) var(--ease-out), background var(--motion-fast), border-color var(--motion-fast); }
+  .cq-chip:active { transform:scale(0.96); background:var(--surface-muted); border-color:var(--accent-fill); }
+  .cq-chip:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
+  .cbub--done { align-self:flex-start; display:inline-flex; align-items:center; gap:7px; font-family:var(--sans); font-weight:700; font-size:14px; color:var(--confirmed-ink); padding:4px 2px; animation:rowIn var(--motion-med) var(--ease-out); }
+  .cbub--done svg { width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
   .cap-dock { flex-shrink:0; padding:12px 20px calc(14px + var(--safe-bottom)); border-top:1px solid var(--border-default); display:none; align-items:center; justify-content:space-between; gap:12px; }
-  #view-capture[data-state="draft"] .cap-dock { display:flex; }
+  #view-capture[data-state="done"] .cap-dock { display:flex; }
   .btn-discard { background:transparent; border:0; color:var(--text-muted); font-family:var(--sans); font-weight:500; font-size:14px; cursor:pointer; padding:10px 12px; min-height:44px; border-radius:8px; }
   .btn-discard:active, .btn-discard:focus-visible { color:var(--text-secondary); }
   .btn-discard:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
@@ -466,7 +450,7 @@
 
       <!-- READY: choose straight away -->
       <div class="cap-state cs-ready">
-        <p class="ready-line" id="ready-line">What just happened?</p>
+        <p class="ready-line" id="ready-line">What just happened on shift?</p>
       </div>
 
       <!-- LISTENING -->
@@ -478,24 +462,15 @@
         <button class="btn-stop" type="button" id="btn-stop"><span class="sq" aria-hidden="true"></span> Done</button>
       </div>
 
-      <!-- DRAFT + gap-fill -->
-      <div class="cap-state cs-draft">
-        <div class="draft-head"><span class="eyebrow">Your note</span><span class="prov prov--voice" id="draft-prov">Voice</span></div>
-        <label class="draft-hint" for="draft-text">Tap to edit</label>
-        <textarea class="draft-text" id="draft-text" aria-label="Edit your note" placeholder="Type what happened..."></textarea>
-        <div class="cap-convo" id="cap-convo" aria-live="polite"></div>
-        <div class="draft-2nd">
-          <button class="btn-ghost btn-ghost--add" type="button" id="btn-addvoice"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Add more voice</button>
-          <button class="btn-ghost btn-ghost--redo" type="button" id="btn-redo"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 109-9 9 9 0 00-7 3.3M3 4v4h4"/></svg> Re-record</button>
-        </div>
-      </div>
+      <!-- CHAT thread: the note + the engine's gap-fill questions, all as bubbles -->
+      <div class="cap-state cs-chat" id="cap-thread"></div>
     </div>
 
     <!-- READY composer (Type / mic / Speak) -->
     <div class="composer" id="ready-composer">
       <div class="composer-bar">
         <div class="composer-field">
-          <input class="composer-input" id="composer-input" type="text" inputmode="text" placeholder="Type what happened..." aria-label="Type your note">
+          <textarea class="composer-input" id="composer-input" rows="1" placeholder="Type what happened..." aria-label="Type your note"></textarea>
         </div>
         <div class="composer-controls">
           <span class="composer-chip">CG</span>
@@ -554,6 +529,7 @@
     var inCap = app.getAttribute('data-view')==='capture';
     var kb = inCap ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) : 0;
     capture.style.bottom = (kb>60) ? kb+'px' : '';
+    capture.setAttribute('data-kb', (kb>60) ? '1' : '0');
   }
   if(window.visualViewport){ window.visualViewport.addEventListener('resize', syncCaptureKeyboardPad); }
   function setView(v) { app.setAttribute('data-view', v); syncCaptureKeyboardPad(); }
@@ -592,43 +568,45 @@
   var compMic = document.getElementById('composer-mic');
   var readyComposer = document.getElementById('ready-composer');
   // Empty -> mic + Speak (voice). Once you type, Speak becomes Send and the mic steps aside.
+  var SVG_SEND='<svg viewBox="0 0 24 24"><path d="M5 12h12M12 6l6 6-6 6"/></svg> Send';
+  var SVG_SPEAK='<svg viewBox="0 0 24 24"><path d="M5 9v6M9 5v14M13 8v8M17 10v4M21 11v2"/></svg> Speak';
+  // Auto-grow the box as you type, up to a max; then it scrolls internally.
+  function autoGrow(){ compInput.style.height='auto'; compInput.style.height=Math.min(compInput.scrollHeight, 140)+'px'; }
+  function clearComposer(){ compInput.value=''; compInput.style.height='auto'; }
   function syncComposerMode(){
+    var chat = capture.getAttribute('data-state') === 'chat';
     var has = compInput.value.trim().length > 0;
-    if (readyComposer) readyComposer.setAttribute('data-typing', has ? '1' : '0');
-    compSpeak.innerHTML = has
-      ? '<svg viewBox="0 0 24 24"><path d="M5 12h12M12 6l6 6-6 6"/></svg> Send'
-      : '<svg viewBox="0 0 24 24"><path d="M5 9v6M9 5v14M13 8v8M17 10v4M21 11v2"/></svg> Speak';
+    if (readyComposer) readyComposer.setAttribute('data-typing', (chat || has) ? '1' : '0');
+    compSpeak.innerHTML = (chat || has) ? SVG_SEND : SVG_SPEAK;
+    compInput.placeholder = chat ? 'Type your answer...' : 'Type what happened...';
   }
   function openCapture(){
-    closeDrawer(); clearTimers(); resetConvo();
+    closeDrawer(); clearTimers(); resetChat();
     if (listenEyebrow) listenEyebrow.textContent = 'Listening';
-    document.getElementById('draft-prov').textContent = 'Voice';
-    compInput.value = '';
-    syncComposerMode();
-    setState('ready'); setView('capture');
+    clearComposer();
+    setState('ready'); syncComposerMode();
+    setView('capture');
   }
   document.getElementById('btn-newnote').addEventListener('click', openCapture);
 
-  // Typing happens IN PLACE in the bottom composer (it rides up with the keyboard -- no new top box).
-  // Send moves the typed note into the review + gap-fill step.
-  function submitTyped(){
-    var v = compInput.value.trim(); if (!v) return;
-    document.getElementById('draft-prov').textContent = 'Typed';
-    document.getElementById('draft-text').value = v;
-    compInput.blur();
-    setState('draft');
-    buildConvo();
-  }
-  compInput.addEventListener('input', syncComposerMode);
-  compMic.addEventListener('click', function(){ document.getElementById('draft-prov').textContent='Voice'; startListening(); });
-  compSpeak.addEventListener('click', function(){ if (compInput.value.trim().length > 0) { submitTyped(); } else { document.getElementById('draft-prov').textContent='Voice'; startListening(); } });
+  // Composer: in READY it starts the note; in CHAT it sends a free-text answer to the live question.
+  compInput.addEventListener('input', function(){ autoGrow(); syncComposerMode(); });
+  compMic.addEventListener('click', startListening);
+  compSpeak.addEventListener('click', function(){
+    var st = capture.getAttribute('data-state');
+    var v = compInput.value.trim();
+    if (st === 'ready') { if (v) { clearComposer(); startChat(v); } else { startListening(); } }
+    else if (st === 'chat') { if (v) { clearComposer(); syncComposerMode(); answerQ(v); } }
+  });
 
-  // ---- Conversational gap-fill: engine asks for whatever detail is missing ----
-  var convoAnswers=[], convoBuilt=false, textConvoTimer=null, convoType='note';
-  function setConfirmEnabled(on){ var b=document.getElementById('btn-confirm'); if(!b) return; b.disabled=!on; if(on) b.classList.remove('is-locked'); else b.classList.add('is-locked'); }
-  function resetConvo(){ convoAnswers=[]; convoBuilt=false; convoType='note'; if(textConvoTimer){clearTimeout(textConvoTimer);textConvoTimer=null;} var c=document.getElementById('cap-convo'); if(c) c.innerHTML=''; setConfirmEnabled(true); }
-  function gapQuestions(){
-    var txt=(document.getElementById('draft-text').value||'').toLowerCase();
+  // ---- Chat-style capture: the note + the engine's gap-fill questions live as bubbles in one thread ----
+  var thread = document.getElementById('cap-thread');
+  var captureType='note', qQueue=[], capAnswers=[], pendingQ=null;
+  function resetChat(){ captureType='note'; qQueue=[]; capAnswers=[]; pendingQ=null; if(thread) thread.innerHTML=''; }
+  function threadScroll(){ var b=document.querySelector('.cap-body'); if(b) requestAnimationFrame(function(){ b.scrollTop=b.scrollHeight; }); }
+  function addCbub(side, text){ var d=document.createElement('div'); d.className='cbub cbub--'+side; d.textContent=text; thread.appendChild(d); threadScroll(); return d; }
+  function gapQuestions(txt){
+    txt=(txt||'').toLowerCase();
     if(/agitat|pacing|\bpace\b|flap|pinch|grab|bite|unsettl|distress|escalat|lunge|lunging|\bkick|scratch|threw|\bhit\b|restrain|aggress/.test(txt))
       return {type:'boc',qs:[
         {q:'Roughly how long until CG settled?',chips:['Under 5 min','5-10 min','Over 10 min']},
@@ -651,69 +629,43 @@
         {q:'Given as per the plan?',chips:['As per MAP','PRN given','Refused','Given late']},
         {q:'Any side effects?',chips:['None noted','Drowsy','Other']}
       ]};
-    return {type:'note',qs:[
-      {q:'How was CG in himself?',chips:['Calm','Happy','Tired','Unsettled']}
-    ]};
+    return {type:'note',qs:[ {q:'How was CG in himself?',chips:['Calm','Happy','Tired','Unsettled']} ]};
   }
-  function buildConvo(){
-    var convo=document.getElementById('cap-convo'); if(!convo||convoBuilt) return; convoBuilt=true; convoAnswers=[];
-    var g=gapQuestions(); convoType=g.type;
-    setConfirmEnabled(false);
-    var i=0;
-    function nextQ(){ if(i>=g.qs.length){ renderConvoDone(convo); return; } renderConvoQ(convo,g.qs[i++],nextQ); }
-    convo.innerHTML='';
-    var intro=document.createElement('p'); intro.className='convo-intro'; intro.textContent='A couple of quick things'; convo.appendChild(intro);
-    nextQ();
+  function startChat(noteText){
+    resetChat();
+    setState('chat'); syncComposerMode();
+    addCbub('me', noteText);
+    var g=gapQuestions(noteText); captureType=g.type; qQueue=g.qs.slice();
+    setTimeout(askNext, 280);
   }
-  function renderConvoQ(convo,qobj,onAnswered){
-    var step=document.createElement('div'); step.className='convo-step';
-    var q=document.createElement('p'); q.className='convo-q-text'; q.textContent=qobj.q; step.appendChild(q);
-    var chips=document.createElement('div'); chips.className='convo-chips';
-    qobj.chips.forEach(function(c){
-      var b=document.createElement('button'); b.type='button'; b.className='convo-chip'; b.textContent=c;
-      b.addEventListener('click',function(){
-        if(/^other$/i.test(c)){ showOtherInput(step,qobj.q,onAnswered); }
-        else { finishConvoStep(step,qobj.q,c,onAnswered); }
+  function askNext(){
+    if(qQueue.length===0){ finishChat(); return; }
+    pendingQ=qQueue.shift();
+    addCbub('ai', pendingQ.q);
+    var row=document.createElement('div'); row.className='cq-chips';
+    pendingQ.chips.forEach(function(c){
+      var b=document.createElement('button'); b.type='button'; b.className='cq-chip'; b.textContent=c;
+      b.addEventListener('click', function(){
+        if(/^other$/i.test(c)){ row.remove(); compInput.focus({preventScroll:true}); return; }
+        answerQ(c);
       });
-      chips.appendChild(b);
+      row.appendChild(b);
     });
-    step.appendChild(chips); convo.appendChild(step);
+    thread.appendChild(row); threadScroll();
   }
-  function showOtherInput(step,qtext,onAnswered){
-    var chips=step.querySelector('.convo-chips'); if(chips) chips.remove();
-    var body=document.querySelector('.cap-body');
-    var bar=document.createElement('div'); bar.className='convo-other-bar';
-    var lbl=document.createElement('p'); lbl.className='convo-other-q'; lbl.textContent=qtext;
-    var row=document.createElement('div'); row.className='convo-other';
-    var inp=document.createElement('input'); inp.type='text'; inp.className='convo-other-input'; inp.placeholder='Type what it was'; inp.setAttribute('aria-label','Specify');
-    var add=document.createElement('button'); add.type='button'; add.className='convo-other-add'; add.textContent='Add';
-    row.appendChild(inp); row.appendChild(add); bar.appendChild(lbl); bar.appendChild(row);
-    if(body){ body.insertBefore(bar, body.firstChild); body.scrollTop=0; }
-    function commit(){ var v=inp.value.trim(); if(!v){ return; } bar.remove(); if(body) body.scrollTop=0; finishConvoStep(step,qtext,v,onAnswered); }
-    add.addEventListener('click',commit);
-    inp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); commit(); } });
-    inp.focus({ preventScroll:true });
+  function answerQ(ans){
+    Array.prototype.forEach.call(thread.querySelectorAll('.cq-chips'), function(r){ r.remove(); });
+    capAnswers.push(ans); pendingQ=null;
+    addCbub('me', ans);
+    setTimeout(askNext, 240);
   }
-  function finishConvoStep(step,qtext,answer,onAnswered){
-    convoAnswers.push(answer);
-    step.className='convo-step convo-step--done';
-    step.innerHTML='<svg class="convo-tick" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8l3.5 3.5L13 5"/></svg><span class="convo-done-a"></span><span class="convo-done-q"></span>';
-    step.querySelector('.convo-done-a').textContent=answer;
-    step.querySelector('.convo-done-q').textContent=qtext.replace(/\?+$/,'');
-    onAnswered();
+  function finishChat(){
+    pendingQ=null;
+    var d=document.createElement('div'); d.className='cbub--done';
+    d.innerHTML='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8l3.5 3.5L13 5"/></svg> All set. Save it to the feed whenever you are ready.';
+    thread.appendChild(d); threadScroll();
+    setState('done'); syncComposerMode();
   }
-  function renderConvoDone(convo){
-    var d=document.createElement('div'); d.className='convo-done';
-    d.innerHTML='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8l3.5 3.5L13 5"/></svg> Complete. Log it to the feed when you are ready.';
-    convo.appendChild(d);
-    setConfirmEnabled(true);
-  }
-  document.getElementById('draft-text').addEventListener('input', function(){
-    if(app.getAttribute('data-view')!=='capture' || convoBuilt) return;
-    if(textConvoTimer) clearTimeout(textConvoTimer);
-    if(this.value.trim().length<12) return;
-    textConvoTimer=setTimeout(buildConvo,700);
-  });
 
   // ---- Capture back / time ----
   document.getElementById('cap-back').addEventListener('click', function(){ clearTimers(); setView('home'); });
@@ -727,11 +679,9 @@
     var words=TRANSCRIPT.split(' '), i=0;
     typeTimer=setInterval(function(){ i++; liveText.innerHTML=words.slice(0,i).join(' ')+'<span class="cursor">&nbsp;</span>'; if(i>=words.length){clearInterval(typeTimer);typeTimer=null;} },90);
   }
-  function stopListening() { clearTimers(); document.getElementById('draft-text').value=TRANSCRIPT; setState('draft'); buildConvo(); }
+  function stopListening() { clearTimers(); startChat(TRANSCRIPT); }
   document.getElementById('btn-stop').addEventListener('click', stopListening);
-  document.getElementById('btn-redo').addEventListener('click', function(){ resetConvo(); startListening(); });
-  document.getElementById('btn-addvoice').addEventListener('click', function(){ resetConvo(); startListening(); });
-  document.getElementById('btn-discard').addEventListener('click', function(){ clearTimers(); resetConvo(); setView('home'); });
+  document.getElementById('btn-discard').addEventListener('click', function(){ clearTimers(); resetChat(); setView('home'); });
 
   // WhatsApp-style clamp: limit long bubbles to 4 lines, add a Read more / Show less toggle when they overflow
   function setupClamp(el){
@@ -769,14 +719,11 @@
     return li;
   }
   document.getElementById('btn-confirm').addEventListener('click', function(){
-    if (this.disabled) return;
-    var text=(document.getElementById('draft-text').value||'').trim();
-    if (convoAnswers.length) text += ' (' + convoAnswers.join(', ') + ')';
-    if (text) {
-      if (convoType==='boc') addFeedEntry(text, 'boc');
-      else addFeedEntry(text, 'note');
-    }
-    resetConvo();
+    var me=thread.querySelector('.cbub--me');
+    var text = me ? me.textContent.trim() : '';
+    if (capAnswers.length) text += ' (' + capAnswers.join(', ') + ')';
+    if (text) { addFeedEntry(text, captureType==='boc'?'boc':'note'); }
+    resetChat();
     setView('home');
   });
 
