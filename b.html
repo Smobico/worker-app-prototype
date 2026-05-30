@@ -224,13 +224,16 @@
   #view-capture { position:absolute; inset:0; z-index:30; background:var(--surface-base); display:flex; flex-direction:column; min-height:0; transform:translateY(100%); transition:transform var(--motion-med) var(--ease-out); }
   .app[data-view="capture"] #view-capture { transform:translateY(0); }
   .cap-top { flex-shrink:0; padding:calc(var(--safe-top) + 12px) 10px 4px; display:grid; grid-template-columns:44px 1fr 44px; gap:8px; align-items:center; }
+  /* Back/close: a visible resting button so there is always an obvious way off the capture page */
+  #cap-back { background:var(--surface-muted); color:var(--text-primary); }
   .cap-for { font-family:var(--sans); font-weight:600; font-size:16px; color:var(--text-primary); text-align:center; margin:0; }
   .cap-for .for { display:block; font-family:var(--mono); font-weight:500; font-size:9px; letter-spacing:0.3em; text-indent:0.15em; text-transform:uppercase; color:var(--text-muted); margin-bottom:2px; }
   .cap-body { flex:1; min-height:0; position:relative; padding:18px 22px 8px; display:flex; flex-direction:column; overflow-y:auto; scrollbar-width:none; }
   .cap-body::-webkit-scrollbar { display:none; }
-  /* Watermark sits behind everything, anchored to a fixed point on the full screen (vh, not the sheet
-     height) so the keyboard lifting the sheet does not drag it up or off-screen. */
-  .cap-mark { position:absolute; left:50%; top:40vh; transform:translate(-50%,-50%); width:188px; height:188px; pointer-events:none; z-index:-1; color:var(--mark-ink); }
+  /* Watermark: centred behind everything, and HIDDEN whenever the composer is focused (keyboard up) so it
+     can never appear to drift as the sheet/keyboard animates -- shown only on the calm, keyboard-down view. */
+  .cap-mark { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:188px; height:188px; pointer-events:none; z-index:-1; color:var(--mark-ink); }
+  #view-capture:focus-within .cap-mark { display:none; }
   .cap-mark svg { width:100%; height:100%; }
   .cap-state { display:none; flex-direction:column; width:100%; }
   #view-capture[data-state="ready"] .cs-ready { display:flex; flex:1; }
@@ -305,6 +308,11 @@
   .cbub--done svg { width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
   .cap-dock { flex-shrink:0; padding:12px 20px calc(14px + var(--safe-bottom)); border-top:1px solid var(--border-default); display:none; align-items:center; justify-content:space-between; gap:12px; }
   #view-capture[data-state="done"] .cap-dock { display:flex; }
+  /* Footer nav appears once you are in the conversation (after sending); hidden on the initial compose
+     screen and while the keyboard is up. */
+  .cap-nav { display:none; flex-shrink:0; grid-template-columns:repeat(3,1fr); align-items:center; padding-bottom:var(--safe-bottom); border-top:1px solid var(--border-default); background:var(--surface-base); }
+  #view-capture[data-state="chat"] .cap-nav { display:grid; }
+  #view-capture[data-kb="1"] .cap-nav { display:none; }
   .btn-discard { background:transparent; border:0; color:var(--text-muted); font-family:var(--sans); font-weight:500; font-size:14px; cursor:pointer; padding:10px 12px; min-height:44px; border-radius:8px; }
   .btn-discard:active, .btn-discard:focus-visible { color:var(--text-secondary); }
   .btn-discard:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
@@ -518,6 +526,11 @@
       <button class="btn-discard" type="button" id="btn-discard">Discard</button>
       <button class="btn-confirm" type="button" id="btn-confirm"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg> Confirm and save</button>
     </footer>
+    <nav class="cap-nav" aria-label="Navigate">
+      <button class="tab-btn" type="button" data-capnav="today" aria-label="Today"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Today</button>
+      <button class="tab-btn" type="button" data-capnav="cg" aria-label="CG profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>CG</button>
+      <button class="tab-btn" type="button" data-capnav="tasks" aria-label="Tasks"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Tasks</button>
+    </nav>
   </section>
 
   <!-- ============ VOICE MODE -- back-and-forth conversation with the AI agent ============ -->
@@ -575,6 +588,7 @@
     var kb = inCap ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) : 0;
     capture.style.bottom = (kb>60) ? kb+'px' : '';
     capture.setAttribute('data-kb', (kb>60) ? '1' : '0');
+    if (inCap) window.scrollTo(0, 0);
   }
   if(window.visualViewport){ window.visualViewport.addEventListener('resize', syncCaptureKeyboardPad); }
   function setView(v) { app.setAttribute('data-view', v); syncCaptureKeyboardPad(); }
@@ -642,8 +656,8 @@
   compSpeak.addEventListener('click', function(){
     var st = capture.getAttribute('data-state');
     var v = compInput.value.trim();
-    if (st === 'ready') { if (v) { clearComposer(); startChat(v); } else { openVoiceMode(); } }
-    else if (st === 'chat') { if (v) { clearComposer(); syncComposerMode(); answerQ(v); } }
+    if (st === 'ready') { if (v) { clearComposer(); compInput.blur(); startChat(v); } else { openVoiceMode(); } }
+    else if (st === 'chat') { if (v) { clearComposer(); compInput.blur(); syncComposerMode(); answerQ(v); } }
   });
 
   // ---- Chat-style capture: the note + the engine's gap-fill questions live as bubbles in one thread ----
@@ -715,7 +729,14 @@
   }
 
   // ---- Capture back / time ----
-  document.getElementById('cap-back').addEventListener('click', function(){ clearTimers(); setView('home'); });
+  document.getElementById('cap-back').addEventListener('click', function(){ clearTimers(); resetChat(); setView('home'); });
+  Array.prototype.forEach.call(document.querySelectorAll('.cap-nav .tab-btn'), function(b){
+    b.addEventListener('click', function(){
+      var act=b.getAttribute('data-capnav');
+      clearTimers(); resetChat(); setView('home');
+      if(act==='cg') setDrawer('cg'); else if(act==='tasks') setDrawer('tasks');
+    });
+  });
 
   // ---- Voice listening (mock transcript) ----
   function fmt(s){ var m=Math.floor(s/60), r=s%60; return m+':'+(r<10?'0':'')+r; }
