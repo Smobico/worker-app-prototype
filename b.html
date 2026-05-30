@@ -576,18 +576,19 @@
     function commit(){ var v=inp.value.trim(); if(!v) return; finishConvoStep(step,qtext,v,onAnswered); }
     add.addEventListener('click',commit);
     inp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); commit(); } });
-    // jump straight onto the field above the keyboard. iOS Safari ignores scrollIntoView inside a
-    // scrolling panel while the keyboard animates in, so manually scroll the field near the top of
-    // the sheet on a short delay (after the keyboard has appeared).
-    inp.focus();
-    var liftField=function(){
+    // iOS: never let the PAGE scroll on focus -- that shifts the whole fixed sheet up and exposes the
+    // screens behind it. Keep the page pinned (preventScroll) and scroll ONLY the capture body. Position
+    // the field high in the sheet BEFORE opening the keyboard, then re-settle once the keyboard is up.
+    var lift=function(){
       try {
+        if(window.scrollY) window.scrollTo(0,0);
         var body=document.querySelector('.cap-body');
-        if(body){ var r=inp.getBoundingClientRect(), br=body.getBoundingClientRect(); body.scrollTop += (r.top - br.top) - 60; }
+        if(body){ var r=inp.getBoundingClientRect(), br=body.getBoundingClientRect(); body.scrollTop += (r.top - br.top) - 96; }
       } catch(e){}
     };
-    setTimeout(liftField,320);
-    setTimeout(liftField,520);
+    lift();
+    inp.focus({ preventScroll:true });
+    setTimeout(lift,350);
   }
   function finishConvoStep(step,qtext,answer,onAnswered){
     convoAnswers.push(answer);
