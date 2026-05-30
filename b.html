@@ -257,14 +257,17 @@
   .composer-mic:active, .composer-mic:focus-visible { background:var(--surface-muted); }
   .composer-mic:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
   .composer-mic svg { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
-  .composer[data-typing="1"] .composer-mic { display:none; }
-  .composer-speak { display:inline-flex; align-items:center; gap:7px; background:#E8A87C; color:#0F1A2E; border:0; border-radius:999px; padding:0 15px; height:44px; font-family:var(--sans); font-weight:700; font-size:13.5px; cursor:pointer; box-shadow:inset 0 1px 0 rgba(255,255,255,0.5); transition:transform var(--motion-fast) var(--ease-out); }
+  .composer-speak { display:inline-flex; align-items:center; justify-content:center; gap:7px; background:#E8A87C; color:#0F1A2E; border:1.5px solid #CC865A; border-radius:999px; padding:0 16px; height:44px; font-family:var(--sans); font-weight:700; font-size:13.5px; cursor:pointer; box-shadow:inset 0 1px 0 rgba(255,255,255,0.5); transition:transform var(--motion-fast) var(--ease-out); }
+  .composer-speak.is-send { width:44px; padding:0; gap:0; }
   .composer-speak:active { transform:scale(0.96); }
   .composer-speak:focus-visible { outline:3px solid var(--border-focus); outline-offset:2px; }
   .composer-speak svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .composer-speak.is-send svg { width:21px; height:21px; stroke-width:2.2; }
   .composer-hint { text-align:center; font-family:var(--sans); font-weight:500; font-size:12px; color:var(--text-muted); margin:7px 0 2px; }
   #view-capture[data-kb="1"] .composer { padding-bottom:8px; }
   #view-capture[data-kb="1"] .composer-hint { display:none; }
+  .composer:focus-within { padding-bottom:8px; }
+  .composer:focus-within .composer-hint { display:none; }
 
   /* LISTENING */
   .cs-listening { flex:1; }
@@ -497,7 +500,7 @@
   var app = document.getElementById('app');
   var capture = document.getElementById('view-capture');
   var TRANSCRIPT = "Sat CG down for lunch around midday. He was settled and happy, stayed at the table the whole time and cleared up after.";
-  var timer = null, secs = 0, typeTimer = null;
+  var timer = null, secs = 0, typeTimer = null, recog = null, recogText = '';
   var liveText = document.getElementById('live-text');
   var listenTimer = document.getElementById('listen-timer');
   var listenEyebrow = document.getElementById('listen-eyebrow');
@@ -536,7 +539,7 @@
   function setState(s) { capture.setAttribute('data-state', s); }
   function setDrawer(d) { app.setAttribute('data-drawer', d); }
   function closeDrawer() { setDrawer('none'); }
-  function clearTimers() { if (timer){clearInterval(timer);timer=null;} if (typeTimer){clearInterval(typeTimer);typeTimer=null;} }
+  function clearTimers() { if (timer){clearInterval(timer);timer=null;} if (typeTimer){clearInterval(typeTimer);typeTimer=null;} if (recog){ try{recog.stop();}catch(e){} recog=null; } }
 
   // ---- Footer nav: Today = home; CG / Tasks raise drawers; + = new shift note ----
   document.querySelector('.tab-btn[data-act="today"]').addEventListener('click', closeDrawer);
@@ -568,16 +571,18 @@
   var compMic = document.getElementById('composer-mic');
   var readyComposer = document.getElementById('ready-composer');
   // Empty -> mic + Speak (voice). Once you type, Speak becomes Send and the mic steps aside.
-  var SVG_SEND='<svg viewBox="0 0 24 24"><path d="M5 12h12M12 6l6 6-6 6"/></svg> Send';
+  var SVG_ARROW='<svg viewBox="0 0 24 24"><path d="M12 19V6M6 12l6-6 6 6"/></svg>';
   var SVG_SPEAK='<svg viewBox="0 0 24 24"><path d="M5 9v6M9 5v14M13 8v8M17 10v4M21 11v2"/></svg> Speak';
   // Auto-grow the box as you type, up to a max; then it scrolls internally.
   function autoGrow(){ compInput.style.height='auto'; compInput.style.height=Math.min(compInput.scrollHeight, 140)+'px'; }
   function clearComposer(){ compInput.value=''; compInput.style.height='auto'; }
+  // Empty -> Speak pill. Once there's text (or we're in chat), Speak becomes the Claude/Grok up-arrow send. Mic always stays.
   function syncComposerMode(){
     var chat = capture.getAttribute('data-state') === 'chat';
-    var has = compInput.value.trim().length > 0;
-    if (readyComposer) readyComposer.setAttribute('data-typing', (chat || has) ? '1' : '0');
-    compSpeak.innerHTML = (chat || has) ? SVG_SEND : SVG_SPEAK;
+    var send = chat || compInput.value.trim().length > 0;
+    compSpeak.classList.toggle('is-send', send);
+    compSpeak.innerHTML = send ? SVG_ARROW : SVG_SPEAK;
+    compSpeak.setAttribute('aria-label', send ? 'Send' : 'Speak');
     compInput.placeholder = chat ? 'Type your answer...' : 'Type what happened...';
   }
   function openCapture(){
@@ -673,13 +678,30 @@
   // ---- Voice listening (mock transcript) ----
   function fmt(s){ var m=Math.floor(s/60), r=s%60; return m+':'+(r<10?'0':'')+r; }
   function startListening() {
-    setState('listening'); secs=0; listenTimer.textContent='0:00';
+    setState('listening'); secs=0; listenTimer.textContent='0:00'; recogText='';
     liveText.innerHTML='<span class="cursor">&nbsp;</span>';
     timer=setInterval(function(){ secs++; listenTimer.textContent=fmt(secs); },1000);
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SR) {
+      try {
+        recog = new SR(); recog.continuous = true; recog.interimResults = true; recog.lang = 'en-AU';
+        recog.onresult = function(e){ var s=''; for (var i=0;i<e.results.length;i++){ s += e.results[i][0].transcript; } recogText=s; liveText.innerHTML = s.replace(/[<>&]/g,' ') + '<span class="cursor">&nbsp;</span>'; };
+        recog.onerror = function(){};
+        recog.start();
+        return; // real browser recognition running -- no demo animation
+      } catch(e) { recog = null; }
+    }
+    // Fallback (no usable browser speech API -- e.g. iOS Safari): play a demo transcript so the UX stays visible
     var words=TRANSCRIPT.split(' '), i=0;
     typeTimer=setInterval(function(){ i++; liveText.innerHTML=words.slice(0,i).join(' ')+'<span class="cursor">&nbsp;</span>'; if(i>=words.length){clearInterval(typeTimer);typeTimer=null;} },90);
   }
-  function stopListening() { clearTimers(); startChat(TRANSCRIPT); }
+  function stopListening() {
+    if (recog) { try { recog.stop(); } catch(e){} }
+    var t = (recogText && recogText.trim()) ? recogText.trim() : TRANSCRIPT;
+    recog = null; recogText = '';
+    clearTimers();
+    startChat(t);
+  }
   document.getElementById('btn-stop').addEventListener('click', stopListening);
   document.getElementById('btn-discard').addEventListener('click', function(){ clearTimers(); resetChat(); setView('home'); });
 
