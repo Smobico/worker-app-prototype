@@ -139,7 +139,7 @@
   .cap-fab-wrap { position:absolute; right:24px; bottom:calc(var(--tabbar-h) + var(--safe-bottom) + 20px); width:60px; height:60px; z-index:22; }
   .app:not([data-drawer="none"]) .cap-fab-wrap, .app[data-view="capture"] .cap-fab-wrap { opacity:0; pointer-events:none; }
   /* icon stays anchored on the FAB centre; label rides to its left. Even quarter-arc, R=108 */
-  .cap-opt { position:absolute; right:7px; bottom:7px; display:flex; align-items:center; gap:10px; white-space:nowrap; background:transparent; border:0; cursor:pointer; padding:0; opacity:0; transform:translate(0,0) scale(0.5); transform-origin:84% 50%; pointer-events:none; transition:opacity var(--motion-fast) var(--ease-out), transform var(--motion-med) var(--ease-out); }
+  .cap-opt { position:absolute; right:7px; bottom:7px; display:flex; align-items:flex-start; gap:10px; white-space:nowrap; background:transparent; border:0; cursor:pointer; padding:0; opacity:0; transform:translate(0,0) scale(0.5); transform-origin:84% 50%; pointer-events:none; transition:opacity var(--motion-fast) var(--ease-out), transform var(--motion-med) var(--ease-out); }
   .app[data-capfab="open"] .cap-opt { opacity:1; pointer-events:auto; }
   .app[data-capfab="open"] #opt-voice { transform:translate(0px, -84px); }
   .app[data-capfab="open"] #opt-text  { transform:translate(-59px, -59px); }
@@ -301,8 +301,8 @@
   <!-- Floating capture button + voice/text fan-out -->
   <div class="cap-scrim" id="cap-scrim"></div>
   <div class="cap-fab-wrap">
-    <button class="cap-opt" id="opt-voice" type="button"><span class="cap-opt-label">Voice</span><span class="cap-opt-ico"><svg viewBox="0 0 24 24"><path d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"/></svg></span></button>
-    <button class="cap-opt" id="opt-text" type="button"><span class="cap-opt-label">Text</span><span class="cap-opt-ico"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg></span></button>
+    <button class="cap-opt" id="opt-voice" type="button"><span class="cap-opt-label">Voice note</span><span class="cap-opt-ico"><svg viewBox="0 0 24 24"><path d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"/></svg></span></button>
+    <button class="cap-opt" id="opt-text" type="button"><span class="cap-opt-label">Text note</span><span class="cap-opt-ico"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg></span></button>
     <button class="cap-opt" id="opt-wrap" type="button"><span class="cap-opt-label">Wrap up</span><span class="cap-opt-ico"><svg viewBox="0 0 24 24"><path d="M5 21V4M5 4l8 3 6-2v9l-6 2-8-3"/></svg></span></button>
     <button class="cap-fab" id="cap-fab" type="button" aria-label="Actions"><svg class="cap-fab-ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
   </div>
