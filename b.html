@@ -303,7 +303,7 @@
   .convo-chip:active { transform:scale(0.96); background:var(--accent-soft); border-color:var(--accent-ink); }
   .convo-chip:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
   .convo-step--done { flex-direction:row; align-items:baseline; gap:8px; }
-  .convo-tick { width:15px; height:15px; fill:none; stroke:var(--confirmed-ink); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; transform:translateY(2px); }
+  .convo-tick { width:15px; height:15px; fill:none; stroke:#16A34A; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; transform:translateY(2px); }
   .convo-done-a { font-family:var(--sans); font-weight:600; font-size:14px; color:var(--text-primary); }
   .convo-done-q { font-family:var(--sans); font-size:13px; color:var(--text-muted); }
   .convo-other { display:flex; gap:8px; scroll-margin:100px 0; }
@@ -311,7 +311,7 @@
   .convo-other-input:focus { border-color:var(--border-focus); box-shadow:0 0 0 3px rgba(38,112,184,0.12); }
   .convo-other-add { flex-shrink:0; font-family:var(--sans); font-weight:600; font-size:13px; padding:9px 17px; border:0; border-radius:999px; background:var(--text-primary); color:var(--surface-base); cursor:pointer; min-height:40px; }
   .convo-other-add:active { filter:brightness(1.15); }
-  .convo-done { display:flex; align-items:center; gap:7px; font-family:var(--sans); font-size:13px; font-weight:500; color:var(--confirmed-ink); animation:rowIn var(--motion-med) var(--ease-out); }
+  .convo-done { display:flex; align-items:center; gap:7px; font-family:var(--sans); font-size:14px; font-weight:700; color:#16A34A; animation:rowIn var(--motion-med) var(--ease-out); }
   .convo-done svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
 
   @media (prefers-reduced-motion: reduce) {
@@ -576,9 +576,18 @@
     function commit(){ var v=inp.value.trim(); if(!v) return; finishConvoStep(step,qtext,v,onAnswered); }
     add.addEventListener('click',commit);
     inp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); commit(); } });
-    // jump straight onto the field above the keyboard -- let iOS scroll it into view, then centre it
+    // jump straight onto the field above the keyboard. iOS Safari ignores scrollIntoView inside a
+    // scrolling panel while the keyboard animates in, so manually scroll the field near the top of
+    // the sheet on a short delay (after the keyboard has appeared).
     inp.focus();
-    try { inp.scrollIntoView({ block:'center' }); } catch(e){}
+    var liftField=function(){
+      try {
+        var body=document.querySelector('.cap-body');
+        if(body){ var r=inp.getBoundingClientRect(), br=body.getBoundingClientRect(); body.scrollTop += (r.top - br.top) - 60; }
+      } catch(e){}
+    };
+    setTimeout(liftField,320);
+    setTimeout(liftField,520);
   }
   function finishConvoStep(step,qtext,answer,onAnswered){
     convoAnswers.push(answer);
