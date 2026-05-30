@@ -48,7 +48,7 @@
     -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility;
     font-feature-settings:"cv02","cv03","cv04","cv11"; -webkit-tap-highlight-color:transparent; overscroll-behavior:none; }
 
-  .app { position:fixed; inset:0; overflow:hidden; background:var(--surface-base); }
+  .app { position:fixed; top:0; left:0; right:0; height:100%; overflow:hidden; background:var(--surface-base); }
   .app::before { content:""; position:absolute; inset:0; pointer-events:none; z-index:0; opacity:0.5;
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.6 0.85' numOctaves='3' seed='5'/><feColorMatrix values='0 0 0 0 0.32  0 0 0 0 0.18  0 0 0 0 0.06  0 0 0 0.03 0'/></filter><rect width='100%25' height='100%25' filter='url(%23p)'/></svg>");
     background-size:240px 240px; }
@@ -477,16 +477,23 @@
   var listenTimer = document.getElementById('listen-timer');
   var eyebrow = document.getElementById('cap-eyebrow');
 
-  // Keep the capture sheet sized to the area ABOVE the iOS keyboard so its dock + fields stay visible.
-  function syncCaptureHeight(){
+  // Root keyboard handling: shrink the WHOLE app shell to the visible area above the iOS keyboard while
+  // capturing, so every layer (feed, drawers, capture sheet) is clipped above the keyboard and nothing
+  // can bleed through beneath the sheet.
+  function syncAppViewport(){
     if(!window.visualViewport) return;
-    capture.style.height = (app.getAttribute('data-view')==='capture') ? (window.visualViewport.height + 'px') : '';
+    if(app.getAttribute('data-view')==='capture'){
+      app.style.height = window.visualViewport.height + 'px';
+      app.style.top = window.visualViewport.offsetTop + 'px';
+    } else {
+      app.style.height=''; app.style.top='';
+    }
   }
   if(window.visualViewport){
-    window.visualViewport.addEventListener('resize', syncCaptureHeight);
-    window.visualViewport.addEventListener('scroll', syncCaptureHeight);
+    window.visualViewport.addEventListener('resize', syncAppViewport);
+    window.visualViewport.addEventListener('scroll', syncAppViewport);
   }
-  function setView(v) { app.setAttribute('data-view', v); syncCaptureHeight(); }
+  function setView(v) { app.setAttribute('data-view', v); syncAppViewport(); }
   function setState(s) { capture.setAttribute('data-state', s); }
   function setDrawer(d) { app.setAttribute('data-drawer', d); }
   function closeDrawer() { setDrawer('none'); }
