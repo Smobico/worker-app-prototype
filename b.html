@@ -339,7 +339,6 @@
   .leave-title { font-family:var(--sans); font-weight:700; font-size:19px; letter-spacing:-0.01em; color:var(--text-primary); margin:4px 0 10px; text-align:center; }
   .leave-btn { border:0; border-radius:14px; padding:15px; font-family:var(--sans); font-weight:600; font-size:15px; cursor:pointer; min-height:52px; }
   .leave-save { background:#E8A87C; color:#0F1A2E; box-shadow:inset 0 1px 0 rgba(255,255,255,0.5); }
-  .leave-later { background:var(--surface-muted); color:var(--text-primary); }
   .leave-discard { background:transparent; color:#9B2D2D; border:1.5px solid rgba(155,45,45,0.32); }
   .leave-cancel { background:transparent; border:0; color:var(--text-secondary); font-family:var(--sans); font-weight:500; font-size:14px; padding:12px; min-height:44px; cursor:pointer; margin-top:2px; }
   .leave-btn:active, .leave-cancel:active { filter:brightness(1.05); }
@@ -376,6 +375,26 @@
   .voice-mute.is-muted { background:var(--surface-raised); border:1.5px solid var(--border-strong); color:var(--text-muted); }
   .voice-end { height:60px; padding:0 32px; border-radius:999px; background:var(--text-primary); color:var(--surface-base); font-family:var(--sans); font-weight:700; font-size:15px; }
   .voice-end:active { filter:brightness(1.15); }
+
+  /* ===== REVIEW / FINALISE (wrap-up shift-note page; the D1.8 finalise+paste surface) ===== */
+  #view-review { position:absolute; inset:0; z-index:32; background:var(--surface-base); display:flex; flex-direction:column; min-height:0; transform:translateY(100%); transition:transform var(--motion-med) var(--ease-out); }
+  .app[data-view="review"] #view-review { transform:translateY(0); }
+  .app[data-view="review"] .tabbar { display:none; }
+  .rv-top { flex-shrink:0; padding:calc(var(--safe-top) + 12px) 10px 4px; display:grid; grid-template-columns:44px 1fr 44px; gap:8px; align-items:center; }
+  #rv-back { background:var(--surface-muted); color:var(--text-primary); }
+  .rv-title { font-family:var(--sans); font-weight:600; font-size:16px; text-align:center; margin:0; color:var(--text-primary); }
+  .rv-title .for { display:block; font-family:var(--mono); font-weight:500; font-size:9px; letter-spacing:0.3em; text-indent:0.15em; text-transform:uppercase; color:var(--text-muted); margin-bottom:2px; }
+  .rv-body { flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding:10px 20px 8px; display:flex; flex-direction:column; gap:10px; }
+  .rv-body::-webkit-scrollbar { display:none; }
+  .rv-intro { font-family:var(--sans); font-size:13.5px; line-height:1.5; color:var(--text-secondary); margin:2px 2px 0; }
+  .rv-note { flex:1; min-height:260px; width:100%; border:1px solid var(--border-default); border-radius:14px; background:var(--surface-raised); padding:16px; font-family:var(--note-font); font-size:15px; line-height:1.6; color:var(--text-primary); resize:none; box-shadow:0 1px 2px rgba(15,26,46,0.05); }
+  .rv-note:focus { outline:none; border-color:var(--border-focus); box-shadow:0 0 0 3px rgba(38,112,184,0.12); }
+  .rv-dock { flex-shrink:0; display:flex; flex-direction:column; gap:9px; padding:12px 20px calc(16px + var(--safe-bottom)); border-top:1px solid var(--border-default); }
+  .rv-copy { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--accent-fill); color:var(--speak-ink); border:0; border-radius:14px; padding:15px; font-family:var(--sans); font-weight:700; font-size:15px; cursor:pointer; min-height:52px; box-shadow:0 8px 18px -10px rgba(15,26,46,0.5); }
+  .rv-copy svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .rv-finish { background:transparent; color:var(--text-primary); border:1.5px solid var(--border-strong); border-radius:14px; padding:14px; font-family:var(--sans); font-weight:600; font-size:15px; cursor:pointer; min-height:50px; }
+  .rv-copy:active, .rv-finish:active { filter:brightness(1.05); }
+  .rv-copy:focus-visible, .rv-finish:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition-duration:0.01ms !important; animation-duration:0.01ms !important; animation-iteration-count:1 !important; }
@@ -591,6 +610,23 @@
     </div>
   </section>
 
+  <!-- ============ REVIEW / FINALISE -- the wrap-up shift-note page (D1.8 finalise+paste) ============ -->
+  <section id="view-review" aria-label="Review and finalise shift note">
+    <header class="rv-top">
+      <button class="top-btn" type="button" id="rv-back" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+      <h2 class="rv-title"><span class="for">End of shift</span>Shift note - CG</h2>
+      <span></span>
+    </header>
+    <div class="rv-body">
+      <p class="rv-intro" id="rv-intro">Here is the shift note from your entries today. Read it over, edit anything, then copy it into your roster system.</p>
+      <textarea class="rv-note" id="rv-note" aria-label="Shift note, editable"></textarea>
+    </div>
+    <footer class="rv-dock">
+      <button class="rv-copy" type="button" id="rv-copy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg> Copy shift note</button>
+      <button class="rv-finish" type="button" id="rv-finish">Finish shift</button>
+    </footer>
+  </section>
+
 </div>
 
 <script>
@@ -654,33 +690,35 @@
   document.getElementById('wrap-cancel').addEventListener('click', closeDrawer);
   document.getElementById('task-wrap').addEventListener('click', function(){ setDrawer('wrap'); });
   function feedCount(){ return document.querySelectorAll('#events-list .msg').length; }
-  function copyShiftNote(){
+  // Assemble the day's entries into a paste-ready shift note. (Real app: noteBuilder.js prose; this is the mock.)
+  function buildShiftNoteText(){
     var lines=[];
     Array.prototype.forEach.call(document.querySelectorAll('#events-list .msg'), function(li){
       var tm=li.querySelector('.bubble-time'), bx=li.querySelector('.bubble-text');
       if(bx) lines.unshift((tm?tm.textContent+'  ':'')+bx.textContent.trim());
     });
-    var note='Shift note - CG - Thursday 30 May\n\n'+lines.join('\n');
-    var btn=document.getElementById('wrap-copy');
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(note).then(
-        function(){ if(btn) btn.textContent='Copied to clipboard'; },
-        function(){ if(btn) btn.textContent='Press and hold to copy'; }
-      );
-    } else if(btn){ btn.textContent='Copied'; }
+    return 'Shift note - CG - Thursday 30 May\n\n'+lines.join('\n');
   }
-  document.getElementById('wrap-commit').addEventListener('click', function(){
-    var center=document.querySelector('.drawer[data-d="wrap"] .drawer-center');
-    if(!center){ closeDrawer(); return; }
-    center.innerHTML =
-      '<p class="drawer-eyebrow">Shift wrapped</p>'+
-      '<h2 class="drawer-title" style="text-align:center">Nice work.</h2>'+
-      '<p class="drawer-body-txt">You captured '+feedCount()+' notes for CG today. The record is up to date. Copy the shift note to paste into your roster system.</p>'+
-      '<button class="btn-commit" type="button" id="wrap-copy">Copy shift note</button>'+
-      '<button class="btn-cancel" type="button" id="wrap-done">Done</button>';
-    document.getElementById('wrap-copy').addEventListener('click', copyShiftNote);
-    document.getElementById('wrap-done').addEventListener('click', closeDrawer);
+  // Wrap up -> review/finalise screen (read, edit, copy, finish) -- the D1.8 finalise+paste surface.
+  var RV_COPY_LABEL='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg> Copy shift note';
+  var rvNote=document.getElementById('rv-note'), rvCopy=document.getElementById('rv-copy');
+  function openReview(){
+    closeDrawer();
+    if(rvNote) rvNote.value=buildShiftNoteText();
+    if(rvCopy) rvCopy.innerHTML=RV_COPY_LABEL;
+    var intro=document.getElementById('rv-intro');
+    if(intro) intro.textContent='Here is the shift note from your '+feedCount()+' entries today. Read it over, edit anything, then copy it into your roster system.';
+    app.setAttribute('data-view','review');
+  }
+  document.getElementById('wrap-commit').addEventListener('click', openReview);
+  document.getElementById('rv-back').addEventListener('click', function(){ app.setAttribute('data-view','home'); });
+  if(rvCopy) rvCopy.addEventListener('click', function(){
+    var btn=this, txt=rvNote?rvNote.value:'';
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){ btn.textContent='Copied to clipboard'; }, function(){ btn.textContent='Press and hold to copy'; });
+    } else { btn.textContent='Copied'; }
   });
+  document.getElementById('rv-finish').addEventListener('click', function(){ app.setAttribute('data-view','home'); });
 
   // ---- Drawer swipe-down to dismiss ----
   Array.prototype.forEach.call(document.querySelectorAll('.drawer-grip'), function (grip) {
@@ -1009,6 +1047,7 @@
   document.addEventListener('keydown', function(e){
     if (e.key !== 'Escape') return;
     if (capture.getAttribute('data-leave')==='1') { hideLeaveSheet(); return; }
+    if (app.getAttribute('data-view')==='review') { app.setAttribute('data-view','home'); return; }
     if (app.getAttribute('data-view')==='capture') { requestLeave('home'); return; }
     if (app.getAttribute('data-drawer')!=='none') closeDrawer();
   });
