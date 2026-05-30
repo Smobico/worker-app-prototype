@@ -387,7 +387,8 @@
   .rv-body { flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding:10px 20px 8px; display:flex; flex-direction:column; gap:10px; }
   .rv-body::-webkit-scrollbar { display:none; }
   .rv-intro { font-family:var(--sans); font-size:13.5px; line-height:1.5; color:var(--text-secondary); margin:2px 2px 0; }
-  .rv-note { flex:1; min-height:260px; width:100%; border:1px solid var(--border-default); border-radius:14px; background:var(--surface-raised); padding:16px; font-family:var(--note-font); font-size:15px; line-height:1.6; color:var(--text-primary); resize:none; box-shadow:0 1px 2px rgba(15,26,46,0.05); }
+  /* Mono so the ALL-CAPS heading ASCII underline rows line up (locked D1.8 uses DM Mono for this exact reason). */
+  .rv-note { flex:1; min-height:300px; width:100%; border:1px solid var(--border-default); border-radius:14px; background:var(--surface-raised); padding:16px; font-family:var(--mono); font-size:12.5px; line-height:1.55; color:var(--text-primary); resize:none; white-space:pre; overflow-x:auto; box-shadow:0 1px 2px rgba(15,26,46,0.05); }
   .rv-note:focus { outline:none; border-color:var(--border-focus); box-shadow:0 0 0 3px rgba(38,112,184,0.12); }
   .rv-dock { flex-shrink:0; display:flex; flex-direction:column; gap:9px; padding:12px 20px calc(16px + var(--safe-bottom)); border-top:1px solid var(--border-default); }
   .rv-copy { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--accent-fill); color:var(--speak-ink); border:0; border-radius:14px; padding:15px; font-family:var(--sans); font-weight:700; font-size:15px; cursor:pointer; min-height:52px; box-shadow:0 8px 18px -10px rgba(15,26,46,0.5); }
@@ -694,14 +695,55 @@
   document.getElementById('wrap-cancel').addEventListener('click', closeDrawer);
   document.getElementById('task-wrap').addEventListener('click', function(){ setDrawer('wrap'); });
   function feedCount(){ return document.querySelectorAll('#events-list .msg').length; }
-  // Assemble the day's entries into a paste-ready shift note. (Real app: noteBuilder.js prose; this is the mock.)
+  // Assemble the day's entries into the LOCKED D1.8 NDIS-compliant plain-text shift note
+  // (design/v2/locked/surface_d1_8_finalise_paste.html v2.1). Plain text survives paste into any provider tool;
+  // ALL-CAPS headings + ASCII underline rows; [AI-assisted] C12 marker last. In the real app the prose sections
+  // are composed by noteBuilder.js (3 Claude calls) gated behind the C1 wrapper; this is the mock assembler.
+  function heading(label){ return label + '\n' + new Array(label.length + 1).join('='); }
   function buildShiftNoteText(){
-    var lines=[];
+    var progress=[], meds=[], bocs=[];
+    // Feed is newest-first (insertBefore firstChild); unshift to read chronological.
     Array.prototype.forEach.call(document.querySelectorAll('#events-list .msg'), function(li){
       var tm=li.querySelector('.bubble-time'), bx=li.querySelector('.bubble-text');
-      if(bx) lines.unshift((tm?tm.textContent+'  ':'')+bx.textContent.trim());
+      if(!bx) return;
+      var t = tm ? tm.textContent.trim() : '';
+      var body = bx.textContent.trim();
+      if(li.classList.contains('msg--med')) meds.unshift((t?t+' - ':'')+body);
+      else if(li.classList.contains('msg--boc') || li.classList.contains('msg--incident')) bocs.unshift((t?t+' - ':'')+body);
+      else progress.unshift((t?t+' - ':'')+body);
     });
-    return 'Shift note - CG - Thursday 30 May\n\n'+lines.join('\n');
+    var none='Not reported this shift.';
+    var firstTime = document.querySelector('#events-list .msg:last-child .bubble-time');
+    var lastTime  = document.querySelector('#events-list .msg:first-child .bubble-time');
+    var shiftWindow = (firstTime && lastTime) ? (firstTime.textContent.trim()+' - '+lastTime.textContent.trim()) : '08:00 - 14:00';
+    return [
+      'CLIENT: CG',
+      'DATE: Thursday 30 May',
+      'SUPPORT WORKER: WT',
+      'SHIFT: ' + shiftWindow,
+      'SUPPORT TYPE: Daily support',
+      'LOCATION: Home and community',
+      '',
+      heading('PROGRESS NOTES'),
+      progress.length ? progress.join('\n') : none,
+      '',
+      heading('PRESENTATION'),
+      'Recorded across the entries above.',
+      '',
+      heading('NDIS GOALS PROGRESS'),
+      none,
+      '',
+      heading('MEDICATION'),
+      meds.length ? meds.join('\n') : none,
+      '',
+      heading('BOC'),
+      bocs.length ? bocs.join('\n') : none,
+      '',
+      heading('FOLLOW-UP REQUIREMENTS'),
+      none,
+      '',
+      '[AI-assisted]'
+    ].join('\n');
   }
   // Wrap up -> review/finalise screen (read, edit, copy, finish) -- the D1.8 finalise+paste surface.
   var RV_COPY_LABEL='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg> Copy shift note';
