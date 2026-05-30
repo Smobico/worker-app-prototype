@@ -218,7 +218,12 @@
   .btn-commit:focus-visible, .btn-cancel:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
 
   /* ============ CAPTURE sheet ============ */
-  #view-capture { position:absolute; inset:0; z-index:30; background:var(--surface-base); display:flex; flex-direction:column; min-height:0; transform:translateY(100%); transition:transform var(--motion-med) var(--ease-out); }
+  /* While capture is open, take the drawers fully out of the layout so they can never bleed through
+     behind the sheet when the keyboard reflows the viewport. */
+  .app[data-view="capture"] .drawer,
+  .app[data-view="capture"] .drawer-backdrop { display:none !important; }
+  /* top/height (not inset:0) so JS can shrink the sheet to the visible area above the iOS keyboard. */
+  #view-capture { position:absolute; top:0; left:0; right:0; height:100%; z-index:30; background:var(--surface-base); display:flex; flex-direction:column; min-height:0; transform:translateY(100%); transition:transform var(--motion-med) var(--ease-out); }
   .app[data-view="capture"] #view-capture { transform:translateY(0); }
   .cap-top { flex-shrink:0; padding:calc(var(--safe-top) + 10px) 8px 6px; display:grid; grid-template-columns:44px 1fr 44px; gap:8px; align-items:center; }
   .cap-time-row { flex-shrink:0; padding:0 20px 14px; border-bottom:1px solid var(--border-default); display:flex; align-items:center; justify-content:center; gap:8px; }
@@ -472,7 +477,16 @@
   var listenTimer = document.getElementById('listen-timer');
   var eyebrow = document.getElementById('cap-eyebrow');
 
-  function setView(v) { app.setAttribute('data-view', v); }
+  // Keep the capture sheet sized to the area ABOVE the iOS keyboard so its dock + fields stay visible.
+  function syncCaptureHeight(){
+    if(!window.visualViewport) return;
+    capture.style.height = (app.getAttribute('data-view')==='capture') ? (window.visualViewport.height + 'px') : '';
+  }
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', syncCaptureHeight);
+    window.visualViewport.addEventListener('scroll', syncCaptureHeight);
+  }
+  function setView(v) { app.setAttribute('data-view', v); syncCaptureHeight(); }
   function setState(s) { capture.setAttribute('data-state', s); }
   function setDrawer(d) { app.setAttribute('data-drawer', d); }
   function closeDrawer() { setDrawer('none'); }
@@ -576,19 +590,16 @@
     function commit(){ var v=inp.value.trim(); if(!v) return; finishConvoStep(step,qtext,v,onAnswered); }
     add.addEventListener('click',commit);
     inp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); commit(); } });
-    // iOS: never let the PAGE scroll on focus -- that shifts the whole fixed sheet up and exposes the
-    // screens behind it. Keep the page pinned (preventScroll) and scroll ONLY the capture body. Position
-    // the field high in the sheet BEFORE opening the keyboard, then re-settle once the keyboard is up.
-    var lift=function(){
-      try {
-        if(window.scrollY) window.scrollTo(0,0);
-        var body=document.querySelector('.cap-body');
-        if(body){ var r=inp.getBoundingClientRect(), br=body.getBoundingClientRect(); body.scrollTop += (r.top - br.top) - 96; }
-      } catch(e){}
-    };
-    lift();
+    // The sheet now resizes itself above the keyboard (syncCaptureHeight), and the page is pinned
+    // (preventScroll) so nothing behind can show. Just reveal the field within the capture body once
+    // the keyboard has settled.
     inp.focus({ preventScroll:true });
-    setTimeout(lift,350);
+    setTimeout(function(){
+      try {
+        var body=document.querySelector('.cap-body');
+        if(body){ var r=inp.getBoundingClientRect(), br=body.getBoundingClientRect(); body.scrollTop += (r.top - br.top) - 80; }
+      } catch(e){}
+    }, 340);
   }
   function finishConvoStep(step,qtext,answer,onAnswered){
     convoAnswers.push(answer);
