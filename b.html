@@ -219,6 +219,20 @@
   .task-ico svg { width:100%; height:100%; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
   .task-label { font-size:15px; font-weight:600; color:var(--text-primary); }
 
+  /* Saved-drafts list (Tasks drawer): resume on the left, delete on the right. New note never auto-loads these. */
+  .draft-row { display:grid; grid-template-columns:1fr 46px; align-items:stretch; background:var(--surface-raised); border:1px solid var(--border-default); border-radius:12px; box-shadow:0 1px 2px rgba(15,26,46,0.04); overflow:hidden; }
+  .draft-row + .draft-row { margin-top:8px; }
+  .draft-resume { min-width:0; display:flex; flex-direction:column; gap:3px; align-items:flex-start; justify-content:center; text-align:left; background:transparent; border:0; padding:12px 6px 12px 14px; cursor:pointer; font-family:var(--sans); min-height:58px; }
+  .draft-resume:active, .draft-resume:focus-visible { background:var(--surface-muted); }
+  .draft-resume:focus-visible { outline:2px solid var(--border-focus); outline-offset:-2px; }
+  .draft-snippet { font-size:14.5px; font-weight:500; color:var(--text-primary); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .draft-meta { font-family:var(--mono); font-size:10px; letter-spacing:0.04em; color:var(--text-muted); }
+  .draft-del { background:transparent; border:0; border-left:1px solid var(--border-default); color:var(--text-muted); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; }
+  .draft-del:active, .draft-del:focus-visible { background:rgba(155,45,45,0.09); color:#9B2D2D; }
+  .draft-del:focus-visible { outline:2px solid var(--border-focus); outline-offset:-2px; }
+  .draft-del svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+  .leave-foot { font-family:var(--sans); font-size:12px; line-height:1.4; color:var(--text-muted); text-align:center; margin:6px 0 0; }
+
   /* ============ CAPTURE -- the chat-window (Grok/Claude/ChatGPT pattern) ============ */
   .app[data-view="capture"] .drawer, .app[data-view="capture"] .drawer-backdrop { display:none !important; }
   #view-capture { position:absolute; top:0; left:0; right:0; height:100%; z-index:30; background:var(--surface-base); display:flex; flex-direction:column; min-height:0; transform:translateY(100%); transition:transform var(--motion-med) var(--ease-out); }
@@ -473,6 +487,10 @@
     <div class="drawer-grip" aria-hidden="true"></div>
     <div class="drawer-head"><h2 class="drawer-title">Tasks</h2></div>
     <div class="drawer-scroll">
+      <div class="section" id="drafts-section" hidden>
+        <p class="eyebrow" id="drafts-eyebrow">Saved drafts</p>
+        <div id="drafts-list"></div>
+      </div>
       <div class="section"><p class="eyebrow">Medication note</p>
         <div class="ma-E" id="med-ack" role="button" tabindex="0" aria-label="Aripiprazole 5 mg, administered by AC at 08:15. Tap to acknowledge."><span class="ma-E-tick" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8l3.5 3.5L13 5"/></svg></span><span class="ma-E-text">Aripiprazole 5 mg<span class="who">AC &middot; 08:15</span></span><span class="ma-E-hint" id="med-hint">tap to acknowledge</span></div>
         <button class="ma-undo" id="med-undo" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><path d="M3 12a9 9 0 109-9 9 9 0 00-7 3.3M3 4v4h4"/></svg> Undo</button>
@@ -552,10 +570,10 @@
     <aside class="leave-sheet" id="leave-sheet" role="dialog" aria-modal="true" aria-label="Unsaved note">
       <p class="leave-eyebrow">This note isn't saved yet</p>
       <h3 class="leave-title">What would you like to do?</h3>
-      <button class="leave-btn leave-save" type="button" id="leave-save">Save draft</button>
-      <button class="leave-btn leave-later" type="button" id="leave-later">Check later</button>
+      <button class="leave-btn leave-save" type="button" id="leave-save">Save to drafts</button>
       <button class="leave-btn leave-discard" type="button" id="leave-discard">Discard note</button>
       <button class="leave-cancel" type="button" id="leave-keep">Keep editing</button>
+      <p class="leave-foot">Drafts wait for you under Tasks. A new note always starts fresh.</p>
     </aside>
   </section>
 
@@ -681,8 +699,12 @@
   var compMic = document.getElementById('composer-mic');
   var readyComposer = document.getElementById('ready-composer');
   var compHint = readyComposer.querySelector('.composer-hint');
-  var draftStash = null;   // a kept-but-not-saved note survives leaving capture and resumes on reopen
   var HINT_DEFAULT = 'Type it, dictate it, or tap Speak. Your call.';
+  // Parked drafts live as a list under Tasks. New note ALWAYS starts blank so an urgent capture
+  // (e.g. a major incident) is never blocked by a previously-parked draft (H-1: never delay the incident).
+  var drafts = [], draftSeq = 0;
+  function nextDraftId(){ return ++draftSeq; }
+  function draftTimeLabel(){ var n=new Date(),h=n.getHours(),m=n.getMinutes(),ap=h<12?'am':'pm',h12=h%12||12; return h12+':'+(m<10?'0':'')+m+ap; }
   // Empty -> mic + Speak (voice). Once you type, Speak becomes Send and the mic steps aside.
   var SVG_ARROW='<svg viewBox="0 0 24 24"><path d="M12 19V6M6 12l6-6 6 6"/></svg>';
   var SVG_SPEAK='<svg viewBox="0 0 24 24"><path d="M5 9v6M9 5v14M13 8v8M17 10v4M21 11v2"/></svg> Speak';
@@ -704,12 +726,7 @@
     clearComposer();
     capture.setAttribute('data-leave','0');
     setState('ready');
-    if (draftStash && draftStash.text) {
-      compInput.value = draftStash.text; autoGrow();
-      if (compHint) compHint.textContent = 'Picking up your saved note.';
-    } else if (compHint) {
-      compHint.textContent = HINT_DEFAULT;
-    }
+    if (compHint) compHint.textContent = HINT_DEFAULT;   // always blank; parked drafts live under Tasks
     syncComposerMode();
     setView('capture');
   }
@@ -805,10 +822,40 @@
     b.addEventListener('click', function(){ requestLeave(b.getAttribute('data-capnav')); });
   });
   function currentDraftText(){ var me=thread.querySelector('.cbub--me'); return me ? me.textContent.trim() : compInput.value.trim(); }
-  function saveDraftAndLeave(){ var t=currentDraftText(); if(t) draftStash={ text:t }; doLeave(pendingLeave); }
+  function renderDrafts(){
+    var sec=document.getElementById('drafts-section'), list=document.getElementById('drafts-list'), eb=document.getElementById('drafts-eyebrow');
+    if(!sec||!list) return;
+    list.innerHTML='';
+    if(drafts.length===0){ sec.hidden=true; return; }
+    sec.hidden=false; if(eb) eb.textContent='Saved drafts ('+drafts.length+')';
+    drafts.forEach(function(d){
+      var row=document.createElement('div'); row.className='draft-row';
+      var open=document.createElement('button'); open.type='button'; open.className='draft-resume'; open.setAttribute('aria-label','Resume draft saved at '+d.time);
+      var snip=document.createElement('span'); snip.className='draft-snippet'; snip.textContent=d.text;
+      var meta=document.createElement('span'); meta.className='draft-meta'; meta.textContent='saved '+d.time;
+      open.appendChild(snip); open.appendChild(meta);
+      open.addEventListener('click', function(){ resumeDraft(d.id); });
+      var del=document.createElement('button'); del.type='button'; del.className='draft-del'; del.setAttribute('aria-label','Delete this draft');
+      del.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M6 8l1 12a1 1 0 001 1h8a1 1 0 001-1l1-12"/></svg>';
+      del.addEventListener('click', function(){ deleteDraft(d.id); });
+      row.appendChild(open); row.appendChild(del); list.appendChild(row);
+    });
+  }
+  function saveDraft(){ var t=currentDraftText(); if(t){ drafts.unshift({ id:nextDraftId(), text:t, time:draftTimeLabel() }); renderDrafts(); } }
+  function deleteDraft(id){ drafts=drafts.filter(function(d){ return d.id!==id; }); renderDrafts(); }
+  function resumeDraft(id){
+    var idx=-1; for(var i=0;i<drafts.length;i++){ if(drafts[i].id===id){ idx=i; break; } }
+    if(idx<0) return;
+    var d=drafts.splice(idx,1)[0]; renderDrafts();
+    closeDrawer(); clearTimers(); resetChat(); clearComposer();
+    capture.setAttribute('data-leave','0'); setState('ready');
+    compInput.value=d.text; autoGrow();
+    if(compHint) compHint.textContent='Picking up your draft. Edit it, send it, or save it again.';
+    syncComposerMode(); setView('capture');
+  }
+  function saveDraftAndLeave(){ saveDraft(); doLeave(pendingLeave); }
   document.getElementById('leave-save').addEventListener('click', saveDraftAndLeave);
-  document.getElementById('leave-later').addEventListener('click', saveDraftAndLeave);
-  document.getElementById('leave-discard').addEventListener('click', function(){ draftStash=null; doLeave(pendingLeave); });
+  document.getElementById('leave-discard').addEventListener('click', function(){ doLeave(pendingLeave); });
   document.getElementById('leave-keep').addEventListener('click', hideLeaveSheet);
   document.getElementById('leave-scrim').addEventListener('click', hideLeaveSheet);
 
@@ -840,7 +887,7 @@
     startChat(t);
   }
   document.getElementById('btn-stop').addEventListener('click', stopListening);
-  document.getElementById('btn-discard').addEventListener('click', function(){ draftStash=null; clearTimers(); resetChat(); setView('home'); });
+  document.getElementById('btn-discard').addEventListener('click', function(){ clearTimers(); resetChat(); setView('home'); });
 
   // WhatsApp-style clamp: limit long bubbles to 4 lines, add a Read more / Show less toggle when they overflow
   function setupClamp(el){
@@ -882,7 +929,6 @@
     var text = me ? me.textContent.trim() : '';
     if (capAnswers.length) text += ' (' + capAnswers.join(', ') + ')';
     if (text) { addFeedEntry(text, captureType==='boc'?'boc':'note'); }
-    draftStash=null;
     resetChat();
     setView('home');
   });
