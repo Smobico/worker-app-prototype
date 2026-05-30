@@ -228,9 +228,9 @@
   .cap-for .for { display:block; font-family:var(--mono); font-weight:500; font-size:9px; letter-spacing:0.3em; text-indent:0.15em; text-transform:uppercase; color:var(--text-muted); margin-bottom:2px; }
   .cap-body { flex:1; min-height:0; position:relative; padding:18px 22px 8px; display:flex; flex-direction:column; overflow-y:auto; scrollbar-width:none; }
   .cap-body::-webkit-scrollbar { display:none; }
-  /* Watermark sits behind everything, centred in the VISIBLE capture area (the sheet shrinks above the
-     keyboard, so top:50% keeps it centred and on-screen rather than pushed off the top). */
-  .cap-mark { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:188px; height:188px; pointer-events:none; z-index:-1; color:var(--mark-ink); }
+  /* Watermark sits behind everything, anchored to a fixed point on the full screen (vh, not the sheet
+     height) so the keyboard lifting the sheet does not drag it up or off-screen. */
+  .cap-mark { position:absolute; left:50%; top:40vh; transform:translate(-50%,-50%); width:188px; height:188px; pointer-events:none; z-index:-1; color:var(--mark-ink); }
   .cap-mark svg { width:100%; height:100%; }
   .cap-state { display:none; flex-direction:column; width:100%; }
   #view-capture[data-state="ready"] .cs-ready { display:flex; flex:1; }
@@ -616,7 +616,7 @@
   var SVG_ARROW='<svg viewBox="0 0 24 24"><path d="M12 19V6M6 12l6-6 6 6"/></svg>';
   var SVG_SPEAK='<svg viewBox="0 0 24 24"><path d="M5 9v6M9 5v14M13 8v8M17 10v4M21 11v2"/></svg> Speak';
   // Auto-grow the box as you type, up to a max; then it scrolls internally.
-  function autoGrow(){ compInput.style.height='auto'; compInput.style.height=Math.min(compInput.scrollHeight, 140)+'px'; }
+  function autoGrow(){ compInput.style.height='auto'; compInput.style.height=Math.min(compInput.scrollHeight, 140)+'px'; compInput.scrollTop=compInput.scrollHeight; }
   function clearComposer(){ compInput.value=''; compInput.style.height='auto'; }
   // Empty -> Speak pill. Once there's text (or we're in chat), Speak becomes the Claude/Grok up-arrow send. Mic always stays.
   function syncComposerMode(){
@@ -803,7 +803,7 @@
       dictRecog = new SR(); dictRecog.continuous=true; dictRecog.interimResults=true; dictRecog.lang='en-AU';
       dictRecog.onresult=function(e){ var s=''; for(var i=0;i<e.results.length;i++){ s+=e.results[i][0].transcript; } compInput.value=base+s; autoGrow(); syncComposerMode(); };
       dictRecog.onend=stopDictation; dictRecog.onerror=stopDictation;
-      dictRecog.start(); dictating=true; compMic.classList.add('is-rec'); compInput.focus({preventScroll:true});
+      dictRecog.start(); dictating=true; compMic.classList.add('is-rec');
     } catch(e){ stopDictation(); compInput.focus({preventScroll:true}); }
   }
 
