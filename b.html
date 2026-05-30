@@ -19,11 +19,16 @@
   TNA worker shift loop PILOT -- v6-light, STRUCTURE B evolved (CHAT-FIRST CAPTURE).
   Rebuilt 2026-05-30 (aesthetic-direction pass). Wes reference DNA: Grok / Claude /
   ChatGPT / Perplexity. The portable signal is COMPOSITION, not colour:
-    1. calm emptiness + faint centred identity mark
-    2. one bright focal element (TNA peach plays Grok's white "Speak")
-    3. premium feed: fewer boxes, more air, a Fraunces display moment
+    1. calm emptiness, flat surfaces, faint centred identity mark
+    2. MONOCHROME -- the one focal element is CONTRAST not hue: a deep-ink pill
+       (Speak / compose / Confirm) plays the role Grok's white "Speak" plays.
+       Peach + warm centre-glow + paper texture removed (Wes call 2026-05-30).
+    3. premium feed: fewer boxes, more air
     4. clean strong footer nav
-    5. typographic confidence (Fraunces display, DM Sans body, DM Mono meta)
+    5. typographic confidence: DM Sans throughout (display weight 700 for "Today"
+       and the capture prompt), DM Mono for metadata. Fraunces dropped (Wes call).
+  NOTE: this diverges from the locked brand (Fraunces + peach, finalised 16-04-26).
+  Flagged to Wes; brand revisit (logo / landing) follows the product if this holds.
   Home = the shift feed. The footer "+" = NEW SHIFT NOTE -> opens a chat-window
   capture screen (Grok/Claude pattern) that offers Type / mic / Speak up front;
   the worker chooses straight away. Warm-light is the default; a real dark toggle
@@ -33,7 +38,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
   /* ===== THEME TOKENS -- light is default; [data-theme="dark"] is the toggle ===== */
@@ -41,18 +46,18 @@
     --surface-base:#FAFAF7; --surface-raised:#FFFFFF; --surface-muted:#EEEEE7; --surface-sunk:#F2F1EA;
     --text-primary:#0F1A2E; --text-secondary:#3A4564; --text-muted:#5C6680;
     --border-default:#E2E1DA; --border-strong:#B8B6AC; --border-focus:#2670B8;
-    --accent-fill:#E8A87C; --accent-ink:#8A4F22; --accent-soft:rgba(232,168,124,0.16); --accent-glow:rgba(232,168,124,0.28);
-    --line-warm:rgba(138,79,34,0.13);
-    --speak-bg:#E8A87C; --speak-ink:#3A1E08;
+    --accent-fill:#0F1A2E; --accent-ink:#5C6680; --accent-soft:rgba(15,26,46,0.05); --accent-glow:rgba(47,143,158,0.16);
+    --line-warm:rgba(15,26,46,0.08);
+    --speak-bg:#0F1A2E; --speak-ink:#FAFAF7;
     --pill-neutral-bg:#EEEEE7; --pill-neutral-ink:#3A4564;
     --pill-worker-bg:rgba(90,148,118,0.16); --pill-worker-ink:#1A7044;
-    --pill-boc-bg:rgba(176,118,30,0.15); --pill-boc-ink:#8A5A12;
+    --pill-boc-bg:#EEEEE7; --pill-boc-ink:#3A4564;
     --confirmed-ink:#16A34A; --mic-listening:#2F8F9E; --mic-listening-ink:#135A66;
-    --scrim:rgba(15,26,46,0.42); --mark-ink:rgba(138,79,34,0.05);
+    --scrim:rgba(15,26,46,0.42); --mark-ink:rgba(15,26,46,0.05);
     /* fonts */
     --sans:"DM Sans",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
     --mono:"DM Mono",ui-monospace,monospace;
-    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --display:"DM Sans",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
     --note-font:"DM Sans",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
     /* motion + layout */
     --motion-fast:140ms; --motion-med:280ms; --ease-out:cubic-bezier(0.22,1,0.36,1);
@@ -63,14 +68,14 @@
     --surface-base:#0F1A2E; --surface-raised:#1A2540; --surface-muted:#243155; --surface-sunk:#152037;
     --text-primary:#FAFAF7; --text-secondary:#C8CCD9; --text-muted:#8A8FA3;
     --border-default:#2A3554; --border-strong:#3D4969; --border-focus:#6FA8DC;
-    --accent-fill:#E8A87C; --accent-ink:#EBB892; --accent-soft:rgba(232,168,124,0.13); --accent-glow:rgba(232,168,124,0.20);
-    --line-warm:rgba(232,168,124,0.16);
-    --speak-bg:#E8A87C; --speak-ink:#2A1605;
+    --accent-fill:#FAFAF7; --accent-ink:#8A8FA3; --accent-soft:rgba(250,250,247,0.07); --accent-glow:rgba(63,182,199,0.20);
+    --line-warm:rgba(250,250,247,0.10);
+    --speak-bg:#FAFAF7; --speak-ink:#0F1A2E;
     --pill-neutral-bg:#243155; --pill-neutral-ink:#C8CCD9;
     --pill-worker-bg:rgba(90,148,118,0.24); --pill-worker-ink:#7FCBA0;
-    --pill-boc-bg:rgba(232,168,124,0.18); --pill-boc-ink:#EBB892;
+    --pill-boc-bg:#243155; --pill-boc-ink:#C8CCD9;
     --confirmed-ink:#4ADE80; --mic-listening:#3FB6C7; --mic-listening-ink:#8FD8E2;
-    --scrim:rgba(0,0,0,0.55); --mark-ink:rgba(232,168,124,0.045);
+    --scrim:rgba(0,0,0,0.55); --mark-ink:rgba(250,250,247,0.05);
   }
 
   * { box-sizing:border-box; }
@@ -79,11 +84,7 @@
     -webkit-tap-highlight-color:transparent; overscroll-behavior:none; transition:background var(--motion-med) var(--ease-out); }
 
   .app { position:fixed; inset:0; overflow:hidden; background:var(--surface-base); }
-  .app::before { content:""; position:absolute; inset:0; pointer-events:none; z-index:0; opacity:0.45;
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.6 0.85' numOctaves='3' seed='5'/><feColorMatrix values='0 0 0 0 0.32  0 0 0 0 0.18  0 0 0 0 0.06  0 0 0 0.03 0'/></filter><rect width='100%25' height='100%25' filter='url(%23p)'/></svg>");
-    background-size:240px 240px; }
-  [data-theme="dark"] .app::before { opacity:0.30; }
-  .app::after { content:""; position:absolute; inset:0; pointer-events:none; z-index:0; background:radial-gradient(ellipse at 50% 18%, var(--accent-glow) 0%, transparent 58%); }
+  /* Flat clean surfaces -- no warm glow, no paper texture (matches the reference apps) */
 
   /* ===== HOME (shift feed) ===== */
   .panel { position:absolute; inset:0; z-index:1; display:flex; flex-direction:column; min-height:0; }
@@ -100,7 +101,7 @@
   .top-btn .badge { position:absolute; top:8px; right:8px; width:7px; height:7px; border-radius:50%; background:var(--accent-fill); border:1.5px solid var(--surface-base); }
 
   .home-head { flex-shrink:0; padding:14px 22px 8px; }
-  .home-title { font-family:var(--display); font-optical-sizing:auto; font-weight:500; font-size:34px; line-height:1.05; letter-spacing:-0.01em; color:var(--text-primary); margin:0; }
+  .home-title { font-family:var(--display); font-weight:700; font-size:32px; line-height:1.05; letter-spacing:-0.025em; color:var(--text-primary); margin:0; }
   .home-sub { font-family:var(--mono); font-size:10.5px; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-muted); margin:8px 0 0; }
 
   .body { flex:1; min-height:0; position:relative; padding:18px 22px calc(var(--tabbar-h) + var(--safe-bottom) + 18px); overflow-y:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
@@ -132,7 +133,7 @@
   .app[data-drawer="cg"] .tab-btn[data-act="cg"],
   .app[data-drawer="tasks"] .tab-btn[data-act="tasks"] { color:var(--text-primary); }
   .tab-newwrap { justify-self:center; align-self:center; display:flex; flex-direction:column; align-items:center; gap:5px; }
-  .tab-new { width:54px; height:54px; margin-top:-20px; border-radius:50%; background:var(--accent-fill); color:var(--speak-ink); border:3px solid var(--surface-raised); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 10px 22px -8px rgba(138,79,34,0.55), inset 0 1px 0 rgba(255,255,255,0.45); transition:transform var(--motion-fast) var(--ease-out); }
+  .tab-new { width:54px; height:54px; margin-top:-20px; border-radius:50%; background:var(--accent-fill); color:var(--speak-ink); border:3px solid var(--surface-raised); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 10px 22px -8px rgba(15,26,46,0.55), inset 0 1px 0 rgba(255,255,255,0.45); transition:transform var(--motion-fast) var(--ease-out); }
   .tab-new:active { transform:scale(0.94); }
   .tab-new:focus-visible { outline:3px solid var(--border-focus); outline-offset:3px; }
   .tab-new svg { width:26px; height:26px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
@@ -154,7 +155,7 @@
   .drawer-scroll::-webkit-scrollbar { display:none; }
   .drawer-center { padding:4px 22px calc(24px + var(--safe-bottom) + var(--tabbar-h)); display:flex; flex-direction:column; gap:14px; text-align:center; }
   .drawer-body-txt { font-family:var(--sans); font-size:15px; line-height:1.55; color:var(--text-secondary); margin:0 auto; max-width:32ch; }
-  .btn-commit { background:var(--accent-fill); color:var(--speak-ink); border:0; border-radius:16px; padding:16px; font-family:var(--sans); font-weight:600; font-size:15px; cursor:pointer; min-height:52px; width:100%; box-shadow:0 8px 18px -10px rgba(138,79,34,0.5); }
+  .btn-commit { background:var(--accent-fill); color:var(--speak-ink); border:0; border-radius:16px; padding:16px; font-family:var(--sans); font-weight:600; font-size:15px; cursor:pointer; min-height:52px; width:100%; box-shadow:0 8px 18px -10px rgba(15,26,46,0.5); }
   .btn-commit:active, .btn-commit:focus-visible { filter:brightness(1.05); }
   .btn-cancel { background:transparent; border:0; color:var(--text-secondary); font-family:var(--sans); font-weight:500; font-size:14px; padding:12px; cursor:pointer; border-radius:8px; min-height:44px; }
   .btn-commit:focus-visible, .btn-cancel:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
@@ -226,7 +227,7 @@
   .cs-ready { justify-content:center; align-items:center; }
   .ready-prompt { text-align:center; display:flex; flex-direction:column; gap:10px; align-items:center; max-width:18ch; }
   .ready-eyebrow { font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:0.24em; text-indent:0.12em; text-transform:uppercase; color:var(--accent-ink); margin:0; }
-  .ready-line { font-family:var(--display); font-optical-sizing:auto; font-weight:500; font-size:28px; line-height:1.18; letter-spacing:-0.01em; color:var(--text-primary); margin:0; text-wrap:balance; }
+  .ready-line { font-family:var(--display); font-weight:700; font-size:27px; line-height:1.2; letter-spacing:-0.02em; color:var(--text-primary); margin:0; text-wrap:balance; }
   .cap-when { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:18px; }
   .cap-when-label { font-family:var(--mono); font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-muted); }
   .cap-when-btn { background:transparent; border:0; cursor:pointer; font-family:var(--mono); font-size:11px; letter-spacing:0.04em; color:var(--accent-ink); border-bottom:1px dashed var(--accent-ink); padding:4px 2px; min-height:32px; }
@@ -309,7 +310,7 @@
   .btn-discard { background:transparent; border:0; color:var(--text-muted); font-family:var(--sans); font-weight:500; font-size:14px; cursor:pointer; padding:10px 12px; min-height:44px; border-radius:8px; }
   .btn-discard:active, .btn-discard:focus-visible { color:var(--text-secondary); }
   .btn-discard:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
-  .btn-confirm { background:var(--accent-fill); color:var(--speak-ink); border:0; border-radius:999px; padding:13px 26px; font-family:var(--sans); font-weight:700; font-size:15px; cursor:pointer; min-height:48px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 6px 14px -8px rgba(138,79,34,0.5); }
+  .btn-confirm { background:var(--accent-fill); color:var(--speak-ink); border:0; border-radius:999px; padding:13px 26px; font-family:var(--sans); font-weight:700; font-size:15px; cursor:pointer; min-height:48px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 6px 14px -8px rgba(15,26,46,0.5); }
   .btn-confirm:active, .btn-confirm:focus-visible { filter:brightness(1.05); }
   .btn-confirm:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
   .btn-confirm:disabled, .btn-confirm.is-locked { opacity:0.4; cursor:default; box-shadow:none; filter:none; }
