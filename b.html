@@ -100,6 +100,28 @@
   .reminders-list { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:14px; }
   .reminders-list li { font-family:var(--sans); font-size:14px; line-height:1.5; color:var(--text-secondary); padding-left:14px; border-left:3px solid var(--accent-ink); }
 
+  /* ---- CG profile: grouped white cards on a muted ground (Apple Health / Zero / DJI pattern).
+     Contrast between card + ground defines the sections; minimal borders; orange held back to
+     the single "now" card so the act-now content leads and the reference detail recedes. ---- */
+  .drawer[data-d="cg"] { background:var(--surface-muted); }
+  .cg-id { flex-shrink:0; display:flex; align-items:center; gap:13px; padding:2px 22px 14px; }
+  .cg-avatar { width:46px; height:46px; border-radius:50%; background:var(--accent-soft); color:var(--accent-ink); display:flex; align-items:center; justify-content:center; font-family:var(--sans); font-weight:700; font-size:16px; letter-spacing:0.02em; flex-shrink:0; }
+  .cg-id-name { font-family:var(--sans); font-weight:600; font-size:21px; letter-spacing:-0.015em; margin:0; line-height:1.1; }
+  .cg-id-tags { font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); margin:4px 0 0; }
+  .cg-group { margin:0 0 18px; }
+  .cg-group:first-child { margin-top:2px; }
+  .cg-group-label { font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-muted); margin:0 0 9px 4px; }
+  .cg-card { background:var(--surface-raised); border-radius:14px; padding:2px 16px; box-shadow:0 1px 3px rgba(15,26,46,0.06); }
+  .cg-card--now { background:var(--accent-soft); box-shadow:none; }
+  .cg-line { margin:0; padding:13px 2px; border-bottom:1px solid var(--line-warm); font-family:var(--sans); font-size:14px; line-height:1.5; color:var(--text-secondary); }
+  .cg-card--now .cg-line { color:var(--text-primary); border-bottom-color:rgba(138,79,34,0.16); }
+  .cg-line:last-child { border-bottom:0; }
+  .cg-row { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; width:100%; padding:13px 2px; border:0; border-bottom:1px solid var(--line-warm); background:transparent; text-align:left; cursor:pointer; font-family:inherit; min-height:48px; }
+  .cg-row:last-child { border-bottom:0; }
+  .cg-row:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; border-radius:6px; }
+  .cg-row-name { display:block; font-family:var(--sans); font-weight:600; font-size:15px; color:var(--text-primary); letter-spacing:-0.005em; }
+  .cg-row-meta { display:block; font-family:var(--sans); font-size:12.5px; color:var(--text-muted); line-height:1.4; margin-top:3px; }
+
   /* ---- Med tap-to-ack + undo (in Tasks drawer) ---- */
   .ma-E { display:grid; grid-template-columns:auto 1fr auto; column-gap:10px; align-items:center; padding:13px 14px; background:var(--surface-raised); border:1px solid var(--border-default); border-radius:8px; min-height:52px; position:relative; cursor:pointer; user-select:none; -webkit-user-select:none; box-shadow:0 1px 2px rgba(15,26,46,0.04); transition:border-color var(--motion-fast) var(--ease-out), background var(--motion-fast); }
   .ma-E:active { background:var(--surface-muted); }
@@ -315,17 +337,39 @@
   <!-- ============ DRAWERS ============ -->
   <div class="drawer-backdrop" id="drawer-backdrop"></div>
 
-  <section class="drawer" data-d="cg" role="dialog" aria-modal="true" aria-label="CG">
+  <section class="drawer" data-d="cg" role="dialog" aria-modal="true" aria-labelledby="cg-name">
     <div class="drawer-grip" aria-hidden="true"></div>
-    <div class="drawer-head"><h2 class="drawer-title">CG</h2></div>
+    <div class="cg-id">
+      <div class="cg-avatar" aria-hidden="true">CG</div>
+      <div><h2 class="cg-id-name" id="cg-name">CG</h2><p class="cg-id-tags">Autism L3 &middot; Nonverbal &middot; BSP active</p></div>
+    </div>
     <div class="drawer-scroll">
-      <div class="cg-hero"><p class="cg-hero-tags">Autism L3 &middot; BSP active</p></div>
-      <div class="section"><p class="eyebrow">Watch for right now</p><ul class="reminders-list"><li>Deep pressure helps CG regulate. Offer the weighted blanket before things build.</li><li>Firm and warm voice works for CG. Calm, not stern.</li><li>Father visits Sundays. Give space afterward, separation can unsettle him.</li></ul></div>
-      <div class="section"><p class="eyebrow">Behaviours of concern</p>
-        <button class="row-item" type="button"><span><span class="row-item-name">Pinch and grab</span><br><span class="row-item-meta">Escalation topography. Deep pressure helps.</span></span><span class="row-chev"><svg viewBox="0 0 16 16"><path d="M6 4l4 4-4 4"/></svg></span></button>
-        <button class="row-item" type="button"><span><span class="row-item-name">Pacing and flapping</span><br><span class="row-item-meta">Early sign. Offer regulation early.</span></span><span class="row-chev"><svg viewBox="0 0 16 16"><path d="M6 4l4 4-4 4"/></svg></span></button>
+
+      <div class="cg-group">
+        <p class="cg-group-label">Watch for right now</p>
+        <div class="cg-card cg-card--now">
+          <p class="cg-line">Deep pressure helps CG regulate. Offer the weighted blanket before things build.</p>
+          <p class="cg-line">Firm and warm voice works for CG. Calm, not stern.</p>
+          <p class="cg-line">Father visits Sundays. Give space afterward, separation can unsettle him.</p>
+        </div>
       </div>
-      <div class="section"><p class="eyebrow">Communication and sensory</p><p class="note">Nonverbal. Reads through eyes, face and body. Tactile seeking, needs deep pressure to settle.</p></div>
+
+      <div class="cg-group">
+        <p class="cg-group-label">Behaviours of concern</p>
+        <div class="cg-card">
+          <button class="cg-row" type="button"><span><span class="cg-row-name">Pinch and grab</span><span class="cg-row-meta">Escalation sign. Deep pressure helps.</span></span><span class="row-chev"><svg viewBox="0 0 16 16"><path d="M6 4l4 4-4 4"/></svg></span></button>
+          <button class="cg-row" type="button"><span><span class="cg-row-name">Pacing and flapping</span><span class="cg-row-meta">Early sign. Offer regulation early.</span></span><span class="row-chev"><svg viewBox="0 0 16 16"><path d="M6 4l4 4-4 4"/></svg></span></button>
+        </div>
+      </div>
+
+      <div class="cg-group">
+        <p class="cg-group-label">Communication &amp; sensory</p>
+        <div class="cg-card">
+          <p class="cg-line">Nonverbal. Reads through eyes, face and body.</p>
+          <p class="cg-line">Tactile-seeking. Needs deep pressure to settle.</p>
+        </div>
+      </div>
+
     </div>
   </section>
 
