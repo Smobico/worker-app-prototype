@@ -310,7 +310,9 @@
   .convo-tick { width:15px; height:15px; fill:none; stroke:#16A34A; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; transform:translateY(2px); }
   .convo-done-a { font-family:var(--sans); font-weight:600; font-size:14px; color:var(--text-primary); }
   .convo-done-q { font-family:var(--sans); font-size:13px; color:var(--text-muted); }
-  .convo-other { display:flex; gap:8px; scroll-margin:100px 0; }
+  .convo-other-bar { width:100%; max-width:60ch; display:flex; flex-direction:column; gap:9px; padding:13px 15px; background:var(--accent-soft); border:1px solid var(--accent-ink); border-radius:16px; }
+  .convo-other-q { margin:0; font-family:var(--note-font); font-size:15px; font-weight:600; color:var(--text-primary); }
+  .convo-other { display:flex; gap:8px; }
   .convo-other-input { flex:1; min-width:0; font-family:var(--note-font); font-size:14px; padding:9px 14px; border:1.5px solid var(--border-strong); border-radius:999px; background:var(--surface-raised); color:var(--text-primary); outline:none; }
   .convo-other-input:focus { border-color:var(--border-focus); box-shadow:0 0 0 3px rgba(38,112,184,0.12); }
   .convo-other-add { flex-shrink:0; font-family:var(--sans); font-weight:600; font-size:13px; padding:9px 17px; border:0; border-radius:999px; background:var(--text-primary); color:var(--surface-base); cursor:pointer; min-height:40px; }
@@ -582,26 +584,20 @@
   }
   function showOtherInput(step,qtext,onAnswered){
     var chips=step.querySelector('.convo-chips'); if(chips) chips.remove();
+    // Put the "specify" field at the TOP of the capture body -- the same place as the note field, which
+    // the keyboard never covers -- instead of low in the scroll where iOS hides it behind the keyboard.
+    var body=document.querySelector('.cap-body');
+    var bar=document.createElement('div'); bar.className='convo-other-bar';
+    var lbl=document.createElement('p'); lbl.className='convo-other-q'; lbl.textContent=qtext;
     var row=document.createElement('div'); row.className='convo-other';
     var inp=document.createElement('input'); inp.type='text'; inp.className='convo-other-input'; inp.placeholder='Type what it was'; inp.setAttribute('aria-label','Specify');
     var add=document.createElement('button'); add.type='button'; add.className='convo-other-add'; add.textContent='Add';
-    row.appendChild(inp); row.appendChild(add); step.appendChild(row);
-    function commit(){ var v=inp.value.trim(); if(!v) return; finishConvoStep(step,qtext,v,onAnswered); }
+    row.appendChild(inp); row.appendChild(add); bar.appendChild(lbl); bar.appendChild(row);
+    if(body){ body.insertBefore(bar, body.firstChild); body.scrollTop=0; }
+    function commit(){ var v=inp.value.trim(); if(!v){ return; } bar.remove(); if(body) body.scrollTop=0; finishConvoStep(step,qtext,v,onAnswered); }
     add.addEventListener('click',commit);
     inp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); commit(); } });
-    // Focus without scrolling the page (preventScroll). The keyboard height is added as bottom padding
-    // to the capture body so the field has room to scroll clear of the keyboard; then scroll ONLY the
-    // capture body to bring the field up. Two passes cover keyboard-open timing.
-    var lift=function(){
-      try {
-        syncCaptureKeyboardPad();
-        var body=document.querySelector('.cap-body');
-        if(body){ var r=inp.getBoundingClientRect(), br=body.getBoundingClientRect(); body.scrollTop += (r.top - br.top) - 80; }
-      } catch(e){}
-    };
     inp.focus({ preventScroll:true });
-    setTimeout(lift,330);
-    setTimeout(lift,560);
   }
   function finishConvoStep(step,qtext,answer,onAnswered){
     convoAnswers.push(answer);
