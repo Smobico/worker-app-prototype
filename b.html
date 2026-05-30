@@ -230,10 +230,8 @@
   .cap-for .for { display:block; font-family:var(--mono); font-weight:500; font-size:9px; letter-spacing:0.3em; text-indent:0.15em; text-transform:uppercase; color:var(--text-muted); margin-bottom:2px; }
   .cap-body { flex:1; min-height:0; position:relative; padding:18px 22px 8px; display:flex; flex-direction:column; overflow-y:auto; scrollbar-width:none; }
   .cap-body::-webkit-scrollbar { display:none; }
-  /* Watermark: centred behind everything, and HIDDEN whenever the composer is focused (keyboard up) so it
-     can never appear to drift as the sheet/keyboard animates -- shown only on the calm, keyboard-down view. */
-  .cap-mark { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:188px; height:188px; pointer-events:none; z-index:-1; color:var(--mark-ink); }
-  #view-capture:focus-within .cap-mark { display:none; }
+  /* Watermark removed from the capture page: a background mark on a keyboard-heavy input screen fights the
+     iOS keyboard (drifts / half-clips). The brand watermark stays on the calm Today feed, where it is stable. */
   .cap-mark svg { width:100%; height:100%; }
   .cap-state { display:none; flex-direction:column; width:100%; }
   #view-capture[data-state="ready"] .cs-ready { display:flex; flex:1; }
@@ -313,6 +311,21 @@
   .cap-nav { display:none; flex-shrink:0; grid-template-columns:repeat(3,1fr); align-items:center; padding-bottom:var(--safe-bottom); border-top:1px solid var(--border-default); background:var(--surface-base); }
   #view-capture[data-state="chat"] .cap-nav { display:grid; }
   #view-capture[data-kb="1"] .cap-nav { display:none; }
+
+  /* Leave-mid-capture sheet: Save draft / Check later / Discard */
+  .leave-scrim { position:absolute; inset:0; z-index:40; background:var(--scrim); backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); opacity:0; pointer-events:none; transition:opacity var(--motion-med) var(--ease-out); }
+  #view-capture[data-leave="1"] .leave-scrim { opacity:1; pointer-events:auto; }
+  .leave-sheet { position:absolute; left:0; right:0; bottom:0; z-index:41; background:var(--surface-base); border-radius:22px 22px 0 0; padding:20px 20px calc(18px + var(--safe-bottom)); box-shadow:0 -12px 34px -12px rgba(0,0,0,0.32); transform:translateY(101%); transition:transform var(--motion-med) var(--ease-out); display:flex; flex-direction:column; gap:9px; }
+  #view-capture[data-leave="1"] .leave-sheet { transform:translateY(0); }
+  .leave-eyebrow { font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent-ink); margin:0; text-align:center; }
+  .leave-title { font-family:var(--sans); font-weight:700; font-size:19px; letter-spacing:-0.01em; color:var(--text-primary); margin:4px 0 10px; text-align:center; }
+  .leave-btn { border:0; border-radius:14px; padding:15px; font-family:var(--sans); font-weight:600; font-size:15px; cursor:pointer; min-height:52px; }
+  .leave-save { background:#E8A87C; color:#0F1A2E; box-shadow:inset 0 1px 0 rgba(255,255,255,0.5); }
+  .leave-later { background:var(--surface-muted); color:var(--text-primary); }
+  .leave-discard { background:transparent; color:#9B2D2D; border:1.5px solid rgba(155,45,45,0.32); }
+  .leave-cancel { background:transparent; border:0; color:var(--text-secondary); font-family:var(--sans); font-weight:500; font-size:14px; padding:12px; min-height:44px; cursor:pointer; margin-top:2px; }
+  .leave-btn:active, .leave-cancel:active { filter:brightness(1.05); }
+  .leave-btn:focus-visible, .leave-cancel:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
   .btn-discard { background:transparent; border:0; color:var(--text-muted); font-family:var(--sans); font-weight:500; font-size:14px; cursor:pointer; padding:10px 12px; min-height:44px; border-radius:8px; }
   .btn-discard:active, .btn-discard:focus-visible { color:var(--text-secondary); }
   .btn-discard:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
@@ -484,7 +497,6 @@
       <h2 class="cap-for">New note - CG</h2>
       <span></span>
     </header>
-    <div class="cap-mark" aria-hidden="true"><svg viewBox="0 0 2000 2000" fill="currentColor"><use href="#tn-mark"/></svg></div>
     <div class="cap-body">
 
       <!-- READY: choose straight away -->
@@ -531,6 +543,15 @@
       <button class="tab-btn" type="button" data-capnav="cg" aria-label="CG profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>CG</button>
       <button class="tab-btn" type="button" data-capnav="tasks" aria-label="Tasks"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Tasks</button>
     </nav>
+    <div class="leave-scrim" id="leave-scrim"></div>
+    <aside class="leave-sheet" id="leave-sheet" role="dialog" aria-modal="true" aria-label="Unsaved note">
+      <p class="leave-eyebrow">This note isn't saved yet</p>
+      <h3 class="leave-title">What would you like to do?</h3>
+      <button class="leave-btn leave-save" type="button" id="leave-save">Save draft</button>
+      <button class="leave-btn leave-later" type="button" id="leave-later">Check later</button>
+      <button class="leave-btn leave-discard" type="button" id="leave-discard">Discard note</button>
+      <button class="leave-cancel" type="button" id="leave-keep">Keep editing</button>
+    </aside>
   </section>
 
   <!-- ============ VOICE MODE -- back-and-forth conversation with the AI agent ============ -->
@@ -729,14 +750,21 @@
   }
 
   // ---- Capture back / time ----
-  document.getElementById('cap-back').addEventListener('click', function(){ clearTimers(); resetChat(); setView('home'); });
+  // Leaving mid-capture asks what to do with the unsaved note (Save draft / Check later / Discard).
+  var pendingLeave=null;
+  function hasDraft(){ var st=capture.getAttribute('data-state'); return st==='chat' || st==='done' || (st==='ready' && compInput.value.trim().length>0); }
+  function doLeave(target){ capture.setAttribute('data-leave','0'); clearTimers(); resetChat(); clearComposer(); setView('home'); if(target==='cg') setDrawer('cg'); else if(target==='tasks') setDrawer('tasks'); }
+  function requestLeave(target){ if(!hasDraft()){ doLeave(target); return; } pendingLeave=target; capture.setAttribute('data-leave','1'); }
+  function hideLeaveSheet(){ capture.setAttribute('data-leave','0'); }
+  document.getElementById('cap-back').addEventListener('click', function(){ requestLeave('home'); });
   Array.prototype.forEach.call(document.querySelectorAll('.cap-nav .tab-btn'), function(b){
-    b.addEventListener('click', function(){
-      var act=b.getAttribute('data-capnav');
-      clearTimers(); resetChat(); setView('home');
-      if(act==='cg') setDrawer('cg'); else if(act==='tasks') setDrawer('tasks');
-    });
+    b.addEventListener('click', function(){ requestLeave(b.getAttribute('data-capnav')); });
   });
+  document.getElementById('leave-save').addEventListener('click', function(){ doLeave(pendingLeave); });
+  document.getElementById('leave-later').addEventListener('click', function(){ doLeave(pendingLeave); });
+  document.getElementById('leave-discard').addEventListener('click', function(){ doLeave(pendingLeave); });
+  document.getElementById('leave-keep').addEventListener('click', hideLeaveSheet);
+  document.getElementById('leave-scrim').addEventListener('click', hideLeaveSheet);
 
   // ---- Voice listening (mock transcript) ----
   function fmt(s){ var m=Math.floor(s/60), r=s%60; return m+':'+(r<10?'0':'')+r; }
@@ -879,7 +907,7 @@
     var sy=0, dy=0, dr=false;
     grip.addEventListener('pointerdown', function(e){ dr=true; sy=e.clientY; dy=0; capture.style.transition='none'; });
     grip.addEventListener('pointermove', function(e){ if(!dr) return; dy=Math.max(0, e.clientY-sy); capture.style.transform='translateY('+dy+'px)'; });
-    function rel(){ if(!dr) return; dr=false; capture.style.transition=''; capture.style.transform=''; if(dy>90){ clearTimers(); setView('home'); } dy=0; }
+    function rel(){ if(!dr) return; dr=false; capture.style.transition=''; capture.style.transform=''; if(dy>90){ requestLeave('home'); } dy=0; }
     grip.addEventListener('pointerup', rel);
     grip.addEventListener('pointercancel', rel);
   })();
