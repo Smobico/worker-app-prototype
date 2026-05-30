@@ -105,12 +105,11 @@
      the single "now" card so the act-now content leads and the reference detail recedes. ---- */
   .drawer[data-d="cg"] { background:var(--surface-muted); }
   .cg-id { flex-shrink:0; display:flex; align-items:center; gap:13px; padding:2px 22px 14px; }
-  .cg-avatar { width:46px; height:46px; border-radius:50%; background:var(--accent-soft); color:var(--accent-ink); display:flex; align-items:center; justify-content:center; font-family:var(--sans); font-weight:700; font-size:16px; letter-spacing:0.02em; flex-shrink:0; }
-  .cg-id-name { font-family:var(--sans); font-weight:600; font-size:21px; letter-spacing:-0.015em; margin:0; line-height:1.1; }
-  .cg-id-tags { font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); margin:4px 0 0; }
+  .cg-avatar { width:48px; height:48px; border-radius:50%; background:var(--accent-soft); color:var(--text-primary); display:flex; align-items:center; justify-content:center; font-family:var(--sans); font-weight:700; font-size:16px; letter-spacing:0.02em; flex-shrink:0; }
+  .cg-id-tags { font-family:var(--mono); font-size:11.5px; font-weight:600; letter-spacing:0.03em; text-transform:uppercase; color:var(--text-secondary); margin:0; line-height:1.45; }
   .cg-group { margin:0 0 18px; }
   .cg-group:first-child { margin-top:2px; }
-  .cg-group-label { font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-muted); margin:0 0 9px 4px; }
+  .cg-group-label { font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:0.13em; text-transform:uppercase; color:var(--text-secondary); margin:0 0 9px 4px; }
   .cg-card { background:var(--surface-raised); border-radius:14px; padding:2px 16px; box-shadow:0 1px 3px rgba(15,26,46,0.06); }
   .cg-card--now { background:var(--accent-soft); box-shadow:none; }
   .cg-line { margin:0; padding:13px 2px; border-bottom:1px solid var(--line-warm); font-family:var(--sans); font-size:14px; line-height:1.5; color:var(--text-secondary); }
@@ -337,11 +336,11 @@
   <!-- ============ DRAWERS ============ -->
   <div class="drawer-backdrop" id="drawer-backdrop"></div>
 
-  <section class="drawer" data-d="cg" role="dialog" aria-modal="true" aria-labelledby="cg-name">
+  <section class="drawer" data-d="cg" role="dialog" aria-modal="true" aria-label="CG profile">
     <div class="drawer-grip" aria-hidden="true"></div>
     <div class="cg-id">
-      <div class="cg-avatar" aria-hidden="true">CG</div>
-      <div><h2 class="cg-id-name" id="cg-name">CG</h2><p class="cg-id-tags">Autism L3 &middot; Nonverbal &middot; BSP active</p></div>
+      <div class="cg-avatar">CG</div>
+      <p class="cg-id-tags">Autism L3 &middot; Nonverbal &middot; BSP active</p>
     </div>
     <div class="drawer-scroll">
 
