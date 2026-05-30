@@ -609,7 +609,6 @@
     var kb = inCap ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) : 0;
     capture.style.bottom = (kb>60) ? kb+'px' : '';
     capture.setAttribute('data-kb', (kb>60) ? '1' : '0');
-    if (inCap) window.scrollTo(0, 0);
   }
   if(window.visualViewport){ window.visualViewport.addEventListener('resize', syncCaptureKeyboardPad); }
   function setView(v) { app.setAttribute('data-view', v); syncCaptureKeyboardPad(); }
