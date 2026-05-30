@@ -250,7 +250,7 @@
   #view-capture[data-state="chat"] .composer-hint { display:none; }
   .composer-bar { background:var(--surface-raised); border:1.5px solid var(--border-strong); border-radius:24px; padding:8px 8px 10px 12px; box-shadow:0 8px 26px -12px rgba(15,26,46,0.30); }
   .composer-field { display:flex; align-items:center; }
-  .composer-input { flex:1; min-width:0; border:0; background:transparent; outline:none; font-family:var(--note-font); font-size:17px; font-weight:500; line-height:1.4; color:var(--text-primary); padding:11px 8px 7px 4px; resize:none; max-height:140px; overflow-y:auto; scrollbar-width:none; }
+  .composer-input { flex:1; min-width:0; border:0; background:transparent; outline:none; font-family:var(--note-font); font-size:17px; font-weight:600; line-height:1.4; color:var(--text-primary); padding:11px 8px 7px 4px; resize:none; max-height:140px; overflow-y:auto; scrollbar-width:none; }
   .composer-input::-webkit-scrollbar { display:none; }
   .composer-input::placeholder { color:var(--text-muted); }
   .composer-controls { display:flex; align-items:center; gap:9px; padding:4px 2px 2px 4px; }
@@ -313,10 +313,11 @@
   #view-capture[data-kb="1"] .cap-nav { display:none; }
 
   /* Leave-mid-capture sheet: Save draft / Check later / Discard */
-  .leave-scrim { position:absolute; inset:0; z-index:40; background:var(--scrim); backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); opacity:0; pointer-events:none; transition:opacity var(--motion-med) var(--ease-out); }
-  #view-capture[data-leave="1"] .leave-scrim { opacity:1; pointer-events:auto; }
-  .leave-sheet { position:absolute; left:0; right:0; bottom:0; z-index:41; background:var(--surface-base); border-radius:22px 22px 0 0; padding:20px 20px calc(18px + var(--safe-bottom)); box-shadow:0 -12px 34px -12px rgba(0,0,0,0.32); transform:translateY(101%); transition:transform var(--motion-med) var(--ease-out); display:flex; flex-direction:column; gap:9px; }
-  #view-capture[data-leave="1"] .leave-sheet { transform:translateY(0); }
+  .leave-scrim { position:absolute; inset:0; z-index:40; background:var(--scrim); backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); display:none; }
+  #view-capture[data-leave="1"] .leave-scrim { display:block; }
+  .leave-sheet { position:absolute; left:0; right:0; bottom:0; z-index:41; background:var(--surface-base); border-radius:22px 22px 0 0; padding:20px 20px calc(18px + var(--safe-bottom)); box-shadow:0 -12px 34px -12px rgba(0,0,0,0.32); display:none; flex-direction:column; gap:9px; }
+  #view-capture[data-leave="1"] .leave-sheet { display:flex; animation:sheetUp var(--motion-med) var(--ease-out); }
+  @keyframes sheetUp { from{ transform:translateY(100%); } to{ transform:translateY(0); } }
   .leave-eyebrow { font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent-ink); margin:0; text-align:center; }
   .leave-title { font-family:var(--sans); font-weight:700; font-size:19px; letter-spacing:-0.01em; color:var(--text-primary); margin:4px 0 10px; text-align:center; }
   .leave-btn { border:0; border-radius:14px; padding:15px; font-family:var(--sans); font-weight:600; font-size:15px; cursor:pointer; min-height:52px; }
