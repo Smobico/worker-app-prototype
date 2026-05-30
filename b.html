@@ -228,7 +228,9 @@
   .cap-for .for { display:block; font-family:var(--mono); font-weight:500; font-size:9px; letter-spacing:0.3em; text-indent:0.15em; text-transform:uppercase; color:var(--text-muted); margin-bottom:2px; }
   .cap-body { flex:1; min-height:0; position:relative; padding:18px 22px 8px; display:flex; flex-direction:column; overflow-y:auto; scrollbar-width:none; }
   .cap-body::-webkit-scrollbar { display:none; }
-  .cap-mark { position:absolute; left:50%; top:38%; transform:translate(-50%,-50%); width:170px; height:170px; pointer-events:none; color:var(--mark-ink); }
+  /* Watermark sits behind everything, centred in the VISIBLE capture area (the sheet shrinks above the
+     keyboard, so top:50% keeps it centred and on-screen rather than pushed off the top). */
+  .cap-mark { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:188px; height:188px; pointer-events:none; z-index:-1; color:var(--mark-ink); }
   .cap-mark svg { width:100%; height:100%; }
   .cap-state { display:none; flex-direction:column; width:100%; }
   #view-capture[data-state="ready"] .cs-ready { display:flex; flex:1; }
@@ -247,7 +249,7 @@
   #view-capture[data-state="chat"] .composer-hint { display:none; }
   .composer-bar { background:var(--surface-raised); border:1.5px solid var(--border-strong); border-radius:24px; padding:8px 8px 10px 12px; box-shadow:0 8px 26px -12px rgba(15,26,46,0.30); }
   .composer-field { display:flex; align-items:center; }
-  .composer-input { flex:1; min-width:0; border:0; background:transparent; outline:none; font-family:var(--note-font); font-size:17px; line-height:1.4; color:var(--text-primary); padding:11px 8px 7px 4px; resize:none; max-height:140px; overflow-y:auto; scrollbar-width:none; }
+  .composer-input { flex:1; min-width:0; border:0; background:transparent; outline:none; font-family:var(--note-font); font-size:17px; font-weight:500; line-height:1.4; color:var(--text-primary); padding:11px 8px 7px 4px; resize:none; max-height:140px; overflow-y:auto; scrollbar-width:none; }
   .composer-input::-webkit-scrollbar { display:none; }
   .composer-input::placeholder { color:var(--text-muted); }
   .composer-controls { display:flex; align-items:center; gap:9px; padding:4px 2px 2px 4px; }
@@ -257,6 +259,8 @@
   .composer-mic:active, .composer-mic:focus-visible { background:var(--surface-muted); }
   .composer-mic:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
   .composer-mic svg { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .composer-mic.is-rec { background:#E8A87C; border-color:#CC865A; color:#0F1A2E; animation:micPulse 1.3s ease-in-out infinite; }
+  @keyframes micPulse { 0%,100%{ box-shadow:0 0 0 0 rgba(232,168,124,0.5); } 50%{ box-shadow:0 0 0 6px rgba(232,168,124,0); } }
   .composer-speak { display:inline-flex; align-items:center; justify-content:center; gap:7px; background:#E8A87C; color:#0F1A2E; border:1.5px solid #CC865A; border-radius:999px; padding:0 16px; height:44px; font-family:var(--sans); font-weight:700; font-size:13.5px; cursor:pointer; box-shadow:inset 0 1px 0 rgba(255,255,255,0.5); transition:transform var(--motion-fast) var(--ease-out); }
   .composer-speak.is-send { width:44px; padding:0; gap:0; }
   .composer-speak:active { transform:scale(0.96); }
@@ -309,6 +313,30 @@
   .btn-confirm:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
   .btn-confirm:disabled, .btn-confirm.is-locked { opacity:0.4; cursor:default; box-shadow:none; filter:none; }
   .btn-confirm svg { width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+
+  /* ============ VOICE MODE -- back-and-forth conversation with the AI agent ============ */
+  #view-voice { position:absolute; inset:0; z-index:35; background:var(--surface-base); display:flex; flex-direction:column; transform:translateY(100%); transition:transform var(--motion-med) var(--ease-out); }
+  .app[data-view="voice"] #view-voice { transform:translateY(0); }
+  .voice-top { flex-shrink:0; padding:calc(var(--safe-top) + 18px) 20px 0; text-align:center; }
+  .voice-title { font-family:var(--sans); font-weight:600; font-size:16px; color:var(--text-primary); }
+  .voice-stage { flex:1; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:26px; padding:24px; text-align:center; }
+  .voice-orb { width:152px; height:152px; border-radius:50%; background:radial-gradient(circle at 50% 36%, #F1C09B 0%, #E8A87C 58%, #CC865A 100%); animation:orbSpeak 2.4s var(--ease-out) infinite; }
+  @keyframes orbSpeak { 0%,100%{ transform:scale(1); box-shadow:0 0 44px -6px rgba(232,168,124,0.5); } 50%{ transform:scale(1.05); box-shadow:0 0 70px 2px rgba(232,168,124,0.62); } }
+  #view-voice[data-vstate="listening"] .voice-orb { background:radial-gradient(circle at 50% 36%, #8FD8E2 0%, #2F8F9E 62%, #135A66 100%); animation:orbListen 1.05s ease-in-out infinite; }
+  @keyframes orbListen { 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.13); } }
+  #view-voice[data-vstate="thinking"] .voice-orb { animation:orbThink 1.6s ease-in-out infinite; }
+  @keyframes orbThink { 0%,100%{ transform:scale(0.97); opacity:0.85; } 50%{ transform:scale(1.02); opacity:1; } }
+  .voice-status { font-family:var(--mono); font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-muted); margin:0; }
+  .voice-line { font-family:var(--sans); font-weight:700; font-size:24px; line-height:1.32; letter-spacing:-0.02em; color:var(--text-primary); margin:0; max-width:18ch; min-height:3.2em; }
+  #view-voice[data-vstate="listening"] .voice-line { font-weight:500; color:var(--text-secondary); }
+  .voice-dock { flex-shrink:0; display:flex; align-items:center; justify-content:center; gap:26px; padding:0 20px calc(30px + var(--safe-bottom)); }
+  .voice-btn { border:0; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; }
+  .voice-btn:focus-visible { outline:3px solid var(--border-focus); outline-offset:3px; }
+  .voice-mute { width:60px; height:60px; border-radius:50%; background:var(--surface-muted); color:var(--text-primary); }
+  .voice-mute svg { width:26px; height:26px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .voice-mute.is-muted { background:var(--surface-raised); border:1.5px solid var(--border-strong); color:var(--text-muted); }
+  .voice-end { height:60px; padding:0 32px; border-radius:999px; background:var(--text-primary); color:var(--surface-base); font-family:var(--sans); font-weight:700; font-size:15px; }
+  .voice-end:active { filter:brightness(1.15); }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition-duration:0.01ms !important; animation-duration:0.01ms !important; animation-iteration-count:1 !important; }
@@ -448,8 +476,8 @@
       <h2 class="cap-for">New note - CG</h2>
       <span></span>
     </header>
+    <div class="cap-mark" aria-hidden="true"><svg viewBox="0 0 2000 2000" fill="currentColor"><use href="#tn-mark"/></svg></div>
     <div class="cap-body">
-      <div class="cap-mark" aria-hidden="true"><svg viewBox="0 0 2000 2000" fill="currentColor"><use href="#tn-mark"/></svg></div>
 
       <!-- READY: choose straight away -->
       <div class="cap-state cs-ready">
@@ -490,6 +518,20 @@
       <button class="btn-discard" type="button" id="btn-discard">Discard</button>
       <button class="btn-confirm" type="button" id="btn-confirm"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg> Confirm and save</button>
     </footer>
+  </section>
+
+  <!-- ============ VOICE MODE -- back-and-forth conversation with the AI agent ============ -->
+  <section id="view-voice" data-vstate="speaking" aria-label="Voice conversation with the assistant">
+    <header class="voice-top"><span class="voice-title">New note - CG</span></header>
+    <div class="voice-stage">
+      <div class="voice-orb" aria-hidden="true"></div>
+      <p class="voice-status" id="voice-status">Connecting</p>
+      <p class="voice-line" id="voice-line"></p>
+    </div>
+    <div class="voice-dock">
+      <button class="voice-btn voice-mute" id="voice-mute" type="button" aria-label="Mute microphone"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg></button>
+      <button class="voice-btn voice-end" id="voice-end" type="button">End</button>
+    </div>
   </section>
 
 </div>
@@ -596,11 +638,11 @@
 
   // Composer: in READY it starts the note; in CHAT it sends a free-text answer to the live question.
   compInput.addEventListener('input', function(){ autoGrow(); syncComposerMode(); });
-  compMic.addEventListener('click', startListening);
+  compMic.addEventListener('click', startDictation);
   compSpeak.addEventListener('click', function(){
     var st = capture.getAttribute('data-state');
     var v = compInput.value.trim();
-    if (st === 'ready') { if (v) { clearComposer(); startChat(v); } else { startListening(); } }
+    if (st === 'ready') { if (v) { clearComposer(); startChat(v); } else { openVoiceMode(); } }
     else if (st === 'chat') { if (v) { clearComposer(); syncComposerMode(); answerQ(v); } }
   });
 
@@ -748,6 +790,57 @@
     resetChat();
     setView('home');
   });
+
+  // ---- Mic in the composer = inline dictation INTO the text box (never opens a new screen) ----
+  var dictating=false, dictRecog=null;
+  function stopDictation(){ dictating=false; compMic.classList.remove('is-rec'); if(dictRecog){ try{dictRecog.stop();}catch(e){} dictRecog=null; } }
+  function startDictation(){
+    if(dictating){ stopDictation(); return; }
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SR){ compInput.focus({preventScroll:true}); return; } // fallback: open keyboard so the worker can use its own dictation key
+    var base = compInput.value ? compInput.value.replace(/\s+$/,'') + ' ' : '';
+    try {
+      dictRecog = new SR(); dictRecog.continuous=true; dictRecog.interimResults=true; dictRecog.lang='en-AU';
+      dictRecog.onresult=function(e){ var s=''; for(var i=0;i<e.results.length;i++){ s+=e.results[i][0].transcript; } compInput.value=base+s; autoGrow(); syncComposerMode(); };
+      dictRecog.onend=stopDictation; dictRecog.onerror=stopDictation;
+      dictRecog.start(); dictating=true; compMic.classList.add('is-rec'); compInput.focus({preventScroll:true});
+    } catch(e){ stopDictation(); compInput.focus({preventScroll:true}); }
+  }
+
+  // ---- Speak = a back-and-forth VOICE conversation with the AI agent (UX mock; real-time voice is a backend build) ----
+  var voiceTimers=[], voiceLine=null, voiceStatusEl=null, voiceView=null;
+  function vClear(){ for(var i=0;i<voiceTimers.length;i++){ clearTimeout(voiceTimers[i]); } voiceTimers=[]; }
+  function vAfter(ms, fn){ voiceTimers.push(setTimeout(fn, ms)); }
+  function vState(s){ voiceView.setAttribute('data-vstate', s); voiceStatusEl.textContent = (s==='listening') ? 'Listening' : ((s==='thinking') ? 'One sec' : 'Assistant'); }
+  function vSay(line){ vState('speaking'); voiceLine.textContent = line; }
+  function vHeard(text){ vState('listening'); voiceLine.textContent = '"' + text + '"'; }
+  function openVoiceMode(){
+    voiceView=document.getElementById('view-voice'); voiceLine=document.getElementById('voice-line'); voiceStatusEl=document.getElementById('voice-status');
+    vClear(); capAnswers=[]; var g=gapQuestions(TRANSCRIPT); captureType=g.type; qQueue=g.qs.slice();
+    document.getElementById('voice-mute').classList.remove('is-muted');
+    voiceLine.textContent=''; vState('speaking'); voiceStatusEl.textContent='Connecting';
+    app.setAttribute('data-view','voice');
+    vAfter(700, function(){ vSay('What just happened on shift with CG?'); });
+    vAfter(2700, function(){ vHeard('Sat CG down for lunch around midday, he was settled and happy.'); });
+    vAfter(5200, function(){ vState('thinking'); voiceLine.textContent=''; });
+    vAfter(5900, vAskNext);
+  }
+  function vAskNext(){
+    if(qQueue.length===0){ vFinish(); return; }
+    var q=qQueue.shift();
+    vSay(q.q);
+    vAfter(2300, function(){ capAnswers.push(q.chips[0]); vHeard(q.chips[0]); });
+    vAfter(4300, function(){ vState('thinking'); voiceLine.textContent=''; vAfter(700, vAskNext); });
+  }
+  function vFinish(){ vSay('Got it. I will save that to the feed now.'); vAfter(2400, function(){ endVoice(true); }); }
+  function endVoice(save){
+    vClear();
+    if(save){ var text=TRANSCRIPT; if(capAnswers.length) text += ' (' + capAnswers.join(', ') + ')'; addFeedEntry(text, captureType==='boc'?'boc':'note'); }
+    resetChat();
+    setView('home');
+  }
+  document.getElementById('voice-end').addEventListener('click', function(){ endVoice(true); });
+  document.getElementById('voice-mute').addEventListener('click', function(){ this.classList.toggle('is-muted'); });
 
   // ---- Med tap-to-acknowledge + undo ----
   (function () {
