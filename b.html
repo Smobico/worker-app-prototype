@@ -292,19 +292,26 @@
   .btn-confirm:disabled, .btn-confirm.is-locked { opacity:0.38; cursor:default; box-shadow:none; filter:none; }
   .btn-confirm svg { width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
 
-  /* ---- Conversational capture: TNA asks a follow-up + chips (concept exploration) ---- */
-  .cap-convo { width:100%; max-width:60ch; display:flex; flex-direction:column; gap:11px; }
+  /* ---- Conversational capture: engine fills the gaps; answered steps collapse to a tidy summary ---- */
+  .cap-convo { width:100%; max-width:60ch; display:flex; flex-direction:column; gap:14px; }
   .cap-convo:empty { display:none; }
-  .convo-q { display:flex; gap:9px; align-items:flex-start; animation:rowIn var(--motion-med) var(--ease-out); }
-  .convo-tna { flex-shrink:0; font-family:var(--mono); font-size:8px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent-ink); background:var(--accent-soft); border-radius:999px; padding:6px 8px; margin-top:3px; }
-  .convo-q-text { margin:0; font-family:var(--note-font); font-size:15px; line-height:1.45; color:var(--text-primary); background:var(--surface-raised); border:1px solid var(--border-default); border-radius:14px 14px 14px 4px; padding:10px 14px; box-shadow:0 1px 3px rgba(15,26,46,0.05); }
-  .convo-chips { display:flex; flex-wrap:wrap; gap:8px; padding-left:38px; animation:rowIn var(--motion-med) var(--ease-out); }
-  .convo-chip { font-family:var(--sans); font-size:13px; font-weight:600; color:var(--text-secondary); background:var(--surface-raised); border:1.5px solid var(--border-default); border-radius:999px; padding:9px 15px; min-height:40px; cursor:pointer; transition:transform var(--motion-fast) var(--ease-out), background var(--motion-fast), border-color var(--motion-fast), color var(--motion-fast); }
-  .convo-chip:active { transform:scale(0.97); }
-  .convo-chip.picked { background:var(--accent-ink); border-color:var(--accent-ink); color:#fff; }
-  .convo-chip:disabled:not(.picked) { opacity:0.4; cursor:default; }
+  .convo-intro { font-family:var(--mono); font-size:9px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-muted); margin:0; }
+  .convo-step { display:flex; flex-direction:column; gap:10px; animation:rowIn var(--motion-med) var(--ease-out); }
+  .convo-q-text { margin:0; font-family:var(--note-font); font-size:16px; font-weight:500; line-height:1.4; color:var(--text-primary); }
+  .convo-chips { display:flex; flex-wrap:wrap; gap:8px; }
+  .convo-chip { font-family:var(--sans); font-size:13px; font-weight:600; color:var(--text-primary); background:var(--surface-raised); border:1.5px solid var(--border-strong); border-radius:999px; padding:9px 15px; min-height:40px; cursor:pointer; transition:transform var(--motion-fast) var(--ease-out), background var(--motion-fast), border-color var(--motion-fast); }
+  .convo-chip:active { transform:scale(0.96); background:var(--accent-soft); border-color:var(--accent-ink); }
   .convo-chip:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
-  .convo-done { display:flex; align-items:center; gap:7px; padding-left:38px; font-family:var(--sans); font-size:13px; font-weight:500; color:var(--confirmed-ink); animation:rowIn var(--motion-med) var(--ease-out); }
+  .convo-step--done { flex-direction:row; align-items:baseline; gap:8px; }
+  .convo-tick { width:15px; height:15px; fill:none; stroke:var(--confirmed-ink); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; transform:translateY(2px); }
+  .convo-done-a { font-family:var(--sans); font-weight:600; font-size:14px; color:var(--text-primary); }
+  .convo-done-q { font-family:var(--sans); font-size:13px; color:var(--text-muted); }
+  .convo-other { display:flex; gap:8px; }
+  .convo-other-input { flex:1; min-width:0; font-family:var(--note-font); font-size:14px; padding:9px 14px; border:1.5px solid var(--border-strong); border-radius:999px; background:var(--surface-raised); color:var(--text-primary); outline:none; }
+  .convo-other-input:focus { border-color:var(--border-focus); box-shadow:0 0 0 3px rgba(38,112,184,0.12); }
+  .convo-other-add { flex-shrink:0; font-family:var(--sans); font-weight:600; font-size:13px; padding:9px 17px; border:0; border-radius:999px; background:var(--text-primary); color:var(--surface-base); cursor:pointer; min-height:40px; }
+  .convo-other-add:active { filter:brightness(1.15); }
+  .convo-done { display:flex; align-items:center; gap:7px; font-family:var(--sans); font-size:13px; font-weight:500; color:var(--confirmed-ink); animation:rowIn var(--motion-med) var(--ease-out); }
   .convo-done svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
 
   @media (prefers-reduced-motion: reduce) {
@@ -542,23 +549,42 @@
     setConfirmEnabled(false); // nothing logs to the feed until the gaps are filled
     var i=0;
     function nextQ(){ if(i>=g.qs.length){ renderConvoDone(convo); return; } renderConvoQ(convo,g.qs[i++],nextQ); }
-    convo.innerHTML=''; nextQ();
+    convo.innerHTML='';
+    var intro=document.createElement('p'); intro.className='convo-intro'; intro.textContent='A couple of quick things'; convo.appendChild(intro);
+    nextQ();
   }
   function renderConvoQ(convo,qobj,onAnswered){
-    var qEl=document.createElement('div'); qEl.className='convo-q';
-    qEl.innerHTML='<span class="convo-tna">TNA</span><p class="convo-q-text"></p>';
-    qEl.querySelector('.convo-q-text').textContent=qobj.q;
-    convo.appendChild(qEl);
+    var step=document.createElement('div'); step.className='convo-step';
+    var q=document.createElement('p'); q.className='convo-q-text'; q.textContent=qobj.q; step.appendChild(q);
     var chips=document.createElement('div'); chips.className='convo-chips';
     qobj.chips.forEach(function(c){
       var b=document.createElement('button'); b.type='button'; b.className='convo-chip'; b.textContent=c;
       b.addEventListener('click',function(){
-        Array.prototype.forEach.call(chips.children,function(x){ x.disabled=true; x.classList.remove('picked'); });
-        b.classList.add('picked'); convoAnswers.push(c); onAnswered();
+        if(/^other$/i.test(c)){ showOtherInput(step,qobj.q,onAnswered); }
+        else { finishConvoStep(step,qobj.q,c,onAnswered); }
       });
       chips.appendChild(b);
     });
-    convo.appendChild(chips);
+    step.appendChild(chips); convo.appendChild(step);
+  }
+  function showOtherInput(step,qtext,onAnswered){
+    var chips=step.querySelector('.convo-chips'); if(chips) chips.remove();
+    var row=document.createElement('div'); row.className='convo-other';
+    var inp=document.createElement('input'); inp.type='text'; inp.className='convo-other-input'; inp.placeholder='Type what it was'; inp.setAttribute('aria-label','Specify');
+    var add=document.createElement('button'); add.type='button'; add.className='convo-other-add'; add.textContent='Add';
+    row.appendChild(inp); row.appendChild(add); step.appendChild(row);
+    function commit(){ var v=inp.value.trim(); if(!v) return; finishConvoStep(step,qtext,v,onAnswered); }
+    add.addEventListener('click',commit);
+    inp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); commit(); } });
+    inp.focus({preventScroll:true});
+  }
+  function finishConvoStep(step,qtext,answer,onAnswered){
+    convoAnswers.push(answer);
+    step.className='convo-step convo-step--done';
+    step.innerHTML='<svg class="convo-tick" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8l3.5 3.5L13 5"/></svg><span class="convo-done-a"></span><span class="convo-done-q"></span>';
+    step.querySelector('.convo-done-a').textContent=answer;
+    step.querySelector('.convo-done-q').textContent=qtext.replace(/\?+$/,'');
+    onAnswered();
   }
   function renderConvoDone(convo){
     var d=document.createElement('div'); d.className='convo-done';
