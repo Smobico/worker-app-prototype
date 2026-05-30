@@ -227,7 +227,7 @@
   .cap-time-btn:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
   .cap-for { font-family:var(--sans); font-weight:600; font-size:17px; color:var(--text-primary); text-align:center; margin:0; }
   .cap-for .for { display:block; font-family:var(--mono); font-weight:500; font-size:9px; letter-spacing:0.3em; text-indent:0.15em; text-transform:uppercase; color:var(--text-muted); margin-bottom:2px; }
-  .cap-body { flex:1; min-height:0; padding:24px; display:flex; flex-direction:column; align-items:center; gap:24px; overflow-y:auto; scrollbar-width:none; }
+  .cap-body { flex:1; min-height:0; padding:24px 24px 160px; display:flex; flex-direction:column; align-items:center; gap:24px; overflow-y:auto; scrollbar-width:none; scroll-padding-bottom:160px; }
   .cap-body::-webkit-scrollbar { display:none; }
   .cap-state { display:none; flex-direction:column; align-items:center; gap:24px; width:100%; }
   #view-capture[data-state="ready"] .cs-ready { display:flex; }
@@ -306,7 +306,7 @@
   .convo-tick { width:15px; height:15px; fill:none; stroke:var(--confirmed-ink); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; transform:translateY(2px); }
   .convo-done-a { font-family:var(--sans); font-weight:600; font-size:14px; color:var(--text-primary); }
   .convo-done-q { font-family:var(--sans); font-size:13px; color:var(--text-muted); }
-  .convo-other { display:flex; gap:8px; }
+  .convo-other { display:flex; gap:8px; scroll-margin:100px 0; }
   .convo-other-input { flex:1; min-width:0; font-family:var(--note-font); font-size:14px; padding:9px 14px; border:1.5px solid var(--border-strong); border-radius:999px; background:var(--surface-raised); color:var(--text-primary); outline:none; }
   .convo-other-input:focus { border-color:var(--border-focus); box-shadow:0 0 0 3px rgba(38,112,184,0.12); }
   .convo-other-add { flex-shrink:0; font-family:var(--sans); font-weight:600; font-size:13px; padding:9px 17px; border:0; border-radius:999px; background:var(--text-primary); color:var(--surface-base); cursor:pointer; min-height:40px; }
@@ -576,7 +576,9 @@
     function commit(){ var v=inp.value.trim(); if(!v) return; finishConvoStep(step,qtext,v,onAnswered); }
     add.addEventListener('click',commit);
     inp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); commit(); } });
-    inp.focus({preventScroll:true});
+    // jump straight onto the field above the keyboard -- let iOS scroll it into view, then centre it
+    inp.focus();
+    try { inp.scrollIntoView({ block:'center' }); } catch(e){}
   }
   function finishConvoStep(step,qtext,answer,onAnswered){
     convoAnswers.push(answer);
