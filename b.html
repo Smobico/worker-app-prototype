@@ -635,9 +635,33 @@
   document.getElementById('drawer-backdrop').addEventListener('click', closeDrawer);
   document.getElementById('wrap-cancel').addEventListener('click', closeDrawer);
   document.getElementById('task-wrap').addEventListener('click', function(){ setDrawer('wrap'); });
+  function feedCount(){ return document.querySelectorAll('#events-list .msg').length; }
+  function copyShiftNote(){
+    var lines=[];
+    Array.prototype.forEach.call(document.querySelectorAll('#events-list .msg'), function(li){
+      var tm=li.querySelector('.bubble-time'), bx=li.querySelector('.bubble-text');
+      if(bx) lines.unshift((tm?tm.textContent+'  ':'')+bx.textContent.trim());
+    });
+    var note='Shift note - CG - Thursday 30 May\n\n'+lines.join('\n');
+    var btn=document.getElementById('wrap-copy');
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(note).then(
+        function(){ if(btn) btn.textContent='Copied to clipboard'; },
+        function(){ if(btn) btn.textContent='Press and hold to copy'; }
+      );
+    } else if(btn){ btn.textContent='Copied'; }
+  }
   document.getElementById('wrap-commit').addEventListener('click', function(){
-    closeDrawer();
-    document.getElementById('wrap-title').textContent = 'Shift wrapped. Nice work.';
+    var center=document.querySelector('.drawer[data-d="wrap"] .drawer-center');
+    if(!center){ closeDrawer(); return; }
+    center.innerHTML =
+      '<p class="drawer-eyebrow">Shift wrapped</p>'+
+      '<h2 class="drawer-title" style="text-align:center">Nice work.</h2>'+
+      '<p class="drawer-body-txt">You captured '+feedCount()+' notes for CG today. The record is up to date. Copy the shift note to paste into your roster system.</p>'+
+      '<button class="btn-commit" type="button" id="wrap-copy">Copy shift note</button>'+
+      '<button class="btn-cancel" type="button" id="wrap-done">Done</button>';
+    document.getElementById('wrap-copy').addEventListener('click', copyShiftNote);
+    document.getElementById('wrap-done').addEventListener('click', closeDrawer);
   });
 
   // ---- Drawer swipe-down to dismiss ----
@@ -656,6 +680,9 @@
   var compSpeak = document.getElementById('composer-speak');
   var compMic = document.getElementById('composer-mic');
   var readyComposer = document.getElementById('ready-composer');
+  var compHint = readyComposer.querySelector('.composer-hint');
+  var draftStash = null;   // a kept-but-not-saved note survives leaving capture and resumes on reopen
+  var HINT_DEFAULT = 'Type it, dictate it, or tap Speak. Your call.';
   // Empty -> mic + Speak (voice). Once you type, Speak becomes Send and the mic steps aside.
   var SVG_ARROW='<svg viewBox="0 0 24 24"><path d="M12 19V6M6 12l6-6 6 6"/></svg>';
   var SVG_SPEAK='<svg viewBox="0 0 24 24"><path d="M5 9v6M9 5v14M13 8v8M17 10v4M21 11v2"/></svg> Speak';
@@ -676,7 +703,14 @@
     if (listenEyebrow) listenEyebrow.textContent = 'Listening';
     clearComposer();
     capture.setAttribute('data-leave','0');
-    setState('ready'); syncComposerMode();
+    setState('ready');
+    if (draftStash && draftStash.text) {
+      compInput.value = draftStash.text; autoGrow();
+      if (compHint) compHint.textContent = 'Picking up your saved note.';
+    } else if (compHint) {
+      compHint.textContent = HINT_DEFAULT;
+    }
+    syncComposerMode();
     setView('capture');
   }
   document.getElementById('btn-newnote').addEventListener('click', openCapture);
@@ -770,9 +804,11 @@
   Array.prototype.forEach.call(document.querySelectorAll('.cap-nav .tab-btn'), function(b){
     b.addEventListener('click', function(){ requestLeave(b.getAttribute('data-capnav')); });
   });
-  document.getElementById('leave-save').addEventListener('click', function(){ doLeave(pendingLeave); });
-  document.getElementById('leave-later').addEventListener('click', function(){ doLeave(pendingLeave); });
-  document.getElementById('leave-discard').addEventListener('click', function(){ doLeave(pendingLeave); });
+  function currentDraftText(){ var me=thread.querySelector('.cbub--me'); return me ? me.textContent.trim() : compInput.value.trim(); }
+  function saveDraftAndLeave(){ var t=currentDraftText(); if(t) draftStash={ text:t }; doLeave(pendingLeave); }
+  document.getElementById('leave-save').addEventListener('click', saveDraftAndLeave);
+  document.getElementById('leave-later').addEventListener('click', saveDraftAndLeave);
+  document.getElementById('leave-discard').addEventListener('click', function(){ draftStash=null; doLeave(pendingLeave); });
   document.getElementById('leave-keep').addEventListener('click', hideLeaveSheet);
   document.getElementById('leave-scrim').addEventListener('click', hideLeaveSheet);
 
@@ -804,7 +840,7 @@
     startChat(t);
   }
   document.getElementById('btn-stop').addEventListener('click', stopListening);
-  document.getElementById('btn-discard').addEventListener('click', function(){ clearTimers(); resetChat(); setView('home'); });
+  document.getElementById('btn-discard').addEventListener('click', function(){ draftStash=null; clearTimers(); resetChat(); setView('home'); });
 
   // WhatsApp-style clamp: limit long bubbles to 4 lines, add a Read more / Show less toggle when they overflow
   function setupClamp(el){
@@ -846,6 +882,7 @@
     var text = me ? me.textContent.trim() : '';
     if (capAnswers.length) text += ' (' + capAnswers.join(', ') + ')';
     if (text) { addFeedEntry(text, captureType==='boc'?'boc':'note'); }
+    draftStash=null;
     resetChat();
     setView('home');
   });
@@ -925,7 +962,8 @@
   // ---- Escape closes whatever is open ----
   document.addEventListener('keydown', function(e){
     if (e.key !== 'Escape') return;
-    if (app.getAttribute('data-view')==='capture') { clearTimers(); setView('home'); return; }
+    if (capture.getAttribute('data-leave')==='1') { hideLeaveSheet(); return; }
+    if (app.getAttribute('data-view')==='capture') { requestLeave('home'); return; }
     if (app.getAttribute('data-drawer')!=='none') closeDrawer();
   });
 })();
