@@ -669,10 +669,14 @@
   // content-area ceiling -- it can never be pushed off-screen (this is the Grok behaviour).
   function syncCaptureKeyboardPad(){
     var vv=window.visualViewport; if(!vv) return;
-    if (app.getAttribute('data-view')!=='capture'){ capture.style.top=''; capture.style.height=''; capture.setAttribute('data-kb','0'); return; }
+    // Only pin to the visual viewport when the keyboard is actually UP. With the keyboard down we clear
+    // the inline overrides so the CSS (top:0; height:100%) fills the screen -- otherwise the at-rest
+    // visual viewport (shorter than the layout viewport) left a strip at the bottom that leaked the feed.
+    var kbOpen = app.getAttribute('data-view')==='capture' && (window.innerHeight - vv.height) > 60;
+    if (!kbOpen){ capture.style.top=''; capture.style.height=''; capture.setAttribute('data-kb','0'); return; }
     capture.style.top = vv.offsetTop + 'px';
     capture.style.height = vv.height + 'px';
-    capture.setAttribute('data-kb', ((window.innerHeight - vv.height) > 60) ? '1' : '0');
+    capture.setAttribute('data-kb','1');
   }
   if(window.visualViewport){ window.visualViewport.addEventListener('resize', syncCaptureKeyboardPad); window.visualViewport.addEventListener('scroll', syncCaptureKeyboardPad); }
   function setView(v) { app.setAttribute('data-view', v); syncCaptureKeyboardPad(); }
