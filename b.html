@@ -141,6 +141,10 @@
   .prov--voice, .prov--typed { background:var(--pill-neutral-bg); color:var(--pill-neutral-ink); }
   .prov--ai { background:rgba(110,122,176,0.16); color:#3F4974; }
   [data-theme="dark"] .prov--ai { background:rgba(140,150,200,0.20); color:#B9C0E0; }
+  /* Reportable indicator on an incident feed entry: care-tone, NOT alarm-red. Surfaces the 24-hr Commission clock. */
+  .bubble-flag { display:inline-flex; align-items:center; gap:4px; font-family:var(--mono); font-size:8px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#8A4F22; background:rgba(232,168,124,0.18); padding:4px 7px; border-radius:999px; }
+  .bubble-flag svg { width:9px; height:9px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  [data-theme="dark"] .bubble-flag { color:#E8A87C; background:rgba(232,168,124,0.16); }
   .event-new { animation:rowIn var(--motion-med) var(--ease-out); }
   @keyframes rowIn { from{opacity:0; transform:translateY(-6px);} to{opacity:1; transform:none;} }
 
@@ -331,6 +335,13 @@
   /* Native time input for the "Other time" branch of the event-time question (Layer B: native picker). */
   .cq-time { font-family:var(--mono); font-size:15px; color:var(--text-primary); background:var(--surface-raised); border:1.5px solid var(--border-strong); border-radius:999px; padding:8px 14px; min-height:40px; }
   .cq-time:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
+  /* Escalation result bubble (BOC -> incident). CARE-TONE peach, never alarm-red (S-3.8: worker-facing layer stays
+     compassionate; the regulatory severity lives in the audit layer, not in the worker's face -> H-6 surveillance,
+     H-3 RP-creep). Used when a logged BOC becomes an incident / reportable incident. */
+  .cbub--escalate { align-self:flex-start; max-width:88%; display:flex; align-items:flex-start; gap:9px; background:rgba(232,168,124,0.16); border:1px solid rgba(232,168,124,0.42); color:var(--text-primary); border-radius:18px 18px 18px 6px; padding:13px 15px; font-family:var(--note-font); font-size:14.5px; line-height:1.5; animation:rowIn var(--motion-med) var(--ease-out); }
+  .cbub--escalate svg { width:18px; height:18px; flex-shrink:0; margin-top:1px; fill:none; stroke:#8A4F22; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  [data-theme="dark"] .cbub--escalate { background:rgba(232,168,124,0.18); border-color:rgba(232,168,124,0.36); }
+  [data-theme="dark"] .cbub--escalate svg { stroke:#E8A87C; }
   .cbub--done { align-self:flex-start; display:inline-flex; align-items:center; gap:7px; font-family:var(--sans); font-weight:700; font-size:14px; color:var(--confirmed-ink); padding:4px 2px; animation:rowIn var(--motion-med) var(--ease-out); }
   .cbub--done svg { width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
   .cap-dock { flex-shrink:0; padding:12px 20px calc(14px + var(--safe-bottom)); border-top:1px solid var(--border-default); display:none; align-items:center; justify-content:space-between; gap:12px; }
@@ -422,7 +433,7 @@
 <!-- Genuine ThetaNote brand mark (assets/brand/logo-icon.svg) as a reusable symbol; inherits currentColor so it themes navy (light) / warm-white (dark). -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><symbol id="tn-mark" viewBox="0 0 2000 2000"><path fill="currentColor" d="M1451.618,1533.665c-114.324,149.568-286.706,232.907-475.975,225.013-39.708-1.656-76.796-7.675-114.879-16.908-72.005-17.457-171.436-65.097-223.654-114.512l-45.659-43.208c-28.308-30.436-53.221-62.368-75.117-97.784-51.789-83.768-82.656-175.66-97.77-272.538l-10.076-91.014-2.599-52.682c-2.711-54.96-1.532-108.303.773-163.187,5.217-124.199,32.953-269.386,97.186-376.201l17.868-29.713,29.951-42.188c22.508-31.704,49.899-57.875,79.405-83.448,39.801-34.496,83.041-61.267,131.148-83.376,147.114-67.611,325.546-68.342,473.204-1.002,58.908,26.865,99.95,54.84,147.903,97.517,22.597,20.111,41.578,41.685,60.817,65.038,24.624,29.889,44.363,61.887,62.493,96.069l25.632,54.815c27.093,57.94,50.443,161.494,55.682,226.247l5.068,62.641,2.653,129.463-1.468,64.327-8.328,96.761c-16.021,127.186-55.979,247.457-134.26,349.871ZM1304.187,1506.225c31.169-30.339,59.197-63.115,79.626-101.466l19.403-36.425,27.233-69.542,12.866-46.911c26.485-114.119,27.192-243.312,20.772-360.596l-4.715-49.639-12.228-78.147-18.286-66.247c-6.559-23.764-15.062-46.246-27.087-67.695l-31.954-56.998c-29.09-44.225-63.999-82.135-106.157-114.294-19.47-14.853-38.568-27.984-60.463-38.784-23.401-11.543-45.789-22.341-70.92-30.266-66.401-20.939-135.142-24.856-204.156-14.297-84.984,13.002-168.317,55.382-229.657,115.114-52.056,50.692-91.158,111.283-117.063,179.441-31.271,82.277-42.396,166.565-46.302,254.699-3.355,75.707-1.625,149.236,5.111,224.545,7.294,81.552,28.756,166.171,67.152,238.489,28.5,53.679,79.343,120.792,128.534,153.927l46.92,31.604,27.185,14.377c71.005,34.23,148.315,48.85,227.574,42.219,99.844-8.353,195.182-53.585,266.611-123.111Z"/><path fill="currentColor" d="M1328.865,1183.699c-21.305,57.516-65.175,99.194-126.807,105.449-22.486,2.282-43.474-.078-64.412-8.532-39.523-15.958-71.013-44.66-92.108-81.571l-21.742-38.043-16.883-31.15-62.661-116.73-86.507-160.07c-8.061-14.917-20.172-27.407-33.657-36.101-12.542-8.086-28.563-4.421-35.959,8.017-7.706,12.959-12.103,27.147-16.842,41.51l-9.816,29.749c-4.014,12.163-15.491,20.68-27.502,24.396-39.789,12.308-80.882-8.98-76.517-34.638l6.551-38.51c10.836-63.694,52.634-121.157,117.117-138.348,66.324-17.682,144.218,24.368,176.222,83.054l52.015,95.381,59.226,113.185,44.206,83.967,20.386,37.773c12.268,22.73,30.313,52.557,52.851,58.481,29.403,7.729,37.913-37.441,45.737-61.66l9.178-28.41c8.807-27.262,58.066-36.01,91.999-14.494,11.471,7.273,16.622,19.827,14.471,33.027-4.15,25.47-9.613,50.143-18.549,74.268Z"/></symbol></svg>
 <!-- Build stamp: confirms at a glance which deployed version the device is running (ends "did it land?" guessing). Update the text on every deploy. -->
-<div id="build-stamp" aria-hidden="true" style="position:fixed;top:max(env(safe-area-inset-top,0px),2px);left:50%;transform:translateX(-50%);z-index:99999;font:600 9px/1 ui-monospace,monospace;letter-spacing:0.08em;color:var(--text-muted);opacity:0.5;pointer-events:none;background:var(--surface-base);padding:2px 7px;border-radius:0 0 7px 7px;">v15</div>
+<div id="build-stamp" aria-hidden="true" style="position:fixed;top:max(env(safe-area-inset-top,0px),2px);left:50%;transform:translateX(-50%);z-index:99999;font:600 9px/1 ui-monospace,monospace;letter-spacing:0.08em;color:var(--text-muted);opacity:0.5;pointer-events:none;background:var(--surface-base);padding:2px 7px;border-radius:0 0 7px 7px;">v16</div>
 <div class="app" id="app" data-drawer="none" data-view="home">
 
   <!-- ============ HOME (shift feed) ============ -->
@@ -852,7 +863,21 @@
   // Provenance of the note being captured: 'voice' once the mic / voice-agent is used, else 'typed'. Drives the
   // feed pill (the signature move). Resets to typed each new capture.
   var captureMode='typed';
-  function resetChat(){ captureType='note'; qQueue=[]; capAnswers=[]; pendingQ=null; captureEventTime=null; captureMode='typed'; if(thread) thread.innerHTML=''; }
+  // BOC -> incident escalation state. captureBoc holds the keyed structured answers (injury / rp / rpauth);
+  // captureIncidentLevel is the derived tier: 'boc' (Tier 1, log only) | 'incident' (Tier 2) | 'reportable' (Tier 3).
+  var captureBoc={}, captureIncidentLevel='note';
+  function resetChat(){ captureType='note'; qQueue=[]; capAnswers=[]; pendingQ=null; captureEventTime=null; captureMode='typed'; captureBoc={}; captureIncidentLevel='note'; if(thread) thread.innerHTML=''; }
+  // Silent tier determination (NDIS reportable rules). The worker never sees "Tier N" -- only compassionate framing.
+  // Tier 3 (reportable): injury needing medical attention, OR restrictive practice that is unauthorised / unsure.
+  // Tier 2 (incident): any other injury, OR an authorised restrictive practice.  Tier 1: neither -> log as BOC.
+  function computeTier(b){
+    var injury=b.injury||'', rp=b.rp||'No', rpauth=b.rpauth||'';
+    if(/medical attention/i.test(injury)) return 'reportable';
+    if(!/^no$/i.test(rp) && /^(no|not sure)$/i.test(rpauth)) return 'reportable';
+    if(/minor mark|first aid/i.test(injury)) return 'incident';
+    if(!/^no$/i.test(rp)) return 'incident';                 // authorised RP still raises an incident report
+    return 'boc';
+  }
   // Build a provenance pill element for a feed entry. Quiet, mono, icon + label.
   function provPill(mode){
     var span=document.createElement('span');
@@ -885,9 +910,13 @@
   function gapQuestions(txt){
     txt=(txt||'').toLowerCase();
     if(/agitat|pacing|\bpace\b|flap|pinch|grab|bite|unsettl|distress|escalat|lunge|lunging|\bkick|scratch|threw|\bhit\b|restrain|aggress/.test(txt))
+      // BOC = the locked structured set (D1.7), rendered as chat. Keyed questions (injury / rp / rpauth) drive
+      // the tier + escalation; un-keyed ones (settle / helped) are clinical colour for the note body. This is the
+      // BOC card -- the locked contract is that behaviour incidents get the structured card, NOT loose follow-ups.
       return {type:'boc',qs:[
         {q:'Roughly how long until CG settled?',chips:['Under 5 min','5-10 min','Over 10 min']},
-        {q:'Was there any pinch, grab or bite?',chips:['No contact','Tried, no contact','Made contact']},
+        {key:'injury',q:'Any injury this time -- to CG or you?',chips:['No injury','Minor mark','First aid given','Medical attention needed']},
+        {key:'rp',q:'Did you need to use any restrictive practice?',chips:['No','Physical hold','PRN medication','Environmental','Seclusion']},
         {q:'What helped him settle?',chips:['Deep pressure','Weighted blanket','Quiet space','Just time']}
       ]};
     if(/lunch|breakfast|dinner|\bmeal|food|\bate\b|\beat\b|drink|snack/.test(txt))
@@ -972,17 +1001,61 @@
     setTimeout(askNext, 240);
   }
   function answerQ(ans){
+    var k = pendingQ && pendingQ.key;
     Array.prototype.forEach.call(thread.querySelectorAll('.cq-chips'), function(r){ r.remove(); });
-    capAnswers.push(ans); pendingQ=null;
+    pendingQ=null;
     addCbub('me', ans);
+    if(k){ captureBoc[k]=ans; } else { capAnswers.push(ans); }
+    // RP used -> ask if it was authorised. Worded as a plain clinical question, no judgment (S-3.8 worker layer).
+    if(k==='rp' && !/^no$/i.test(ans)){
+      qQueue.unshift({key:'rpauth',q:"Is that one authorised in CG's plan?",chips:['Yes','No','Not sure']});
+    }
     setTimeout(askNext, 240);
+  }
+  function showDone(msg){
+    var d=document.createElement('div'); d.className='cbub--done';
+    d.innerHTML='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8l3.5 3.5L13 5"/></svg> ';
+    d.appendChild(document.createTextNode(msg));
+    thread.appendChild(d); threadScroll();
+    setState('done'); syncComposerMode();
+  }
+  // Care-tone escalation bubble (peach, never alarm). The visible expression of BOC -> incident.
+  function addEscalateBubble(text){
+    var d=document.createElement('div'); d.className='cbub--escalate';
+    d.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg><span></span>';
+    d.querySelector('span').textContent=text;
+    thread.appendChild(d); threadScroll();
+  }
+  function showEscalationResult(level){
+    if(level==='reportable'){
+      addEscalateBubble("Thanks for flagging all that. I've started an incident report and it needs to go to the Commission within 24 hours -- your coordinator has been notified and will help with that. You don't need to do anything else right now.");
+    } else {
+      addEscalateBubble("I've started an incident report from this so your coordinator sees it. Nothing more for you to do right now.");
+    }
+    showDone('All saved. Tap save to add it to the feed.');
+  }
+  function runEscalation(level){
+    if(level==='reportable'){
+      // Tier 3: worker welfare BEFORE anything else (the locked escalation chain leads with welfare, not paperwork).
+      addCbub('ai','Before we finish -- are you okay after that?');
+      var row=document.createElement('div'); row.className='cq-chips';
+      ['I am okay','It was hard','I need support'].forEach(function(c){
+        var b=document.createElement('button'); b.type='button'; b.className='cq-chip'; b.textContent=c;
+        b.addEventListener('click', function(){ row.remove(); addCbub('me', c); setTimeout(function(){ showEscalationResult(level); }, 260); });
+        row.appendChild(b);
+      });
+      thread.appendChild(row); threadScroll();
+    } else {
+      showEscalationResult(level);
+    }
   }
   function finishChat(){
     pendingQ=null;
-    var d=document.createElement('div'); d.className='cbub--done';
-    d.innerHTML='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8l3.5 3.5L13 5"/></svg> All set. Save it to the feed whenever you are ready.';
-    thread.appendChild(d); threadScroll();
-    setState('done'); syncComposerMode();
+    if(captureType==='boc'){
+      captureIncidentLevel=computeTier(captureBoc);   // 'boc' | 'incident' | 'reportable'
+      if(captureIncidentLevel!=='boc'){ runEscalation(captureIncidentLevel); return; }
+    }
+    showDone('All set. Save it to the feed whenever you are ready.');
   }
 
   // ---- Capture back / time ----
@@ -1090,14 +1163,26 @@
     var t;
     if (captureEventTime && captureEventTime.hhmm) { t = captureEventTime.hhmm; }
     else { var now=new Date(); t=(now.getHours()<10?'0':'')+now.getHours()+':'+(now.getMinutes()<10?'0':'')+now.getMinutes(); }
+    // Feed entry types: note | boc (Tier 1) | incident (Tier 2) | reportable (Tier 3, carries the 24-hr flag).
+    var isReportable=(type==='reportable');
+    var isIncident=(type==='incident'||isReportable);
     var isBoc=(type==='boc');
-    var li=document.createElement('li'); li.className='msg'+(isBoc?' msg--boc':'');
-    var bubble=document.createElement('div'); bubble.className='bubble '+(isBoc?'bubble--boc':'bubble--note'); bubble.setAttribute('tabindex','0');
-    if(isBoc){ var tag=document.createElement('span'); tag.className='bubble-tag'; tag.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 16H3z"/><path d="M12 9v4M12 17h.01"/></svg> Behaviour of concern'; bubble.appendChild(tag); }
+    var li=document.createElement('li'); li.className='msg'+(isIncident?' msg--incident':(isBoc?' msg--boc':''));
+    var bubble=document.createElement('div'); bubble.className='bubble '+(isIncident?'bubble--incident':(isBoc?'bubble--boc':'bubble--note')); bubble.setAttribute('tabindex','0');
+    if(isIncident||isBoc){
+      var tag=document.createElement('span'); tag.className='bubble-tag';
+      tag.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 16H3z"/><path d="M12 9v4M12 17h.01"/></svg> '+(isIncident?'Incident report':'Behaviour of concern');
+      bubble.appendChild(tag);
+    }
     var p=document.createElement('p'); p.className='bubble-text'; p.textContent=text; bubble.appendChild(p);
     var meta=document.createElement('div'); meta.className='bubble-meta';
     var time=document.createElement('span'); time.className='bubble-time'; time.textContent=t;
     meta.appendChild(time); meta.appendChild(provPill(captureMode));
+    if(isReportable){
+      var flag=document.createElement('span'); flag.className='bubble-flag';
+      flag.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Reportable - 24 hr';
+      meta.appendChild(flag);
+    }
     li.appendChild(bubble); li.appendChild(meta);
     list.insertBefore(li, list.firstChild);
     setupClamp(p);
