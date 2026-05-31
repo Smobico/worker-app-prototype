@@ -37,8 +37,11 @@
     --mono:"DM Mono",ui-monospace,monospace;
     --bg:#FAF9F5; --raised:#FFFFFF; --muted:#EFEDE4; --line:#E4E2D7; --line-strong:#CFCcBE;
     --ink:#14130F; --ink2:#46443C; --ink3:#757266;
-    --navy:#16306B; --boc:#B23A2E; --med:#5A6B52; --ai-bg:#E7E5F0; --ai-ink:#494279;
+    --navy:#16306B; --boc:#B23A2E; --med:#46603F; --ai-bg:#E7E5F0; --ai-ink:#494279;
+    --navy-wash:#EBEFF6; --boc-wash:#F6EAE8; --med-wash:#EAEFE6;
     --cap:#E8893C; --cap-ink:#1A0E03; --cap-shadow:rgba(150,80,28,0.55);
+    /* tinted shadow (DESIGN.md): the shadow IS the ink colour, translucent -- warm, not neutral-grey */
+    --sh-1:0 1px 2px rgba(20,22,28,0.06); --sh-2:0 4px 14px -6px rgba(20,22,28,0.18);
     border-radius:30px; overflow:hidden; background:var(--bg); color:var(--ink);
     box-shadow:0 20px 48px -18px rgba(20,22,28,0.55), 0 0 0 1px rgba(0,0,0,0.05);
   }
@@ -95,14 +98,16 @@
      V2 -- BOLD BLOCKS (solid cards, coloured header band)
      ==================================================================== */
   .bk { padding:8px 18px 16px; display:flex; flex-direction:column; gap:13px; }
-  .bk-card { background:var(--raised); border-radius:16px; overflow:hidden; box-shadow:0 2px 8px -3px rgba(20,22,28,0.16); border:1px solid var(--line); }
-  .bk-band { display:flex; align-items:center; justify-content:space-between; padding:9px 14px; background:var(--navy); color:#fff; }
-  .bk-card.is-boc .bk-band { background:var(--boc); }
-  .bk-card.is-med .bk-band { background:var(--med); }
-  .bk-card.is-note .bk-band { background:var(--navy); }
+  .bk-card { background:var(--raised); border-radius:16px; overflow:hidden; box-shadow:var(--sh-2); border:1px solid var(--line); }
+  /* impeccable: tints over saturated fills for entry type; saturation reserved for the capture action only.
+     Band is a tinted wash + coloured-ink label, not a solid block. */
+  .bk-band { display:flex; align-items:center; justify-content:space-between; padding:11px 15px; background:var(--navy-wash); color:var(--navy); border-bottom:1px solid var(--line); }
+  .bk-card.is-boc .bk-band { background:var(--boc-wash); color:var(--boc); }
+  .bk-card.is-med .bk-band { background:var(--med-wash); color:var(--med); }
+  .bk-card.is-note .bk-band { background:var(--navy-wash); color:var(--navy); }
   .bk-band-l { display:inline-flex; align-items:center; gap:7px; font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; }
-  .bk-band-l svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
-  .bk-time { font-family:var(--mono); font-size:12px; font-weight:600; opacity:0.92; font-variant-numeric:tabular-nums; }
+  .bk-band-l svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
+  .bk-time { font-family:var(--mono); font-size:12px; font-weight:600; opacity:0.78; font-variant-numeric:tabular-nums; }
   .bk-body { padding:13px 15px 14px; font-size:15.5px; font-weight:600; line-height:1.48; color:var(--ink); margin:0; }
   .bk-prov { display:inline-flex; align-items:center; gap:5px; margin:0 15px 13px; font-family:var(--mono); font-size:8px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); background:var(--muted); padding:4px 8px; border-radius:999px; }
   .bk-prov svg { width:10px; height:10px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
@@ -132,12 +137,12 @@
   .gr-head:first-child { margin-top:4px; }
   .gr-head .lab { font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--ink2); }
   .gr-head .ln { flex:1; height:2px; background:var(--line-strong); border-radius:2px; }
-  .gr-card { background:var(--raised); border:1px solid var(--line); border-radius:14px; padding:13px 15px; margin-bottom:11px; box-shadow:0 1px 3px rgba(20,22,28,0.06); border-left:4px solid var(--navy); }
-  .gr-card.is-boc { border-left-color:var(--boc); }
-  .gr-card.is-med { border-left-color:var(--med); }
-  .gr-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:7px; }
-  .gr-tag { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700; letter-spacing:-0.01em; }
-  .gr-tag svg { width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+  /* no side-stripe (impeccable ban): type is signalled by a leading coloured dot in the tag + coloured-ink tag. */
+  .gr-card { background:var(--raised); border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:11px; box-shadow:var(--sh-1); }
+  .gr-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .gr-tag { display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:700; letter-spacing:-0.01em; }
+  .gr-tag::before { content:""; width:8px; height:8px; border-radius:50%; background:currentColor; flex-shrink:0; }
+  .gr-tag svg { width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
   .gr-time { font-family:var(--mono); font-size:11px; font-weight:600; color:var(--ink3); font-variant-numeric:tabular-nums; }
   .gr-body { font-size:15px; font-weight:600; line-height:1.46; color:var(--ink); margin:0; }
   .gr-prov { font-family:var(--mono); font-size:8px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); margin-top:7px; display:inline-block; }
