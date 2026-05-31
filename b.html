@@ -128,10 +128,19 @@
   .bubble--boc .bubble-tag { color:var(--accent-fill); }
   .bubble--incident { border:1.5px solid var(--accent-fill); }
   .bubble--incident .bubble-tag { color:var(--speak-ink); background:var(--accent-fill); border-radius:999px; padding:4px 10px; }
-  .prov { display:inline-flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:8px; line-height:1; letter-spacing:0.14em; text-indent:0.07em; text-transform:uppercase; padding:5px 8px; border-radius:999px; white-space:nowrap; align-self:center; }
-  .prov--voice, .prov--med { background:var(--pill-neutral-bg); color:var(--pill-neutral-ink); }
-  .prov--worker { background:var(--pill-worker-bg); color:var(--pill-worker-ink); }
-  .prov--boc { background:var(--pill-boc-bg); color:var(--pill-boc-ink); }
+  /* Meta row under each bubble: event time + provenance pill, left-aligned together. */
+  .bubble-meta { display:flex; align-items:center; gap:8px; padding-left:8px; }
+  .bubble-meta .bubble-time { padding-left:0; }
+  /* Provenance pill -- the signature move: where this entry's content came from. Quiet by design (small, muted
+     mono) so it reads as a record detail, not worker surveillance (H-6). Three states the worker generates:
+     VOICE (worker_stated_voice), TYPED (worker_stated_typed), AI (ai_inferred). Full ladder per
+     project_provenance_discipline_principle; the rest (worker_confirmed / provider_uploaded / clinician_validated)
+     appear once those actors exist. */
+  .prov { display:inline-flex; align-items:center; gap:4px; font-family:var(--mono); font-size:8px; line-height:1; letter-spacing:0.12em; text-indent:0.06em; text-transform:uppercase; padding:4px 7px; border-radius:999px; white-space:nowrap; }
+  .prov svg { width:9px; height:9px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .prov--voice, .prov--typed { background:var(--pill-neutral-bg); color:var(--pill-neutral-ink); }
+  .prov--ai { background:rgba(110,122,176,0.16); color:#3F4974; }
+  [data-theme="dark"] .prov--ai { background:rgba(140,150,200,0.20); color:#B9C0E0; }
   .event-new { animation:rowIn var(--motion-med) var(--ease-out); }
   @keyframes rowIn { from{opacity:0; transform:translateY(-6px);} to{opacity:1; transform:none;} }
 
@@ -413,7 +422,7 @@
 <!-- Genuine ThetaNote brand mark (assets/brand/logo-icon.svg) as a reusable symbol; inherits currentColor so it themes navy (light) / warm-white (dark). -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><symbol id="tn-mark" viewBox="0 0 2000 2000"><path fill="currentColor" d="M1451.618,1533.665c-114.324,149.568-286.706,232.907-475.975,225.013-39.708-1.656-76.796-7.675-114.879-16.908-72.005-17.457-171.436-65.097-223.654-114.512l-45.659-43.208c-28.308-30.436-53.221-62.368-75.117-97.784-51.789-83.768-82.656-175.66-97.77-272.538l-10.076-91.014-2.599-52.682c-2.711-54.96-1.532-108.303.773-163.187,5.217-124.199,32.953-269.386,97.186-376.201l17.868-29.713,29.951-42.188c22.508-31.704,49.899-57.875,79.405-83.448,39.801-34.496,83.041-61.267,131.148-83.376,147.114-67.611,325.546-68.342,473.204-1.002,58.908,26.865,99.95,54.84,147.903,97.517,22.597,20.111,41.578,41.685,60.817,65.038,24.624,29.889,44.363,61.887,62.493,96.069l25.632,54.815c27.093,57.94,50.443,161.494,55.682,226.247l5.068,62.641,2.653,129.463-1.468,64.327-8.328,96.761c-16.021,127.186-55.979,247.457-134.26,349.871ZM1304.187,1506.225c31.169-30.339,59.197-63.115,79.626-101.466l19.403-36.425,27.233-69.542,12.866-46.911c26.485-114.119,27.192-243.312,20.772-360.596l-4.715-49.639-12.228-78.147-18.286-66.247c-6.559-23.764-15.062-46.246-27.087-67.695l-31.954-56.998c-29.09-44.225-63.999-82.135-106.157-114.294-19.47-14.853-38.568-27.984-60.463-38.784-23.401-11.543-45.789-22.341-70.92-30.266-66.401-20.939-135.142-24.856-204.156-14.297-84.984,13.002-168.317,55.382-229.657,115.114-52.056,50.692-91.158,111.283-117.063,179.441-31.271,82.277-42.396,166.565-46.302,254.699-3.355,75.707-1.625,149.236,5.111,224.545,7.294,81.552,28.756,166.171,67.152,238.489,28.5,53.679,79.343,120.792,128.534,153.927l46.92,31.604,27.185,14.377c71.005,34.23,148.315,48.85,227.574,42.219,99.844-8.353,195.182-53.585,266.611-123.111Z"/><path fill="currentColor" d="M1328.865,1183.699c-21.305,57.516-65.175,99.194-126.807,105.449-22.486,2.282-43.474-.078-64.412-8.532-39.523-15.958-71.013-44.66-92.108-81.571l-21.742-38.043-16.883-31.15-62.661-116.73-86.507-160.07c-8.061-14.917-20.172-27.407-33.657-36.101-12.542-8.086-28.563-4.421-35.959,8.017-7.706,12.959-12.103,27.147-16.842,41.51l-9.816,29.749c-4.014,12.163-15.491,20.68-27.502,24.396-39.789,12.308-80.882-8.98-76.517-34.638l6.551-38.51c10.836-63.694,52.634-121.157,117.117-138.348,66.324-17.682,144.218,24.368,176.222,83.054l52.015,95.381,59.226,113.185,44.206,83.967,20.386,37.773c12.268,22.73,30.313,52.557,52.851,58.481,29.403,7.729,37.913-37.441,45.737-61.66l9.178-28.41c8.807-27.262,58.066-36.01,91.999-14.494,11.471,7.273,16.622,19.827,14.471,33.027-4.15,25.47-9.613,50.143-18.549,74.268Z"/></symbol></svg>
 <!-- Build stamp: confirms at a glance which deployed version the device is running (ends "did it land?" guessing). Update the text on every deploy. -->
-<div id="build-stamp" aria-hidden="true" style="position:fixed;top:max(env(safe-area-inset-top,0px),2px);left:50%;transform:translateX(-50%);z-index:99999;font:600 9px/1 ui-monospace,monospace;letter-spacing:0.08em;color:var(--text-muted);opacity:0.5;pointer-events:none;background:var(--surface-base);padding:2px 7px;border-radius:0 0 7px 7px;">v14</div>
+<div id="build-stamp" aria-hidden="true" style="position:fixed;top:max(env(safe-area-inset-top,0px),2px);left:50%;transform:translateX(-50%);z-index:99999;font:600 9px/1 ui-monospace,monospace;letter-spacing:0.08em;color:var(--text-muted);opacity:0.5;pointer-events:none;background:var(--surface-base);padding:2px 7px;border-radius:0 0 7px 7px;">v15</div>
 <div class="app" id="app" data-drawer="none" data-view="home">
 
   <!-- ============ HOME (shift feed) ============ -->
@@ -440,13 +449,13 @@
             <span class="bubble-tag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 16H3z"/><path d="M12 9v4M12 17h.01"/></svg> Behaviour of concern</span>
             <p class="bubble-text">Became unsettled in the lounge around 11:10, pacing and flapping and tapping at the window. Offered the weighted blanket early and brought him through to the quiet room with the lights low. He settled after about ten minutes of deep pressure. No pinching or contact, and he stayed calm right through to lunch.</p>
           </div>
-          <span class="bubble-time">11:10</span>
+          <div class="bubble-meta"><span class="bubble-time">11:10</span><span class="prov prov--voice"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg>Voice</span></div>
         </li>
         <li class="msg">
           <div class="bubble bubble--note" tabindex="0">
             <p class="bubble-text">Settled at the table after a short pace around the lounge. Accepted a drink.</p>
           </div>
-          <span class="bubble-time">09:42</span>
+          <div class="bubble-meta"><span class="bubble-time">09:42</span><span class="prov prov--typed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L18 8l-4-4L2 16z"/><path d="M13 5l4 4"/></svg>Typed</span></div>
         </li>
         <li class="msg msg--med">
           <div class="bubble bubble--med" tabindex="0">
@@ -459,7 +468,7 @@
           <div class="bubble bubble--note" tabindex="0">
             <p class="bubble-text">Woke calm, good eye contact, chose his green jumper himself.</p>
           </div>
-          <span class="bubble-time">07:50</span>
+          <div class="bubble-meta"><span class="bubble-time">07:50</span><span class="prov prov--voice"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg>Voice</span></div>
         </li>
       </ul>
     </div>
@@ -840,7 +849,18 @@
   // C-OCC: capture WHEN the event happened (event time), distinct from when it was logged. Workers log
   // retrospectively (2 min - 1 hr later), so the feed entry + shift note must carry event time, not log time.
   var captureEventTime=null;
-  function resetChat(){ captureType='note'; qQueue=[]; capAnswers=[]; pendingQ=null; captureEventTime=null; if(thread) thread.innerHTML=''; }
+  // Provenance of the note being captured: 'voice' once the mic / voice-agent is used, else 'typed'. Drives the
+  // feed pill (the signature move). Resets to typed each new capture.
+  var captureMode='typed';
+  function resetChat(){ captureType='note'; qQueue=[]; capAnswers=[]; pendingQ=null; captureEventTime=null; captureMode='typed'; if(thread) thread.innerHTML=''; }
+  // Build a provenance pill element for a feed entry. Quiet, mono, icon + label.
+  function provPill(mode){
+    var span=document.createElement('span');
+    if(mode==='voice'){ span.className='prov prov--voice'; span.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg>Voice'; }
+    else if(mode==='ai'){ span.className='prov prov--ai'; span.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18"/></svg>AI'; }
+    else { span.className='prov prov--typed'; span.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L18 8l-4-4L2 16z"/><path d="M13 5l4 4"/></svg>Typed'; }
+    return span;
+  }
   function pad2(n){ return (n<10?'0':'')+n; }
   function minsAgoHHMM(mins){ var d=new Date(Date.now()-mins*60000); return pad2(d.getHours())+':'+pad2(d.getMinutes()); }
   // Zero-SW-tax Rule 1 (never ask what you can infer): if the worker already stated WHEN in their note, skip the
@@ -1039,7 +1059,7 @@
     var t = (recogText && recogText.trim()) ? recogText.trim() : TRANSCRIPT;
     recog = null; recogText = '';
     clearTimers();
-    startChat(t);
+    startChat(t); captureMode='voice'; /* spoken capture = worker_stated_voice */
   }
   document.getElementById('btn-stop').addEventListener('click', stopListening);
   document.getElementById('btn-discard').addEventListener('click', function(){ clearTimers(); resetChat(); setView('home'); });
@@ -1075,8 +1095,10 @@
     var bubble=document.createElement('div'); bubble.className='bubble '+(isBoc?'bubble--boc':'bubble--note'); bubble.setAttribute('tabindex','0');
     if(isBoc){ var tag=document.createElement('span'); tag.className='bubble-tag'; tag.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 16H3z"/><path d="M12 9v4M12 17h.01"/></svg> Behaviour of concern'; bubble.appendChild(tag); }
     var p=document.createElement('p'); p.className='bubble-text'; p.textContent=text; bubble.appendChild(p);
+    var meta=document.createElement('div'); meta.className='bubble-meta';
     var time=document.createElement('span'); time.className='bubble-time'; time.textContent=t;
-    li.appendChild(bubble); li.appendChild(time);
+    meta.appendChild(time); meta.appendChild(provPill(captureMode));
+    li.appendChild(bubble); li.appendChild(meta);
     list.insertBefore(li, list.firstChild);
     setupClamp(p);
     return li;
@@ -1100,7 +1122,7 @@
     var base = compInput.value ? compInput.value.replace(/\s+$/,'') + ' ' : '';
     try {
       dictRecog = new SR(); dictRecog.continuous=true; dictRecog.interimResults=true; dictRecog.lang='en-AU';
-      dictRecog.onresult=function(e){ var s=''; for(var i=0;i<e.results.length;i++){ s+=e.results[i][0].transcript; } compInput.value=base+s; autoGrow(); syncComposerMode(); };
+      dictRecog.onresult=function(e){ var s=''; for(var i=0;i<e.results.length;i++){ s+=e.results[i][0].transcript; } compInput.value=base+s; autoGrow(); syncComposerMode(); captureMode='voice'; /* dictated note = worker_stated_voice */ };
       dictRecog.onend=stopDictation; dictRecog.onerror=stopDictation;
       dictRecog.start(); dictating=true; compMic.classList.add('is-rec');
     } catch(e){ stopDictation(); compInput.focus({preventScroll:true}); }
@@ -1134,7 +1156,7 @@
   function vFinish(){ vSay('Got it. I will save that to the feed now.'); vAfter(2400, function(){ endVoice(true); }); }
   function endVoice(save){
     vClear();
-    if(save){ var text=TRANSCRIPT; if(capAnswers.length) text += ' (' + capAnswers.join(', ') + ')'; addFeedEntry(text, captureType==='boc'?'boc':'note'); }
+    if(save){ captureMode='voice'; /* voice-agent conversation = worker_stated_voice */ var text=TRANSCRIPT; if(capAnswers.length) text += ' (' + capAnswers.join(', ') + ')'; addFeedEntry(text, captureType==='boc'?'boc':'note'); }
     resetChat();
     setView('home');
   }
