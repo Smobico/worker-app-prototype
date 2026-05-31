@@ -52,7 +52,6 @@
     --pill-neutral-bg:#EEEEE7; --pill-neutral-ink:#3A4564;
     --pill-worker-bg:rgba(90,148,118,0.16); --pill-worker-ink:#1A7044;
     --pill-boc-bg:#EEEEE7; --pill-boc-ink:#3A4564;
-    --feed-boc:#B23A2E; --feed-med:#46603F;   /* feed type-tag colours (signal, NOT the capture action; peach stays capture-only) */
     --confirmed-ink:#16A34A; --mic-listening:#2F8F9E; --mic-listening-ink:#135A66;
     --scrim:rgba(15,26,46,0.42); --mark-ink:rgba(15,26,46,0.05);
     /* fonts */
@@ -75,7 +74,6 @@
     --pill-neutral-bg:#243155; --pill-neutral-ink:#C8CCD9;
     --pill-worker-bg:rgba(90,148,118,0.24); --pill-worker-ink:#7FCBA0;
     --pill-boc-bg:#243155; --pill-boc-ink:#C8CCD9;
-    --feed-boc:#E8897C; --feed-med:#8FBF87;
     --confirmed-ink:#4ADE80; --mic-listening:#3FB6C7; --mic-listening-ink:#8FD8E2;
     --scrim:rgba(0,0,0,0.55); --mark-ink:rgba(250,250,247,0.05);
   }
@@ -443,7 +441,7 @@
 <!-- Genuine ThetaNote brand mark (assets/brand/logo-icon.svg) as a reusable symbol; inherits currentColor so it themes navy (light) / warm-white (dark). -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><symbol id="tn-mark" viewBox="0 0 2000 2000"><path fill="currentColor" d="M1451.618,1533.665c-114.324,149.568-286.706,232.907-475.975,225.013-39.708-1.656-76.796-7.675-114.879-16.908-72.005-17.457-171.436-65.097-223.654-114.512l-45.659-43.208c-28.308-30.436-53.221-62.368-75.117-97.784-51.789-83.768-82.656-175.66-97.77-272.538l-10.076-91.014-2.599-52.682c-2.711-54.96-1.532-108.303.773-163.187,5.217-124.199,32.953-269.386,97.186-376.201l17.868-29.713,29.951-42.188c22.508-31.704,49.899-57.875,79.405-83.448,39.801-34.496,83.041-61.267,131.148-83.376,147.114-67.611,325.546-68.342,473.204-1.002,58.908,26.865,99.95,54.84,147.903,97.517,22.597,20.111,41.578,41.685,60.817,65.038,24.624,29.889,44.363,61.887,62.493,96.069l25.632,54.815c27.093,57.94,50.443,161.494,55.682,226.247l5.068,62.641,2.653,129.463-1.468,64.327-8.328,96.761c-16.021,127.186-55.979,247.457-134.26,349.871ZM1304.187,1506.225c31.169-30.339,59.197-63.115,79.626-101.466l19.403-36.425,27.233-69.542,12.866-46.911c26.485-114.119,27.192-243.312,20.772-360.596l-4.715-49.639-12.228-78.147-18.286-66.247c-6.559-23.764-15.062-46.246-27.087-67.695l-31.954-56.998c-29.09-44.225-63.999-82.135-106.157-114.294-19.47-14.853-38.568-27.984-60.463-38.784-23.401-11.543-45.789-22.341-70.92-30.266-66.401-20.939-135.142-24.856-204.156-14.297-84.984,13.002-168.317,55.382-229.657,115.114-52.056,50.692-91.158,111.283-117.063,179.441-31.271,82.277-42.396,166.565-46.302,254.699-3.355,75.707-1.625,149.236,5.111,224.545,7.294,81.552,28.756,166.171,67.152,238.489,28.5,53.679,79.343,120.792,128.534,153.927l46.92,31.604,27.185,14.377c71.005,34.23,148.315,48.85,227.574,42.219,99.844-8.353,195.182-53.585,266.611-123.111Z"/><path fill="currentColor" d="M1328.865,1183.699c-21.305,57.516-65.175,99.194-126.807,105.449-22.486,2.282-43.474-.078-64.412-8.532-39.523-15.958-71.013-44.66-92.108-81.571l-21.742-38.043-16.883-31.15-62.661-116.73-86.507-160.07c-8.061-14.917-20.172-27.407-33.657-36.101-12.542-8.086-28.563-4.421-35.959,8.017-7.706,12.959-12.103,27.147-16.842,41.51l-9.816,29.749c-4.014,12.163-15.491,20.68-27.502,24.396-39.789,12.308-80.882-8.98-76.517-34.638l6.551-38.51c10.836-63.694,52.634-121.157,117.117-138.348,66.324-17.682,144.218,24.368,176.222,83.054l52.015,95.381,59.226,113.185,44.206,83.967,20.386,37.773c12.268,22.73,30.313,52.557,52.851,58.481,29.403,7.729,37.913-37.441,45.737-61.66l9.178-28.41c8.807-27.262,58.066-36.01,91.999-14.494,11.471,7.273,16.622,19.827,14.471,33.027-4.15,25.47-9.613,50.143-18.549,74.268Z"/></symbol></svg>
 <!-- Build stamp: confirms at a glance which deployed version the device is running (ends "did it land?" guessing). Update the text on every deploy. -->
-<div id="build-stamp" aria-hidden="true" style="position:fixed;top:max(env(safe-area-inset-top,0px),2px);left:50%;transform:translateX(-50%);z-index:99999;font:600 9px/1 ui-monospace,monospace;letter-spacing:0.08em;color:var(--text-muted);opacity:0.5;pointer-events:none;background:var(--surface-base);padding:2px 7px;border-radius:0 0 7px 7px;">v18</div>
+<div id="build-stamp" aria-hidden="true" style="position:fixed;top:max(env(safe-area-inset-top,0px),2px);left:50%;transform:translateX(-50%);z-index:99999;font:600 9px/1 ui-monospace,monospace;letter-spacing:0.08em;color:var(--text-muted);opacity:0.5;pointer-events:none;background:var(--surface-base);padding:2px 7px;border-radius:0 0 7px 7px;">v17</div>
 <div class="app" id="app" data-drawer="none" data-view="home">
 
   <!-- ============ HOME (shift feed) ============ -->
@@ -732,7 +730,7 @@
   document.getElementById('drawer-backdrop').addEventListener('click', closeDrawer);
   document.getElementById('wrap-cancel').addEventListener('click', closeDrawer);
   document.getElementById('task-wrap').addEventListener('click', function(){ setDrawer('wrap'); });
-  function feedCount(){ return document.querySelectorAll('#events-list .gr-card').length; }
+  function feedCount(){ return document.querySelectorAll('#events-list .msg').length; }
   // Assemble the day's entries into the LOCKED D1.8 NDIS-compliant plain-text shift note
   // (design/v2/locked/surface_d1_8_finalise_paste.html v2.1). Plain text survives paste into any provider tool;
   // ALL-CAPS headings + ASCII underline rows; [AI-assisted] C12 marker last. In the real app the prose sections
@@ -1185,7 +1183,7 @@
       }
     });
   }
-  function initClamps(){ Array.prototype.forEach.call(document.querySelectorAll('#events-list .gr-body'), setupClamp); }
+  function initClamps(){ Array.prototype.forEach.call(document.querySelectorAll('#events-list .bubble-text'), setupClamp); }
   initClamps();
   if(document.fonts && document.fonts.ready){ document.fonts.ready.then(initClamps); }
 
