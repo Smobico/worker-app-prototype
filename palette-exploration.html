@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TNA palette exploration -- 6 systems</title>
+<!--
+  PALETTE EXPLORATION  -- 2026-06-01
+  Purpose: Wes reopened the brand/colour direction (not sold on monochrome-navy).
+  Shows 6 complete, collision-checked palette SYSTEMS rendered on the real
+  worker-app home-feed surface, across the neutral temperature range
+  (warm -> neutral bone -> near-white -> cool) and the brand-chroma range
+  (pure monochrome -> single committed hue).
+
+  HARD CONSTRAINT held in every system: the reserved Layer A clinical
+  signifiers (risk arc, welfare peach, confirmed green, pending gold,
+  amended/confidence slate-purple, mic teal) are FIXED and must coexist
+  with AA contrast. Each system's brand + capture accent is chosen to
+  thread BETWEEN the reserved clinical hues, never collide with them.
+
+  Typography: DM Sans display + body, DM Mono metadata (Fraunces dropped, Wes call).
+  Light-primary only (the dark toggle is a separate exercise).
+  This is a comparison artifact, not a shippable surface.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  :root{
+    --sans:"DM Sans",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    --mono:"DM Mono",ui-monospace,monospace;
+
+    /* FIXED reserved clinical signifiers (from tokens.css -- never vary) */
+    --risk-2:#D6A52F; --risk-3:#D86A3F; --reportable:#C24A4A; --extreme:#8E1D1D;
+    --welfare:#E8A87C; --welfare-ink:#8A4F22;
+    --confirmed:#5A9476; --confirmed-ink:#2C5A40;
+    --pending:#C9B560; --pending-ink:#5C4A14;
+    --amended:#6E7AB0; --amended-ink:#3F4974;
+    --mic:#2F8F9E;
+  }
+  html{ -webkit-text-size-adjust:100%; text-rendering:optimizeLegibility; }
+  body{
+    margin:0; font-family:var(--sans);
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    background:#1B1F26; color:#E7E8EA; line-height:1.5;
+    padding:32px 20px 80px;
+  }
+
+  /* ---- page chrome (dark editorial backing so the light palettes pop) ---- */
+  .page-head{ max-width:1180px; margin:0 auto 28px; }
+  .page-head h1{ font-size:26px; font-weight:700; letter-spacing:-0.02em; margin:0 0 8px; color:#FBFBFC; }
+  .page-head p{ font-size:14.5px; color:#A7AAB2; margin:0 0 4px; max-width:74ch; }
+  .page-head .mono{ font-family:var(--mono); font-size:11px; letter-spacing:0.04em; color:#7E828C; margin-top:10px; }
+
+  .section-label{ max-width:1180px; margin:34px auto 14px; font-family:var(--mono); font-size:11px; font-weight:500;
+    letter-spacing:0.22em; text-transform:uppercase; color:#8C909A; border-bottom:1px solid #2C313B; padding-bottom:8px; }
+
+  /* ---- hue-space map ---- */
+  .huemap{ max-width:1180px; margin:0 auto; background:#22272F; border:1px solid #2C313B; border-radius:14px; padding:18px 20px; }
+  .huemap h3{ font-size:14px; font-weight:600; margin:0 0 4px; color:#EDEEF0; }
+  .huemap .sub{ font-size:13px; color:#9DA1A9; margin:0 0 16px; max-width:80ch; }
+  .hue-row{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+  .swatch{ flex:1 1 86px; min-width:86px; border-radius:9px; padding:9px 10px 10px; color:#fff;
+    font-family:var(--mono); font-size:9.5px; letter-spacing:0.02em; line-height:1.3; min-height:62px;
+    display:flex; flex-direction:column; justify-content:flex-end; border:1px solid rgba(255,255,255,0.10); }
+  .swatch b{ font-family:var(--sans); font-size:10.5px; font-weight:700; letter-spacing:0; }
+  .hue-legend{ display:flex; gap:18px; flex-wrap:wrap; font-size:12px; color:#9DA1A9; }
+  .hue-legend span{ display:inline-flex; align-items:center; gap:6px; }
+  .dot{ width:10px; height:10px; border-radius:50%; display:inline-block; }
+
+  /* ---- systems grid ---- */
+  .grid{ max-width:1180px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:26px; align-items:start; }
+
+  .sys{ background:#22272F; border:1px solid #2C313B; border-radius:18px; overflow:hidden; }
+  .sys-head{ padding:16px 18px 14px; border-bottom:1px solid #2C313B; }
+  .sys-head .num{ font-family:var(--mono); font-size:11px; color:#7E828C; letter-spacing:0.06em; }
+  .sys-head h2{ font-size:18px; font-weight:700; letter-spacing:-0.01em; margin:3px 0 5px; color:#FBFBFC; }
+  .sys-head .desc{ font-size:12.5px; color:#9DA1A9; margin:0; line-height:1.45; }
+  .sys-head .tag{ display:inline-block; margin-top:9px; font-family:var(--mono); font-size:9.5px; letter-spacing:0.08em;
+    text-transform:uppercase; color:#B9BCC4; background:#2C313B; border-radius:999px; padding:3px 9px; }
+
+  /* swatch chips for the system's own tokens */
+  .toks{ display:flex; gap:0; padding:14px 18px 4px; }
+  .tok{ flex:1; height:34px; display:flex; align-items:flex-end; justify-content:center; padding-bottom:3px;
+    font-family:var(--mono); font-size:8px; letter-spacing:0.04em; }
+  .tok:first-child{ border-radius:7px 0 0 7px; } .tok:last-child{ border-radius:0 7px 7px 0; }
+
+  /* ===== THE MOCKUP: rendered once, inherits each system's vars ===== */
+  .phone-wrap{ padding:16px 18px 20px; }
+  .phone{ border-radius:26px; overflow:hidden; border:1px solid rgba(0,0,0,0.18);
+    box-shadow:0 18px 40px -18px rgba(0,0,0,0.6); background:var(--surface); }
+  .app{ font-family:var(--sans); color:var(--ink); background:var(--surface); }
+
+  .app .top{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px 4px; }
+  .app .brand{ font-size:14.5px; font-weight:600; letter-spacing:-0.01em; color:var(--ink); }
+  .app .top-ic{ display:flex; gap:6px; align-items:center; }
+  .app .ic{ width:30px; height:30px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
+    color:var(--ink-2); }
+  .app .ic svg{ width:18px; height:18px; }
+  .app .avatar{ width:30px; height:30px; border-radius:50%; background:var(--accent); color:var(--accent-ink-on);
+    font-family:var(--sans); font-weight:700; font-size:11px; display:inline-flex; align-items:center; justify-content:center; }
+
+  .app .greet{ font-size:29px; font-weight:700; letter-spacing:-0.04em; line-height:0.98; color:var(--ink); padding:8px 16px 2px; }
+  .app .rule{ height:1px; background:var(--line); margin:12px 16px 8px; }
+  .app .cg-line{ display:flex; align-items:center; justify-content:space-between; padding:0 16px 12px; }
+  .app .cg-name{ font-size:12.5px; font-weight:700; color:var(--ink); }
+  .app .cg-when{ font-family:var(--mono); font-size:11px; color:var(--ink-2); }
+
+  .app .body{ padding:2px 16px 12px; }
+  .app .grp{ display:flex; align-items:center; gap:9px; margin:8px 0 9px; }
+  .app .grp .lab{ font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-3); }
+  .app .grp .ln{ flex:1; height:1.5px; background:var(--line); border-radius:2px; }
+
+  .app .card{ background:var(--raised); border:1px solid var(--line); border-radius:14px; padding:12px 13px; margin-bottom:10px;
+    box-shadow:0 1px 3px var(--shadow); }
+  .app .card .head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+  .app .ctag{ display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; letter-spacing:-0.01em; }
+  .app .ctag.boc{ color:var(--reportable); } .app .ctag.med{ color:var(--confirmed-ink); } .app .ctag.note{ color:var(--accent-text,var(--accent)); }
+  .app .ctag .d{ width:7px; height:7px; border-radius:50%; }
+  .app .ctime{ font-family:var(--mono); font-size:10px; color:var(--ink-3); font-variant-numeric:tabular-nums; }
+  .app .ctext{ font-size:13.5px; font-weight:500; line-height:1.46; color:var(--ink); margin:0; }
+  .app .prov{ display:inline-flex; align-items:center; gap:4px; font-family:var(--mono); font-size:8px; line-height:1;
+    letter-spacing:0.1em; text-transform:uppercase; padding:4px 7px; border-radius:999px; margin-top:9px; }
+  .app .prov.voice{ background:var(--muted); color:var(--ink-2); }
+  .app .prov.ai{ background:rgba(110,122,176,0.18); color:var(--amended-ink); }
+  .app .prov.conf{ background:rgba(90,148,118,0.20); color:var(--confirmed-ink); }
+
+  /* tabbar with raised capture FAB */
+  .app .tabbar{ display:grid; grid-template-columns:repeat(5,1fr); align-items:center; background:var(--raised);
+    border-top:1px solid var(--line); padding:7px 4px 9px; position:relative; }
+  .app .tab{ display:flex; flex-direction:column; align-items:center; gap:3px; font-size:9.5px; font-weight:700;
+    color:var(--ink-3); }
+  .app .tab.on{ color:var(--accent-text,var(--accent)); }
+  .app .tab svg{ width:21px; height:21px; }
+  .app .fab{ width:50px; height:50px; margin-top:-20px; border-radius:50%; background:var(--capture); color:var(--capture-ink);
+    border:3px solid var(--raised); display:inline-flex; align-items:center; justify-content:center; justify-self:center;
+    box-shadow:0 10px 20px -7px var(--fab-shadow); }
+  .app .fab svg{ width:24px; height:24px; }
+  .app .fab-lab{ font-size:9.5px; font-weight:700; color:var(--capture-lab); }
+
+  /* clinical signifier coexistence strip */
+  .coex{ padding:0 18px 20px; }
+  .coex .lab{ font-family:var(--mono); font-size:9.5px; letter-spacing:0.14em; text-transform:uppercase; color:#8C909A; margin:0 0 8px; }
+  .coex .strip{ background:var(--surface); border:1px solid rgba(0,0,0,0.12); border-radius:12px; padding:11px 11px 7px;
+    display:flex; flex-wrap:wrap; gap:6px; }
+  .pill{ font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:0.04em; text-transform:uppercase;
+    padding:5px 9px; border-radius:999px; }
+  .pill.reportable{ background:var(--reportable); color:#FFF; }
+  .pill.risk3{ background:var(--risk-3); color:#FFF; }
+  .pill.welfare{ background:var(--welfare-pill,var(--welfare)); color:var(--welfare-pill-ink,var(--welfare-ink)); }
+  .pill.confirmed{ background:var(--confirmed); color:#FFF; }
+  .pill.pending{ background:var(--pending); color:var(--pending-ink); }
+  .pill.brand{ background:var(--accent); color:var(--accent-ink-on); }
+  .pill.capture{ background:var(--capture); color:var(--capture-ink); }
+
+  /* ===================== SYSTEM TOKEN DEFINITIONS ===================== */
+  /* shared shadow defaults; each system can override --shadow / --fab-shadow */
+  .sys{ --shadow:rgba(15,26,46,0.06); --fab-shadow:rgba(15,26,46,0.45); }
+
+  /* 1. Warm Paper (incumbent evolved) -- warm white, near-monochrome navy */
+  .s-warm{ --surface:#FAFAF7; --raised:#FFFFFF; --muted:#EFEFE9; --line:#E4E3DC;
+    --ink:#0F1A2E; --ink-2:#3A4564; --ink-3:#6B7186;
+    --accent:#16306B; --accent-ink-on:#FAFAF7;
+    --capture:#0F1A2E; --capture-ink:#FAFAF7; --capture-lab:#6B7186;
+    --shadow:rgba(15,26,46,0.06); --fab-shadow:rgba(15,26,46,0.5); }
+
+  /* 2. Bone Neutral -- true-neutral editorial paper, pure monochrome + form */
+  .s-bone{ --surface:#F4F3EF; --raised:#FCFBF8; --muted:#EAE8E2; --line:#E2E0D8;
+    --ink:#1A1A17; --ink-2:#56544D; --ink-3:#807D74;
+    --accent:#1A1A17; --accent-ink-on:#F4F3EF;
+    --capture:#1A1A17; --capture-ink:#FCFBF8; --capture-lab:#807D74;
+    --shadow:rgba(26,26,23,0.07); --fab-shadow:rgba(26,26,23,0.45); }
+
+  /* 3. Cool Clinical -- cool off-white + considered cobalt */
+  .s-cool{ --surface:#F5F7FA; --raised:#FFFFFF; --muted:#E9EDF2; --line:#DCE2EA;
+    --ink:#161B22; --ink-2:#3D4654; --ink-3:#6B7585;
+    --accent:#1A4AB8; --accent-ink-on:#FFFFFF;
+    --capture:#1A4AB8; --capture-ink:#FFFFFF; --capture-lab:#6B7585;
+    --shadow:rgba(22,27,34,0.07); --fab-shadow:rgba(26,74,184,0.45); }
+
+  /* 4. Near White / Record -- barely-tinted near-white, high contrast, indigo capture spot */
+  .s-white{ --surface:#FCFCFB; --raised:#FFFFFF; --muted:#F0F0EE; --line:#E6E6E3;
+    --ink:#111317; --ink-2:#41454D; --ink-3:#717680;
+    --accent:#111317; --accent-ink-on:#FCFCFB;
+    --capture:#3B36B0; --capture-ink:#FFFFFF; --capture-lab:#717680;
+    --shadow:rgba(17,19,23,0.06); --fab-shadow:rgba(59,54,176,0.42); }
+
+  /* 5. Committed Cobalt -- faint neutral surface, brand hue carries identity */
+  .s-cobalt{ --surface:#F7F8F6; --raised:#FFFFFF; --muted:#ECEEEC; --line:#E0E2DE;
+    --ink:#14181F; --ink-2:#404754; --ink-3:#6E7686;
+    --accent:#1B4DC4; --accent-ink-on:#FFFFFF;
+    --capture:#1B4DC4; --capture-ink:#FFFFFF; --capture-lab:#404754;
+    --shadow:rgba(20,24,31,0.07); --fab-shadow:rgba(27,77,196,0.5); }
+
+  /* 6. Aubergine Warm -- warm bone + distinctive aubergine (warm, NOT clinical) */
+  .s-aub{ --surface:#FAF8F5; --raised:#FFFFFF; --muted:#EFEBE6; --line:#E6E0D9;
+    --ink:#1C1A22; --ink-2:#4A4654; --ink-3:#7B7682;
+    --accent:#6B2D5C; --accent-ink-on:#FFF8FC;
+    --capture:#6B2D5C; --capture-ink:#FFF8FC; --capture-lab:#7B7682;
+    --shadow:rgba(28,26,34,0.07); --fab-shadow:rgba(107,45,92,0.45); }
+
+  /* ===== ROUND 2: cool-clean near-white surface FIXED; accent varies ===== */
+  /* shared cool near-white surface (the one Wes liked), ink + neutrals fixed.
+     Only --accent / --capture / their shadows vary. All accents AA-checked:
+     white text on accent >= 4.5:1, accent text/icon on surface >= 4.5:1. */
+  .a1,.a2,.a3,.a4,.a5,.a6{
+    --surface:#F6F8FA; --raised:#FFFFFF; --muted:#E9EDF2; --line:#DCE2EA;
+    --ink:#161B22; --ink-2:#3D4654; --ink-3:#6B7585;
+    --accent-ink-on:#FFFFFF; --capture-ink:#FFFFFF; --capture-lab:#6B7585;
+    --shadow:rgba(22,27,34,0.07);
+  }
+  .a1{ --accent:#6D28D9; --capture:#6D28D9; --fab-shadow:rgba(109,40,217,0.45); } /* Violet */
+  .a2{ --accent:#5B21B6; --capture:#5B21B6; --fab-shadow:rgba(91,33,182,0.45); }  /* Royal purple */
+  .a3{ --accent:#7A2E63; --capture:#7A2E63; --fab-shadow:rgba(122,46,99,0.45); }  /* Plum */
+  .a4{ --accent:#5E2750; --capture:#5E2750; --fab-shadow:rgba(94,39,80,0.45); }   /* Aubergine */
+  .a5{ --accent:#B11A66; --capture:#B11A66; --fab-shadow:rgba(177,26,102,0.42); } /* Raspberry */
+  .a6{ --accent:#A21CAF; --capture:#A21CAF; --fab-shadow:rgba(162,28,175,0.42); } /* Magenta */
+
+  /* ===== ROUND 4: peach / warm revisited (collision resolved) ===== */
+  /* W1 -- Peach brand on WARM cream + espresso ink; welfare relocated to dusty rose.
+     accent (nav/text) = deep terracotta (text-legible); capture FAB = light peach + dark icon. */
+  .w1{ --surface:#F7F2EA; --raised:#FFFDF9; --muted:#EFE7DA; --line:#E8DECF;
+    --ink:#2A211C; --ink-2:#5A4D43; --ink-3:#857668;
+    --accent:#EFA074; --accent-text:#A8482A; --accent-ink-on:#3A2415;
+    --capture:#E89A6B; --capture-ink:#3A2415; --capture-lab:#857668;
+    --welfare-pill:#D98AA0; --welfare-pill-ink:#6E2A3E;
+    --shadow:rgba(42,33,28,0.07); --fab-shadow:rgba(168,72,42,0.4); }
+
+  /* W2 -- Peach brand on COOL near-white (warm spot in a cool field); welfare relocated. */
+  .w2{ --surface:#F6F8FA; --raised:#FFFFFF; --muted:#E9EDF2; --line:#DCE2EA;
+    --ink:#161B22; --ink-2:#3D4654; --ink-3:#6B7585;
+    --accent:#EFA074; --accent-text:#A8482A; --accent-ink-on:#3A2415;
+    --capture:#E89A6B; --capture-ink:#3A2415; --capture-lab:#6B7585;
+    --welfare-pill:#D98AA0; --welfare-pill-ink:#6E2A3E;
+    --shadow:rgba(22,27,34,0.07); --fab-shadow:rgba(168,72,42,0.4); }
+
+  /* W3 -- Warmth from neutrals: warm cream + espresso ink + espresso mono capture.
+     PEACH STAYS WELFARE (no relocation, no collision). The disciplined warm option. */
+  .w3{ --surface:#F7F2EA; --raised:#FFFDF9; --muted:#EFE7DA; --line:#E8DECF;
+    --ink:#2A211C; --ink-2:#5A4D43; --ink-3:#857668;
+    --accent:#6B4A32; --accent-ink-on:#FFFDF9;
+    --capture:#2A211C; --capture-ink:#F7F2EA; --capture-lab:#857668;
+    --shadow:rgba(42,33,28,0.07); --fab-shadow:rgba(42,33,28,0.45); }
+
+  /* WM -- split-the-difference: warm-NEUTRAL off-white + warm-charcoal ink.
+     Between cream (W1) and cool near-white (W2). Refined peach accents + capture. */
+  .wm{ --surface:#F6F5F0; --raised:#FFFFFF; --muted:#ECEAE3; --line:#E4E1D8;
+    --ink:#211F1A; --ink-2:#4E4A42; --ink-3:#7E796E;
+    --accent:#EFA074; --accent-text:#A8482A; --accent-ink-on:#3A2415;
+    --capture:#E89A6B; --capture-ink:#3A2415; --capture-lab:#7E796E;
+    --welfare-pill:#D98AA0; --welfare-pill-ink:#6E2A3E;
+    --shadow:rgba(33,31,26,0.07); --fab-shadow:rgba(168,72,42,0.4); }
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <h1>Worker-app palette exploration &mdash; 6 systems</h1>
+  <p>Each system is a <b>complete set</b> (surface range + ink + brand accent + capture accent), rendered on the real home-feed surface. Every brand/capture accent is chosen to thread <b>between</b> the reserved clinical signifiers, never collide with them. Fraunces dropped; DM Sans display, DM Mono metadata.</p>
+  <p>Range covered: temperature (warm paper &rarr; neutral bone &rarr; near-white &rarr; cool) crossed with brand chroma (pure monochrome &rarr; single committed hue).</p>
+  <div class="mono">light-primary only &middot; reserved clinical palette FIXED across all 6 &middot; comparison artifact, not a shippable surface</div>
+</div>
+
+<!-- HUE SPACE MAP -->
+<div class="section-label">Where the brand can actually live</div>
+<div class="huemap">
+  <h3>The clinical signifier system has already claimed most of the warm hue-wheel.</h3>
+  <p class="sub">These hues are reserved Layer A semantics (risk severity, welfare, confirmation, audit state, mic). The brand + capture accent must avoid all of them. That is why warm accents are hard, and why every system below lands the brand in navy / cobalt / indigo / aubergine / pure-mono.</p>
+
+  <div class="hue-row">
+    <div class="swatch" style="background:#D6A52F"><b>Risk 2</b>amber #D6A52F</div>
+    <div class="swatch" style="background:#D86A3F"><b>Risk 3</b>orange #D86A3F</div>
+    <div class="swatch" style="background:#C24A4A"><b>Reportable</b>red #C24A4A</div>
+    <div class="swatch" style="background:#8E1D1D"><b>Extreme</b>oxblood #8E1D1D</div>
+    <div class="swatch" style="background:#E8A87C; color:#8A4F22; border-color:rgba(0,0,0,0.12)"><b>Welfare</b>peach #E8A87C</div>
+    <div class="swatch" style="background:#5A9476"><b>Confirmed</b>green #5A9476</div>
+    <div class="swatch" style="background:#C9B560; color:#5C4A14; border-color:rgba(0,0,0,0.12)"><b>Pending</b>gold #C9B560</div>
+    <div class="swatch" style="background:#6E7AB0"><b>Amended</b>slate #6E7AB0</div>
+    <div class="swatch" style="background:#2F8F9E"><b>Mic</b>teal #2F8F9E</div>
+  </div>
+  <div class="hue-row">
+    <div class="swatch" style="background:#16306B"><b>navy</b>open #16306B</div>
+    <div class="swatch" style="background:#1A4AB8"><b>cobalt</b>open #1A4AB8</div>
+    <div class="swatch" style="background:#3B36B0"><b>indigo</b>open #3B36B0</div>
+    <div class="swatch" style="background:#6B2D5C"><b>aubergine</b>open #6B2D5C</div>
+    <div class="swatch" style="background:#1A1A17"><b>mono ink</b>form-led</div>
+  </div>
+  <div class="hue-legend">
+    <span><i class="dot" style="background:#C24A4A"></i> reserved for clinical severity / state &mdash; off-limits to brand</span>
+    <span><i class="dot" style="background:#1A4AB8"></i> uncontested &mdash; available for brand + capture</span>
+  </div>
+</div>
+
+<!-- THE 6 SYSTEMS -->
+<div class="section-label">6 systems on the home-feed surface</div>
+<div class="grid">
+
+  <!-- template repeated; only wrapper class + head text differ -->
+  <div class="sys s-warm">
+    <div class="sys-head">
+      <div class="num">SYSTEM 01</div>
+      <h2>Warm Paper</h2>
+      <p class="desc">The incumbent, evolved. Warm-white #FAFAF7, warm-navy ink, near-monochrome. Capture is the ink itself (form-led FAB), brand accent a deep warm navy. Quietly authoritative; warmest end.</p>
+      <span class="tag">warm &middot; near-mono</span>
+    </div>
+    <div class="toks">
+      <div class="tok" style="background:#FAFAF7;color:#0F1A2E">surface</div>
+      <div class="tok" style="background:#FFFFFF;color:#0F1A2E">raised</div>
+      <div class="tok" style="background:#0F1A2E;color:#FAFAF7">ink</div>
+      <div class="tok" style="background:#16306B;color:#fff">accent</div>
+      <div class="tok" style="background:#0F1A2E;color:#FAFAF7">capture</div>
+    </div>
+    <div class="phone-wrap"><div class="phone"><div class="app" data-mock></div></div></div>
+    <div class="coex">
+      <p class="lab">Clinical signifiers on this surface</p>
+      <div class="strip" data-coex></div>
+    </div>
+  </div>
+
+  <div class="sys s-bone">
+    <div class="sys-head">
+      <div class="num">SYSTEM 02</div>
+      <h2>Bone Neutral</h2>
+      <p class="desc">True-neutral editorial paper #F4F3EF, near-black ink, pure monochrome. No brand hue at all; the only colour that ever appears is a clinical signifier firing. The most disciplined "considered" extreme.</p>
+      <span class="tag">neutral &middot; monochrome</span>
+    </div>
+    <div class="toks">
+      <div class="tok" style="background:#F4F3EF;color:#1A1A17">surface</div>
+      <div class="tok" style="background:#FCFBF8;color:#1A1A17">raised</div>
+      <div class="tok" style="background:#1A1A17;color:#F4F3EF">ink</div>
+      <div class="tok" style="background:#1A1A17;color:#F4F3EF">accent</div>
+      <div class="tok" style="background:#1A1A17;color:#F4F3EF">capture</div>
+    </div>
+    <div class="phone-wrap"><div class="phone"><div class="app" data-mock></div></div></div>
+    <div class="coex">
+      <p class="lab">Clinical signifiers on this surface</p>
+      <div class="strip" data-coex></div>
+    </div>
+  </div>
+
+  <div class="sys s-cool">
+    <div class="sys-head">
+      <div class="num">SYSTEM 03</div>
+      <h2>Cool Clinical</h2>
+      <p class="desc">Cool off-white #F5F7FA, slate ink, considered cobalt brand + capture. The "modern health SaaS" read. Closest to the cool-grey anti-reference, so shown honestly for comparison; cobalt keeps it from going generic.</p>
+      <span class="tag">cool &middot; cobalt</span>
+    </div>
+    <div class="toks">
+      <div class="tok" style="background:#F5F7FA;color:#161B22">surface</div>
+      <div class="tok" style="background:#FFFFFF;color:#161B22">raised</div>
+      <div class="tok" style="background:#161B22;color:#F5F7FA">ink</div>
+      <div class="tok" style="background:#1A4AB8;color:#fff">accent</div>
+      <div class="tok" style="background:#1A4AB8;color:#fff">capture</div>
+    </div>
+    <div class="phone-wrap"><div class="phone"><div class="app" data-mock></div></div></div>
+    <div class="coex">
+      <p class="lab">Clinical signifiers on this surface</p>
+      <div class="strip" data-coex></div>
+    </div>
+  </div>
+
+  <div class="sys s-white">
+    <div class="sys-head">
+      <div class="num">SYSTEM 04</div>
+      <h2>Near White / Record</h2>
+      <p class="desc">Barely-tinted near-white #FCFCFB, maximum ink contrast, monochrome chrome with a single indigo capture spot. Reads as "the document / the record." The clean end you flagged, without going sterile-#fff.</p>
+      <span class="tag">near-white &middot; indigo spot</span>
+    </div>
+    <div class="toks">
+      <div class="tok" style="background:#FCFCFB;color:#111317">surface</div>
+      <div class="tok" style="background:#FFFFFF;color:#111317">raised</div>
+      <div class="tok" style="background:#111317;color:#FCFCFB">ink</div>
+      <div class="tok" style="background:#111317;color:#FCFCFB">accent</div>
+      <div class="tok" style="background:#3B36B0;color:#fff">capture</div>
+    </div>
+    <div class="phone-wrap"><div class="phone"><div class="app" data-mock></div></div></div>
+    <div class="coex">
+      <p class="lab">Clinical signifiers on this surface</p>
+      <div class="strip" data-coex></div>
+    </div>
+  </div>
+
+  <div class="sys s-cobalt">
+    <div class="sys-head">
+      <div class="num">SYSTEM 05</div>
+      <h2>Committed Cobalt</h2>
+      <p class="desc">Faint-neutral surface #F7F8F6 with cobalt carrying brand identity throughout (active nav, links, capture). The "Committed" colour strategy DESIGN.md asks for: one saturated hue, used deliberately. Most distinctive.</p>
+      <span class="tag">neutral &middot; brand-forward</span>
+    </div>
+    <div class="toks">
+      <div class="tok" style="background:#F7F8F6;color:#14181F">surface</div>
+      <div class="tok" style="background:#FFFFFF;color:#14181F">raised</div>
+      <div class="tok" style="background:#14181F;color:#F7F8F6">ink</div>
+      <div class="tok" style="background:#1B4DC4;color:#fff">accent</div>
+      <div class="tok" style="background:#1B4DC4;color:#fff">capture</div>
+    </div>
+    <div class="phone-wrap"><div class="phone"><div class="app" data-mock></div></div></div>
+    <div class="coex">
+      <p class="lab">Clinical signifiers on this surface</p>
+      <div class="strip" data-coex></div>
+    </div>
+  </div>
+
+  <div class="sys s-aub">
+    <div class="sys-head">
+      <div class="num">SYSTEM 06</div>
+      <h2>Aubergine Warm</h2>
+      <p class="desc">Warm bone #FAF8F5 with a distinctive aubergine that is genuinely warm yet sits OUTSIDE the clinical arc (not red, not peach, not slate-purple). The honest answer to "can the brand be warm and distinctive without colliding."</p>
+      <span class="tag">warm &middot; distinctive</span>
+    </div>
+    <div class="toks">
+      <div class="tok" style="background:#FAF8F5;color:#1C1A22">surface</div>
+      <div class="tok" style="background:#FFFFFF;color:#1C1A22">raised</div>
+      <div class="tok" style="background:#1C1A22;color:#FAF8F5">ink</div>
+      <div class="tok" style="background:#6B2D5C;color:#FFF8FC">accent</div>
+      <div class="tok" style="background:#6B2D5C;color:#FFF8FC">capture</div>
+    </div>
+    <div class="phone-wrap"><div class="phone"><div class="app" data-mock></div></div></div>
+    <div class="coex">
+      <p class="lab">Clinical signifiers on this surface</p>
+      <div class="strip" data-coex></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== ROUND 2: ACCENT STUDY ===================== -->
+<div class="section-label">Round 2 &mdash; finding the accent (cool near-white surface fixed)</div>
+<div class="huemap" style="margin-bottom:22px;">
+  <h3>Surface settled: cool, clean near-white #F6F8FA. Now: the one good accent + capture colour.</h3>
+  <p class="sub">Blue is ruled out, and the clinical arc is reserved, so the uncontested accent space is the violet &rarr; plum &rarr; aubergine &rarr; raspberry &rarr; magenta arc. Six points across it below, each the brand accent (active nav, the "Note" dot, links) AND the capture button, on the identical surface. Pick the one that reads as TNA, or tell me to push warmer/cooler/deeper within the arc.</p>
+  <div class="hue-row">
+    <div class="swatch" style="background:#6D28D9"><b>Violet</b>#6D28D9</div>
+    <div class="swatch" style="background:#5B21B6"><b>Royal purple</b>#5B21B6</div>
+    <div class="swatch" style="background:#7A2E63"><b>Plum</b>#7A2E63</div>
+    <div class="swatch" style="background:#5E2750"><b>Aubergine</b>#5E2750</div>
+    <div class="swatch" style="background:#B11A66"><b>Raspberry</b>#B11A66</div>
+    <div class="swatch" style="background:#A21CAF"><b>Magenta</b>#A21CAF</div>
+  </div>
+  <div class="hue-legend"><span>cooler / more electric &larr; violet &middot; purple &middot; plum &middot; aubergine &middot; raspberry &middot; magenta &rarr; warmer / bolder</span></div>
+</div>
+
+<div class="grid">
+
+  <div class="sys a1">
+    <div class="sys-head"><div class="num">ACCENT A</div><h2>Violet</h2>
+      <p class="desc">#6D28D9. Vivid, cool-violet. Modern and confident; the most "tech-forward" of the arc. Reads energetic.</p></div>
+    <div class="phone-wrap"><div class="phone"><div class="app" data-mock></div></div></div>
+    <div class="coex"><p class="lab">Clinical signifiers on this surface</p><div class="strip" data-coex></div></div>
+  </div>
+
+  <div class="sys a2">
+    <div class="sys-head"><div class="num">ACCENT B</div><h2>Royal Purple</h2>
+      <p class="desc">#5B21B6. Deeper, less electric than violet. Considered, authoritative, a touch regal. Calmer than A.</p></div>
+    <div class="phone-wrap"><div class="phone"><div class="app" data-mock></div></div></div>
+    <div class="coex"><p class="lab">Clinical signifiers on this surface</p><div class="strip" data-coex></div></div>
+  </div>
+
+  <div class="sys a3">
+    <div class="sys-head"><div class="num">ACCENT C</div><h2>Plum</h2>
+      <p class="desc">#7A2E63. Muted red-purple. Warm-leaning, premium, the "one warm spot in a cool field." My lead for warmth-without-clinical-collision.</p></div>
+    <div class="phone-wrap"><div class="phone"><div class="app" data-mock></div></div></div>
+    <div class="coex"><p class="lab">Clinical signifiers on this surface</p><div class="strip" data-coex></div></div>
+  </div>
+
+  <div class="sys a4">
+    <div class="sys-head"><div class="num">ACCENT D</div><h2>Aubergine</h2>
+      <p class="desc">#5E2750. Deep, sophisticated, quiet. The most restrained warm-purple; reads grave and considered, not loud.</p></div>
+    <div class="phone-wrap"><div class="phone"><div class="app" data-mock></div></div></div>
+    <div class="coex"><p class="lab">Clinical signifiers on this surface</p><div class="strip" data-coex></div></div>
+  </div>
+
+  <div class="sys a5">
+    <div class="sys-head"><div class="num">ACCENT E</div><h2>Raspberry</h2>
+      <p class="desc">#B11A66. Bright magenta-red. Energetic and distinctive; clearly magenta-side, so it does not read as the orange-red risk signifiers. Watch tone vs grave clinical register.</p></div>
+    <div class="phone-wrap"><div class="phone"><div class="app" data-mock></div></div></div>
+    <div class="coex"><p class="lab">Clinical signifiers on this surface</p><div class="strip" data-coex></div></div>
+  </div>
+
+  <div class="sys a6">
+    <div class="sys-head"><div class="num">ACCENT F</div><h2>Magenta</h2>
+      <p class="desc">#A21CAF. Boldest of the arc. Maximum distinctiveness; highest risk of reading consumer/wellness against a clinical record.</p></div>
+    <div class="phone-wrap"><div class="phone"><div class="app" data-mock></div></div></div>
+    <div class="coex"><p class="lab">Clinical signifiers on this surface</p><div class="strip" data-coex></div></div>
+  </div>
+
+</div>
+
+<!-- ===================== ROUND 4: PEACH / WARM REVISITED ===================== -->
+<div class="section-label">Round 4 &mdash; peach / warm revisited (newest; the collision resolved)</div>
+<div class="huemap" style="margin-bottom:22px;">
+  <h3>Real warm apps get warmth from the surface + ink, not from a colliding accent.</h3>
+  <p class="sub">From Mobbin: 5 Minute Journal, Alma, ABY Journal all read warm + considered via cream surface + espresso-brown ink + a small earthy accent. Every earthy accent collides with our clinical set, so the fork is: <b>(W1/W2)</b> make peach the brand and relocate welfare to dusty-rose, or <b>(W3)</b> get the warmth from cream + brown ink and let peach stay welfare. Watch each coexistence strip: in W1/W2 "welfare" is the relocated rose; in W3 it is still peach.</p>
+  <div class="hue-legend">
+    <span><i class="dot" style="background:#E89A6B"></i> peach / capture</span>
+    <span><i class="dot" style="background:#A8482A"></i> terracotta / brand text</span>
+    <span><i class="dot" style="background:#D98AA0"></i> relocated welfare (W1/W2)</span>
+    <span><i class="dot" style="background:#2A211C"></i> espresso ink</span>
+  </div>
+</div>
+
+<div class="grid">
+
+  <div class="sys w1">
+    <div class="sys-head"><div class="num">WARM W1</div><h2>Peach on warm cream</h2>
+      <p class="desc">Cream surface + espresso ink + peach capture button (dark icon) + deep-terracotta brand text. The fully-warm, fully-cohesive version. Welfare relocated to dusty rose. Closest to what you liked, collision resolved.</p>
+      <span class="tag">warm cream &middot; peach brand</span>
+    </div>
+    <div class="phone-wrap"><div class="phone"><div class="app" data-mock></div></div></div>
+    <div class="coex"><p class="lab">Signifiers (welfare = relocated rose)</p><div class="strip" data-coex></div></div>
+  </div>
+
+  <div class="sys w2">
+    <div class="sys-head"><div class="num">WARM W2</div><h2>Peach on cool near-white</h2>
+      <p class="desc">Your cool near-white surface, with the peach capture button as the one warm spot in a cool field. Honours both signals: cool clean surface + the peach you keep coming back to. Welfare relocated.</p>
+      <span class="tag">cool surface &middot; peach spot</span>
+    </div>
+    <div class="phone-wrap"><div class="phone"><div class="app" data-mock></div></div></div>
+    <div class="coex"><p class="lab">Signifiers (welfare = relocated rose)</p><div class="strip" data-coex></div></div>
+  </div>
+
+  <div class="sys w3">
+    <div class="sys-head"><div class="num">WARM W3</div><h2>Warmth from neutrals</h2>
+      <p class="desc">Cream + espresso ink + an espresso (mono) capture button. The warmth is the surface and ink, not the accent. Peach STAYS the welfare signifier (no relocation, zero collision). The disciplined warm answer.</p>
+      <span class="tag">warm cream &middot; peach = welfare</span>
+    </div>
+    <div class="phone-wrap"><div class="phone"><div class="app" data-mock></div></div></div>
+    <div class="coex"><p class="lab">Signifiers (welfare = peach, unchanged)</p><div class="strip" data-coex></div></div>
+  </div>
+
+</div>
+
+<script>
+  // ---- icons (Phosphor-ish inline, stroke 1.5) ----
+  var IC = {
+    bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>',
+    menu:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16M4 12h16M4 17h16"/></svg>',
+    home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg>',
+    people:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="9" r="3"/><path d="M3 19c0-3 3-5 6-5s6 2 6 5"/><path d="M16 7a3 3 0 0 1 0 6"/></svg>',
+    clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>',
+    pencil:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20h4L18 10l-4-4L4 16v4z"/><path d="M13 5l4 4"/></svg>'
+  };
+
+  var MOCK =
+    '<div class="top">'+
+      '<span class="brand">ThetaNote</span>'+
+      '<span class="top-ic"><span class="ic">'+IC.bell+'</span><span class="ic">'+IC.menu+'</span><span class="avatar">WT</span></span>'+
+    '</div>'+
+    '<div class="greet">Today</div>'+
+    '<div class="rule"></div>'+
+    '<div class="cg-line"><span class="cg-name">CG &middot; Community access</span><span class="cg-when">09:40 &ndash; now</span></div>'+
+    '<div class="body">'+
+      '<div class="grp"><span class="lab">This morning</span><span class="ln"></span></div>'+
+
+      '<div class="card">'+
+        '<div class="head"><span class="ctag med"><span class="d" style="background:var(--confirmed)"></span>Medication</span><span class="ctime">08:05</span></div>'+
+        '<p class="ctext">Morning aripiprazole given with breakfast. Settled, ate most of it.</p>'+
+        '<span class="prov conf">worker confirmed</span>'+
+      '</div>'+
+
+      '<div class="card">'+
+        '<div class="head"><span class="ctag boc"><span class="d" style="background:var(--reportable)"></span>Behaviour</span><span class="ctime">09:25</span></div>'+
+        '<p class="ctext">Pinch attempt at the gate when the car was late. Used deep pressure, he reset in about a minute.</p>'+
+        '<span class="prov ai">AI drafted</span>'+
+      '</div>'+
+
+      '<div class="card">'+
+        '<div class="head"><span class="ctag note"><span class="d" style="background:var(--accent)"></span>Note</span><span class="ctime">09:38</span></div>'+
+        '<p class="ctext">Good eye contact on the walk. Reached for my sleeve twice, calm tone throughout.</p>'+
+        '<span class="prov voice">voice</span>'+
+      '</div>'+
+    '</div>'+
+    '<div class="tabbar">'+
+      '<span class="tab on">'+IC.home+'Home</span>'+
+      '<span class="tab">'+IC.people+'People</span>'+
+      '<span class="fab">'+IC.pencil+'</span>'+
+      '<span class="tab">'+IC.clock+'Shifts</span>'+
+      '<span class="tab">'+IC.menu+'More</span>'+
+    '</div>';
+
+  var COEX =
+    '<span class="pill capture">capture</span>'+
+    '<span class="pill brand">brand</span>'+
+    '<span class="pill reportable">reportable</span>'+
+    '<span class="pill risk3">tier 3</span>'+
+    '<span class="pill welfare">welfare</span>'+
+    '<span class="pill confirmed">confirmed</span>'+
+    '<span class="pill pending">pending</span>';
+
+  document.querySelectorAll('[data-mock]').forEach(function(el){ el.innerHTML = MOCK; });
+  document.querySelectorAll('[data-coex]').forEach(function(el){ el.innerHTML = COEX; });
+</script>
+
+<!-- ===================== ROUND 3: ACCENT FINE-TUNE SWEEP ===================== -->
+<div class="section-label">Round 3 &mdash; fine-tune the accent (point at a coordinate)</div>
+<div class="huemap" style="margin-bottom:22px;">
+  <h3>The whole uncontested arc, three depths each, as the capture button on the cool surface.</h3>
+  <p class="sub">Columns sweep hue (cool violet &rarr; warm berry). Rows sweep depth (deep / mid / dusty-muted). Each swatch shows the capture FAB + a BRAND pill beside a REPORTABLE pill so you can see the clinical-collision distance at a glance. Tell me the hex (or "column 3, mid row") and I lock it and build the capture surface + pill ladder + dark toggle.</p>
+</div>
+<div id="sweep" style="max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;"></div>
+
+<script>
+  var SURF='#F6F8FA';
+  // columns = hue family (cool -> warm); rows = depth (deep / mid / dusty)
+  var SWEEP=[
+    {fam:'Violet',   deep:'#3F1D8A', mid:'#5B21B6', dusty:'#574B8A'},
+    {fam:'Purple',   deep:'#4A1D6E', mid:'#6D28D9', dusty:'#67558F'},
+    {fam:'Plum',     deep:'#5C1F49', mid:'#7A2E63', dusty:'#7C5A72'},
+    {fam:'Aubergine',deep:'#4A1F3C', mid:'#5E2750', dusty:'#6B4F61'},
+    {fam:'Wine',     deep:'#5E1B33', mid:'#872B47', dusty:'#8A5A66'},
+    {fam:'Berry',    deep:'#74124C', mid:'#A81B5E', dusty:'#9A5A72'}
+  ];
+  var ROWS=[['deep','Deep'],['mid','Mid'],['dusty','Dusty']];
+  var penc='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" style="width:22px;height:22px"><path d="M4 20h4L18 10l-4-4L4 16v4z"/><path d="M13 5l4 4"/></svg>';
+  var html='';
+  SWEEP.forEach(function(col){
+    ROWS.forEach(function(r){
+      var hex=col[r[0]];
+      html+=''+
+      '<div style="background:'+SURF+';border:1px solid #DCE2EA;border-radius:14px;padding:13px 13px 11px;">'+
+        '<div style="display:flex;align-items:center;gap:11px;">'+
+          '<span style="width:46px;height:46px;border-radius:50%;background:'+hex+';display:inline-flex;align-items:center;justify-content:center;box-shadow:0 8px 16px -7px '+hex+'cc;flex-shrink:0;">'+penc+'</span>'+
+          '<div style="min-width:0;">'+
+            '<div style="font-family:var(--mono);font-size:12px;color:#161B22;font-weight:500;">'+hex+'</div>'+
+            '<div style="font-size:11px;color:#6B7585;">'+col.fam+' &middot; '+r[1]+'</div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="display:flex;gap:5px;margin-top:11px;">'+
+          '<span style="font-family:var(--mono);font-size:8px;letter-spacing:0.06em;text-transform:uppercase;padding:4px 7px;border-radius:999px;background:'+hex+';color:#fff;">brand</span>'+
+          '<span style="font-family:var(--mono);font-size:8px;letter-spacing:0.06em;text-transform:uppercase;padding:4px 7px;border-radius:999px;background:#C24A4A;color:#fff;">reportable</span>'+
+          '<span style="font-family:var(--mono);font-size:8px;letter-spacing:0.06em;text-transform:uppercase;padding:4px 7px;border-radius:999px;background:#E8A87C;color:#8A4F22;">welfare</span>'+
+        '</div>'+
+      '</div>';
+    });
+  });
+  document.getElementById('sweep').innerHTML=html;
+</script>
+</body>
+</html>
