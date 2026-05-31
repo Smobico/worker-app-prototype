@@ -52,6 +52,7 @@
     --pill-neutral-bg:#EEEEE7; --pill-neutral-ink:#3A4564;
     --pill-worker-bg:rgba(90,148,118,0.16); --pill-worker-ink:#1A7044;
     --pill-boc-bg:#EEEEE7; --pill-boc-ink:#3A4564;
+    --feed-boc:#B23A2E; --feed-med:#46603F;   /* feed type-tag colours (signal, NOT the capture action) */
     --confirmed-ink:#16A34A; --mic-listening:#2F8F9E; --mic-listening-ink:#135A66;
     --scrim:rgba(15,26,46,0.42); --mark-ink:rgba(15,26,46,0.05);
     /* fonts */
@@ -74,6 +75,7 @@
     --pill-neutral-bg:#243155; --pill-neutral-ink:#C8CCD9;
     --pill-worker-bg:rgba(90,148,118,0.24); --pill-worker-ink:#7FCBA0;
     --pill-boc-bg:#243155; --pill-boc-ink:#C8CCD9;
+    --feed-boc:#E8897C; --feed-med:#8FBF87;
     --confirmed-ink:#4ADE80; --mic-listening:#3FB6C7; --mic-listening-ink:#8FD8E2;
     --scrim:rgba(0,0,0,0.55); --mark-ink:rgba(250,250,247,0.05);
   }
@@ -110,27 +112,28 @@
   .body-mark { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:232px; height:232px; pointer-events:none; z-index:0; color:var(--mark-ink); }
   .body-mark svg { width:100%; height:100%; }
 
-  /* Chat-bubble feed -- each logged note is a bubble; BOC / incident / medication get distinct formats */
-  .feed { position:relative; z-index:1; margin:0; padding:4px 0 0; list-style:none; display:flex; flex-direction:column; gap:16px; }
-  .msg { display:flex; flex-direction:column; align-items:flex-start; gap:5px; animation:rowIn var(--motion-med) var(--ease-out); }
-  .bubble { max-width:84%; background:var(--surface-raised); border:1px solid var(--border-default); border-radius:20px 20px 20px 7px; padding:12px 15px; box-shadow:0 1px 2px rgba(15,26,46,0.05); cursor:pointer; }
-  .bubble:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
-  .bubble-text { font-family:var(--note-font); font-size:15.5px; line-height:1.5; color:var(--text-primary); margin:0; }
-  .bubble-text.clamped { display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+  /* Grouped feed (V4, chosen 2026-05-31): entries under bold time-of-day headers; dot-led coloured type tags.
+     Type colour (clay BOC / green med / navy note) is SIGNAL not action -- peach stays capture-only.
+     No side-stripe accents (impeccable ban); type shows via the leading dot + coloured-ink tag. Bold body. */
+  .feed { position:relative; z-index:1; margin:0; padding:6px 0 0; list-style:none; }
+  .gr-head { display:flex; align-items:center; gap:10px; margin:16px 2px 11px; }
+  .gr-head:first-child { margin-top:2px; }
+  .gr-head .lab { font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:0.18em; text-indent:0.09em; text-transform:uppercase; color:var(--text-secondary); }
+  .gr-head .ln { flex:1; height:2px; background:var(--border-strong); border-radius:2px; opacity:0.5; }
+  .gr-card { position:relative; z-index:1; background:var(--surface-raised); border:1px solid var(--border-default); border-radius:16px; padding:14px 16px; margin-bottom:11px; box-shadow:0 1px 3px rgba(15,26,46,0.06); cursor:pointer; animation:rowIn var(--motion-med) var(--ease-out); }
+  .gr-card:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
+  .gr-top { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
+  .gr-tag { display:inline-flex; align-items:center; gap:7px; font-family:var(--sans); font-size:12px; font-weight:700; letter-spacing:-0.01em; color:var(--accent-fill); }
+  .gr-tag::before { content:""; width:8px; height:8px; border-radius:50%; background:currentColor; flex-shrink:0; }
+  .gr-tag svg { width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+  .gr-card--boc .gr-tag, .gr-card--incident .gr-tag { color:var(--feed-boc); }
+  .gr-card--med .gr-tag { color:var(--feed-med); }
+  .gr-time { font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:0.02em; color:var(--text-muted); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .gr-body { font-family:var(--note-font); font-size:15px; font-weight:600; line-height:1.5; color:var(--text-primary); margin:0; }
+  .gr-body.clamped { display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+  .gr-foot { display:flex; align-items:center; gap:8px; margin-top:10px; }
   .bubble-more { background:transparent; border:0; padding:8px 0 0; margin:0; font-family:var(--sans); font-weight:600; font-size:13px; color:var(--accent-fill); cursor:pointer; min-height:32px; }
   .bubble-more:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; border-radius:6px; }
-  .bubble-time { font-family:var(--mono); font-size:10px; letter-spacing:0.04em; color:var(--text-muted); padding-left:8px; font-variant-numeric:tabular-nums; }
-  .bubble-tag { display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9.5px; font-weight:600; letter-spacing:0.13em; text-transform:uppercase; margin:0 0 8px; }
-  .bubble-tag svg { width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
-  .bubble--med { background:var(--surface-muted); border-color:transparent; box-shadow:none; }
-  .bubble--med .bubble-tag { color:var(--text-secondary); }
-  .bubble--boc { border:1.5px solid var(--accent-fill); }
-  .bubble--boc .bubble-tag { color:var(--accent-fill); }
-  .bubble--incident { border:1.5px solid var(--accent-fill); }
-  .bubble--incident .bubble-tag { color:var(--speak-ink); background:var(--accent-fill); border-radius:999px; padding:4px 10px; }
-  /* Meta row under each bubble: event time + provenance pill, left-aligned together. */
-  .bubble-meta { display:flex; align-items:center; gap:8px; padding-left:8px; }
-  .bubble-meta .bubble-time { padding-left:0; }
   /* Provenance pill -- the signature move: where this entry's content came from. Quiet by design (small, muted
      mono) so it reads as a record detail, not worker surveillance (H-6). Three states the worker generates:
      VOICE (worker_stated_voice), TYPED (worker_stated_typed), AI (ai_inferred). Full ladder per
@@ -148,17 +151,18 @@
   .event-new { animation:rowIn var(--motion-med) var(--ease-out); }
   @keyframes rowIn { from{opacity:0; transform:translateY(-6px);} to{opacity:1; transform:none;} }
 
-  /* ===== FOOTER NAV (clean + strong; centre-raised peach "+" = new shift note) ===== */
-  .tabbar { position:absolute; left:0; right:0; bottom:0; z-index:20; height:calc(var(--tabbar-h) + var(--safe-bottom)); padding:0 6px calc(var(--safe-bottom)); display:grid; grid-template-columns:1fr 1fr 1fr 1fr; align-items:center; background:var(--surface-raised); border-top:1px solid var(--border-default); box-shadow:0 -2px 18px -10px rgba(15,26,46,0.14); }
+  /* ===== FOOTER NAV (5 tabs; raised peach pencil "New note" in slot 4 -- right of centre, Wes call) ===== */
+  .tabbar { position:absolute; left:0; right:0; bottom:0; z-index:20; height:calc(var(--tabbar-h) + var(--safe-bottom)); padding:0 4px calc(var(--safe-bottom)); display:grid; grid-template-columns:repeat(5,1fr); align-items:center; background:var(--surface-raised); border-top:1px solid var(--border-default); box-shadow:0 -2px 18px -10px rgba(15,26,46,0.14); }
   .app[data-view="capture"] .tabbar { display:none; }
   .tab-btn { background:transparent; border:0; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; padding:8px 0 6px; height:var(--tabbar-h); justify-content:center; color:var(--text-muted); font-family:var(--sans); font-weight:500; font-size:10.5px; letter-spacing:0.01em; }
   .tab-btn svg { width:23px; height:23px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
   .tab-btn:focus-visible { outline:2px solid var(--border-focus); outline-offset:-2px; border-radius:8px; }
   .app[data-drawer="none"] .tab-btn[data-act="today"],
   .app[data-drawer="cg"] .tab-btn[data-act="cg"],
-  .app[data-drawer="tasks"] .tab-btn[data-act="tasks"] { color:var(--text-primary); }
+  .app[data-drawer="tasks"] .tab-btn[data-act="tasks"],
+  .app[data-drawer="wrap"] .tab-btn[data-act="wrap"] { color:var(--text-primary); }
   .tab-newwrap { justify-self:center; align-self:center; display:flex; flex-direction:column; align-items:center; gap:5px; }
-  .tab-new { width:54px; height:54px; margin-top:-20px; border-radius:50%; background:#E8A87C; color:#0F1A2E; border:3px solid var(--surface-raised); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 10px 22px -8px rgba(138,79,34,0.5), inset 0 1px 0 rgba(255,255,255,0.55); transition:transform var(--motion-fast) var(--ease-out); }
+  .tab-new { width:54px; height:54px; margin-top:-22px; border-radius:50%; background:#E8A87C; color:#0F1A2E; border:3px solid var(--surface-raised); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 12px 24px -8px rgba(138,79,34,0.55), inset 0 1px 0 rgba(255,255,255,0.55); transition:transform var(--motion-fast) var(--ease-out); }
   .tab-new:active { transform:scale(0.94); }
   .tab-new:focus-visible { outline:3px solid var(--border-focus); outline-offset:3px; }
   .tab-new svg { width:26px; height:26px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
@@ -441,7 +445,7 @@
 <!-- Genuine ThetaNote brand mark (assets/brand/logo-icon.svg) as a reusable symbol; inherits currentColor so it themes navy (light) / warm-white (dark). -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><symbol id="tn-mark" viewBox="0 0 2000 2000"><path fill="currentColor" d="M1451.618,1533.665c-114.324,149.568-286.706,232.907-475.975,225.013-39.708-1.656-76.796-7.675-114.879-16.908-72.005-17.457-171.436-65.097-223.654-114.512l-45.659-43.208c-28.308-30.436-53.221-62.368-75.117-97.784-51.789-83.768-82.656-175.66-97.77-272.538l-10.076-91.014-2.599-52.682c-2.711-54.96-1.532-108.303.773-163.187,5.217-124.199,32.953-269.386,97.186-376.201l17.868-29.713,29.951-42.188c22.508-31.704,49.899-57.875,79.405-83.448,39.801-34.496,83.041-61.267,131.148-83.376,147.114-67.611,325.546-68.342,473.204-1.002,58.908,26.865,99.95,54.84,147.903,97.517,22.597,20.111,41.578,41.685,60.817,65.038,24.624,29.889,44.363,61.887,62.493,96.069l25.632,54.815c27.093,57.94,50.443,161.494,55.682,226.247l5.068,62.641,2.653,129.463-1.468,64.327-8.328,96.761c-16.021,127.186-55.979,247.457-134.26,349.871ZM1304.187,1506.225c31.169-30.339,59.197-63.115,79.626-101.466l19.403-36.425,27.233-69.542,12.866-46.911c26.485-114.119,27.192-243.312,20.772-360.596l-4.715-49.639-12.228-78.147-18.286-66.247c-6.559-23.764-15.062-46.246-27.087-67.695l-31.954-56.998c-29.09-44.225-63.999-82.135-106.157-114.294-19.47-14.853-38.568-27.984-60.463-38.784-23.401-11.543-45.789-22.341-70.92-30.266-66.401-20.939-135.142-24.856-204.156-14.297-84.984,13.002-168.317,55.382-229.657,115.114-52.056,50.692-91.158,111.283-117.063,179.441-31.271,82.277-42.396,166.565-46.302,254.699-3.355,75.707-1.625,149.236,5.111,224.545,7.294,81.552,28.756,166.171,67.152,238.489,28.5,53.679,79.343,120.792,128.534,153.927l46.92,31.604,27.185,14.377c71.005,34.23,148.315,48.85,227.574,42.219,99.844-8.353,195.182-53.585,266.611-123.111Z"/><path fill="currentColor" d="M1328.865,1183.699c-21.305,57.516-65.175,99.194-126.807,105.449-22.486,2.282-43.474-.078-64.412-8.532-39.523-15.958-71.013-44.66-92.108-81.571l-21.742-38.043-16.883-31.15-62.661-116.73-86.507-160.07c-8.061-14.917-20.172-27.407-33.657-36.101-12.542-8.086-28.563-4.421-35.959,8.017-7.706,12.959-12.103,27.147-16.842,41.51l-9.816,29.749c-4.014,12.163-15.491,20.68-27.502,24.396-39.789,12.308-80.882-8.98-76.517-34.638l6.551-38.51c10.836-63.694,52.634-121.157,117.117-138.348,66.324-17.682,144.218,24.368,176.222,83.054l52.015,95.381,59.226,113.185,44.206,83.967,20.386,37.773c12.268,22.73,30.313,52.557,52.851,58.481,29.403,7.729,37.913-37.441,45.737-61.66l9.178-28.41c8.807-27.262,58.066-36.01,91.999-14.494,11.471,7.273,16.622,19.827,14.471,33.027-4.15,25.47-9.613,50.143-18.549,74.268Z"/></symbol></svg>
 <!-- Build stamp: confirms at a glance which deployed version the device is running (ends "did it land?" guessing). Update the text on every deploy. -->
-<div id="build-stamp" aria-hidden="true" style="position:fixed;top:max(env(safe-area-inset-top,0px),2px);left:50%;transform:translateX(-50%);z-index:99999;font:600 9px/1 ui-monospace,monospace;letter-spacing:0.08em;color:var(--text-muted);opacity:0.5;pointer-events:none;background:var(--surface-base);padding:2px 7px;border-radius:0 0 7px 7px;">v17</div>
+<div id="build-stamp" aria-hidden="true" style="position:fixed;top:max(env(safe-area-inset-top,0px),2px);left:50%;transform:translateX(-50%);z-index:99999;font:600 9px/1 ui-monospace,monospace;letter-spacing:0.08em;color:var(--text-muted);opacity:0.5;pointer-events:none;background:var(--surface-base);padding:2px 7px;border-radius:0 0 7px 7px;">v18</div>
 <div class="app" id="app" data-drawer="none" data-view="home">
 
   <!-- ============ HOME (shift feed) ============ -->
@@ -497,11 +501,12 @@
   <nav class="tabbar" aria-label="Primary">
     <button class="tab-btn" type="button" data-act="today" aria-label="Today"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Today</button>
     <button class="tab-btn" type="button" data-act="cg" aria-label="CG profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>CG</button>
+    <button class="tab-btn" type="button" data-act="tasks" aria-label="Tasks"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Tasks</button>
     <span class="tab-newwrap">
       <button class="tab-new" type="button" id="btn-newnote" aria-label="New shift note"><svg viewBox="0 0 24 24"><path d="M11 4H6.5A2.5 2.5 0 004 6.5v11A2.5 2.5 0 006.5 20h11a2.5 2.5 0 002.5-2.5V13"/><path d="M18.4 3.6a1.9 1.9 0 012.7 2.7L12.3 15l-3.6.9.9-3.6z"/></svg></button>
       <span class="tab-new-label">New note</span>
     </span>
-    <button class="tab-btn" type="button" data-act="tasks" aria-label="Tasks"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Tasks</button>
+    <button class="tab-btn" type="button" data-act="wrap" aria-label="Wrap up shift"><svg viewBox="0 0 24 24"><path d="M5 21V4l8 3 6-2v9l-6 2-8-3"/></svg>Wrap up</button>
   </nav>
 
   <!-- ============ DRAWERS ============ -->
@@ -727,10 +732,11 @@
   function toggleDrawer(d){ setDrawer(app.getAttribute('data-drawer') === d ? 'none' : d); }
   document.querySelector('.tab-btn[data-act="cg"]').addEventListener('click', function(){ toggleDrawer('cg'); });
   document.querySelector('.tab-btn[data-act="tasks"]').addEventListener('click', function(){ toggleDrawer('tasks'); });
+  document.querySelector('.tab-btn[data-act="wrap"]').addEventListener('click', function(){ toggleDrawer('wrap'); });
   document.getElementById('drawer-backdrop').addEventListener('click', closeDrawer);
   document.getElementById('wrap-cancel').addEventListener('click', closeDrawer);
   document.getElementById('task-wrap').addEventListener('click', function(){ setDrawer('wrap'); });
-  function feedCount(){ return document.querySelectorAll('#events-list .msg').length; }
+  function feedCount(){ return document.querySelectorAll('#events-list .gr-card').length; }
   // Assemble the day's entries into the LOCKED D1.8 NDIS-compliant plain-text shift note
   // (design/v2/locked/surface_d1_8_finalise_paste.html v2.1). Plain text survives paste into any provider tool;
   // ALL-CAPS headings + ASCII underline rows; [AI-assisted] C12 marker last. In the real app the prose sections
@@ -739,18 +745,19 @@
   function buildShiftNoteText(){
     var progress=[], meds=[], bocs=[];
     // Feed is newest-first (insertBefore firstChild); unshift to read chronological.
-    Array.prototype.forEach.call(document.querySelectorAll('#events-list .msg'), function(li){
-      var tm=li.querySelector('.bubble-time'), bx=li.querySelector('.bubble-text');
+    Array.prototype.forEach.call(document.querySelectorAll('#events-list .gr-card'), function(li){
+      var tm=li.querySelector('.gr-time'), bx=li.querySelector('.gr-body');
       if(!bx) return;
       var t = tm ? tm.textContent.trim() : '';
       var body = bx.textContent.trim();
-      if(li.classList.contains('msg--med')) meds.unshift((t?t+' - ':'')+body);
-      else if(li.classList.contains('msg--boc') || li.classList.contains('msg--incident')) bocs.unshift((t?t+' - ':'')+body);
+      if(li.classList.contains('gr-card--med')) meds.unshift((t?t+' - ':'')+body);
+      else if(li.classList.contains('gr-card--boc') || li.classList.contains('gr-card--incident')) bocs.unshift((t?t+' - ':'')+body);
       else progress.unshift((t?t+' - ':'')+body);
     });
     var none='Not reported this shift.';
-    var firstTime = document.querySelector('#events-list .msg:last-child .bubble-time');
-    var lastTime  = document.querySelector('#events-list .msg:first-child .bubble-time');
+    var cards=document.querySelectorAll('#events-list .gr-card');
+    var lastTime  = cards.length ? cards[0].querySelector('.gr-time') : null;                 // newest (top)
+    var firstTime = cards.length ? cards[cards.length-1].querySelector('.gr-time') : null;     // oldest (bottom)
     var shiftWindow = (firstTime && lastTime) ? (firstTime.textContent.trim()+' - '+lastTime.textContent.trim()) : '08:00 - 14:00';
     return [
       'CLIENT: CG',
@@ -1183,7 +1190,7 @@
       }
     });
   }
-  function initClamps(){ Array.prototype.forEach.call(document.querySelectorAll('#events-list .bubble-text'), setupClamp); }
+  function initClamps(){ Array.prototype.forEach.call(document.querySelectorAll('#events-list .gr-body'), setupClamp); }
   initClamps();
   if(document.fonts && document.fonts.ready){ document.fonts.ready.then(initClamps); }
 
