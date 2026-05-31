@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#FAFAF7">
-<title>ThetaNote -- Home header: warm greeting (6 premium takes)</title>
+<title>ThetaNote -- Home header: elevated (impeccable critique applied)</title>
 <!--
-  Round 2. Wes steer: it should be a WARM GREETING MOMENT, and the fault with everything so far is
-  GENERIC / NOT PREMIUM. So these acknowledge the worker + shift with craft, and carry client/date/shift
-  as quiet support (date no longer a dominating headline). Premium moves: real display moment, refined
-  hierarchy + tracking, generous breathing space, ONE warm accent, mono meta. DM Sans (no Fraunces per
-  product divergence), warm-paper palette. Brand mark + bell are placeholders pending Wes uploads.
+  Round 3 (impeccable critique applied). Prior greeting takes failed the category-reflex check: "Good morning"
+  on warm paper = the wellness-app reflex => generic. These bring a genuine craft move each + a distinctive,
+  FUNCTIONAL motif (shift-progress) so the header earns its space instead of decorating it.
+  Premium moves: type-scale tension (soft display vs tiny tracked mono), restraint + air, ONE warm accent,
+  shift-progress as a meaningful visual. DM Sans + DM Mono, warm-paper. Brand mark + bell = placeholders.
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,115 +23,104 @@
   .ph { text-align:center; padding:2px 6px; }
   .ph h1 { font-size:18px; font-weight:700; letter-spacing:-0.02em; margin:0 0 4px; color:#26261F; }
   .ph p { font-size:13px; color:#56564E; margin:0; line-height:1.45; }
+  .note { font-size:12px; color:#6A6A60; margin:6px 0 0; line-height:1.5; }
   .v-label { display:flex; align-items:baseline; gap:9px; padding:2px 4px 0; }
   .v-label .n { font-family:"DM Mono",ui-monospace,monospace; font-size:11px; font-weight:600; letter-spacing:0.14em; color:#36362F; }
   .v-label .t { font-size:15px; font-weight:700; letter-spacing:-0.01em; color:#1B1B16; }
+  .v-label .d { font-size:12px; color:#6A6A60; margin-left:auto; }
 
   .device { --navy:#16306B; --ink:#0F1A2E; --ink2:#3A4564; --ink3:#5C6680; --bg:#FAFAF7; --raised:#FFFFFF; --line:#E2E1DA; --muted:#EEEEE7; --peach:#E8A87C; --peachink:#8A4F22;
     border-radius:26px; overflow:hidden; background:var(--bg); box-shadow:0 16px 40px -18px rgba(20,22,28,0.5), 0 0 0 1px rgba(0,0,0,0.05); }
-  .scr { display:flex; flex-direction:column; height:300px; background:var(--bg); }
-  .top { padding:15px 16px 4px; display:flex; align-items:center; justify-content:space-between; }
+  .scr { display:flex; flex-direction:column; height:310px; background:var(--bg); position:relative; }
+  .top { padding:15px 16px 4px; display:flex; align-items:center; justify-content:space-between; position:relative; z-index:2; }
   .brand { display:inline-flex; align-items:center; gap:8px; font-weight:700; font-size:16px; letter-spacing:-0.02em; color:var(--ink); }
   .brand .mk { width:22px; height:22px; border-radius:50%; border:2px solid var(--navy); }
   .topr { display:inline-flex; align-items:center; gap:6px; }
   .bell { width:34px; height:34px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; color:var(--ink2); }
   .bell svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
   .me { width:32px; height:32px; border-radius:50%; background:var(--navy); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; }
-  .fhint { flex:1; padding:6px 16px; overflow:hidden; }
+  .fhint { flex:1; padding:6px 16px; overflow:hidden; position:relative; z-index:2; }
   .gh { background:var(--raised); border:1px solid var(--line); border-radius:14px; padding:11px 13px; box-shadow:0 1px 2px rgba(20,22,28,0.05); }
   .gh b { display:block; font-size:10.5px; font-weight:700; color:var(--navy); margin-bottom:3px; letter-spacing:0.02em; }
   .gh p { margin:0; font-size:12.5px; font-weight:600; color:var(--ink); line-height:1.4; }
-  .hz { padding:10px 16px 14px; }
+  .hz { padding:12px 16px 14px; position:relative; z-index:2; }
   .mono { font-family:"DM Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums; }
+  .caps { font-family:"DM Mono",ui-monospace,monospace; font-size:10px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; }
 
-  /* G1 -- time-aware greeting hero, shift line quiet under */
-  .g1 .hi { font-size:27px; font-weight:700; letter-spacing:-0.03em; line-height:1; margin:0; color:var(--ink); }
-  .g1 .sub { margin-top:9px; font-size:13px; font-weight:500; color:var(--ink3); }
-  .g1 .sub .cg { color:var(--ink); font-weight:600; }
-  .g1 .sub .sep { color:#C4C2B8; margin:0 7px; }
+  /* ===== E1 -- greeting + shift-progress arc (the functional motif) ===== */
+  .e1 { display:flex; align-items:center; gap:16px; }
+  .e1 .arc { position:relative; width:62px; height:62px; flex-shrink:0; }
+  .e1 .arc svg { width:62px; height:62px; transform:rotate(-90deg); }
+  .e1 .arc .mid { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .e1 .arc .mid .cg { font-size:14px; font-weight:700; letter-spacing:0.01em; color:var(--ink); line-height:1; }
+  .e1 .txt .hi { font-size:21px; font-weight:700; letter-spacing:-0.025em; margin:0; line-height:1.05; color:var(--ink); }
+  .e1 .txt .sub { margin-top:5px; font-size:11px; color:var(--ink3); }
+  .e1 .txt .sub .caps { color:var(--peachink); }
 
-  /* G2 -- warm eyebrow date, greeting, "with CG" emphasised */
-  .g2 .eb { font-family:"DM Mono",ui-monospace,monospace; font-size:10px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--peachink); margin:0 0 7px; }
-  .g2 .hi { font-size:24px; font-weight:700; letter-spacing:-0.025em; line-height:1.12; margin:0; color:var(--ink); }
-  .g2 .hi .with { color:var(--ink3); font-weight:600; }
-  .g2 .sh { margin-top:8px; font-size:11px; color:var(--ink3); }
+  /* ===== E2 -- editorial restraint: huge soft greeting, hairline, tiny tracked meta ===== */
+  .e2 .hi { font-size:32px; font-weight:600; letter-spacing:-0.04em; line-height:0.96; margin:0; color:var(--ink); }
+  .e2 .rule { height:1px; background:var(--line); margin:14px 0 10px; }
+  .e2 .meta { display:flex; align-items:center; justify-content:space-between; }
+  .e2 .meta .cg { font-size:13px; font-weight:700; letter-spacing:-0.01em; color:var(--ink); }
+  .e2 .meta .rest { color:var(--ink3); }
 
-  /* G3 -- greeting + avatar, premium two-line, hairline rule under */
-  .g3 .row { display:flex; align-items:center; gap:13px; padding-bottom:13px; border-bottom:1px solid var(--line); }
-  .g3 .av { width:44px; height:44px; border-radius:50%; background:rgba(22,48,107,0.10); color:var(--navy); display:inline-flex; align-items:center; justify-content:center; font-weight:700; font-size:16px; flex-shrink:0; }
-  .g3 .hi { font-size:19px; font-weight:700; letter-spacing:-0.02em; margin:0; line-height:1.05; color:var(--ink); }
-  .g3 .sub { margin-top:3px; font-size:12px; font-weight:500; color:var(--ink3); }
-  .g3 .sub .sep { color:#C4C2B8; margin:0 6px; }
+  /* ===== E3 -- type-scale tension: day-part hero, tiny tracked mono meta ===== */
+  .e3 .pre { font-size:15px; font-weight:500; color:var(--ink3); letter-spacing:-0.01em; }
+  .e3 .hero { font-size:34px; font-weight:700; letter-spacing:-0.04em; line-height:0.92; margin:2px 0 0; color:var(--ink); }
+  .e3 .meta { margin-top:12px; color:var(--ink3); }
+  .e3 .meta .cg { color:var(--ink); font-weight:600; }
+  .e3 .meta .sep { color:#C4C2B8; margin:0 8px; }
 
-  /* G4 -- big warm greeting, peach underline accent on the day-part word */
-  .g4 .hi { font-size:26px; font-weight:700; letter-spacing:-0.03em; line-height:1.05; margin:0; color:var(--ink); }
-  .g4 .hi .hl { box-shadow:inset 0 -10px 0 rgba(232,168,124,0.35); }
-  .g4 .sub { margin-top:10px; font-family:"DM Mono",ui-monospace,monospace; font-size:11px; letter-spacing:0.04em; color:var(--ink3); }
-  .g4 .sub .cg { color:var(--ink2); font-weight:500; }
-  .g4 .sub .sep { color:#C4C2B8; margin:0 7px; }
-
-  /* G5 -- editorial: greeting, generous space, quiet meta row baseline-aligned */
-  .g5 .hi { font-size:30px; font-weight:700; letter-spacing:-0.035em; line-height:0.98; margin:0; color:var(--ink); }
-  .g5 .meta { margin-top:13px; display:flex; align-items:baseline; gap:10px; }
-  .g5 .meta .cg { font-size:14px; font-weight:700; color:var(--ink); letter-spacing:-0.01em; }
-  .g5 .meta .rest { font-family:"DM Mono",ui-monospace,monospace; font-size:11px; color:var(--ink3); letter-spacing:0.03em; }
-
-  /* G6 -- soft greeting card (raised), avatar + greeting + shift chip */
-  .g6 .card { background:var(--raised); border:1px solid var(--line); border-radius:18px; padding:14px 15px; box-shadow:0 2px 10px -5px rgba(20,22,28,0.16); display:flex; align-items:center; gap:13px; }
-  .g6 .av { width:42px; height:42px; border-radius:50%; background:var(--peach); color:#3a2410; display:inline-flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; flex-shrink:0; }
-  .g6 .hi { font-size:17px; font-weight:700; letter-spacing:-0.02em; margin:0; line-height:1.1; color:var(--ink); }
-  .g6 .sub { margin-top:3px; font-family:"DM Mono",ui-monospace,monospace; font-size:11px; color:var(--ink3); letter-spacing:0.02em; }
+  /* ===== E4 -- atmospheric: warm time-of-day wash behind a clean greeting ===== */
+  .e4-wash { position:absolute; top:0; left:0; right:0; height:150px; z-index:1; pointer-events:none;
+    background:radial-gradient(120% 90% at 80% -10%, rgba(232,168,124,0.22) 0%, rgba(232,168,124,0.06) 40%, transparent 70%); }
+  .e4 .hi { font-size:26px; font-weight:700; letter-spacing:-0.03em; line-height:1.02; margin:0; color:var(--ink); }
+  .e4 .sub { margin-top:9px; display:inline-flex; align-items:center; gap:8px; }
+  .e4 .sub .cg { font-size:12.5px; font-weight:600; color:var(--ink2); }
+  .e4 .sub .pill { font-family:"DM Mono",ui-monospace,monospace; font-size:10.5px; color:var(--ink3); background:rgba(255,255,255,0.7); border:1px solid var(--line); padding:3px 9px; border-radius:999px; letter-spacing:0.03em; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="ph"><h1>Home header -- warm greeting (6 premium takes)</h1><p>A human opening that acknowledges you + the shift, with client / date / time as quiet support. Aiming for crafted, not generic. Brand mark + bell are placeholders.</p></div>
+  <div class="ph"><h1>Home header -- elevated</h1><p>impeccable critique applied: escape the wellness-greeting reflex with a real craft move each + a functional shift-progress motif. Brand mark + bell are placeholders.</p>
+  <p class="note">Note the arc in E1: it shows how far you are into the shift (here ~25%, "2h in") -- warm AND useful, not decoration.</p></div>
 
-  <!-- G1 -->
-  <div><div class="v-label"><span class="n">G1</span><span class="t">Time-aware greeting</span></div>
+  <!-- E1 -->
+  <div><div class="v-label"><span class="n">E1</span><span class="t">Greeting + shift-progress arc</span><span class="d">functional motif</span></div>
   <div class="device"><div class="scr">
     <div class="top"><span class="brand"><span class="mk"></span>ThetaNote</span><span class="topr"><span class="bell"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg></span><span class="me">WT</span></span></div>
-    <div class="hz g1"><p class="hi">Good morning, Wes</p><p class="sub">You're with <span class="cg">CG</span><span class="sep">&middot;</span><span class="mono">8am - 2pm</span></p></div>
+    <div class="hz e1">
+      <span class="arc">
+        <svg viewBox="0 0 62 62"><circle cx="31" cy="31" r="27" fill="none" stroke="#E2E1DA" stroke-width="4"/><circle cx="31" cy="31" r="27" fill="none" stroke="#E8A87C" stroke-width="4" stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="127.2"/></svg>
+        <span class="mid"><span class="cg">CG</span></span>
+      </span>
+      <span class="txt"><p class="hi">Morning, Wes</p><p class="sub"><span class="caps">2h in</span> &middot; <span class="mono">8am - 2pm</span></p></span>
+    </div>
     <div class="fhint"><div class="gh"><b>BEHAVIOUR OF CONCERN</b><p>Unsettled in the lounge, pacing. Deep pressure helped.</p></div></div>
   </div></div></div>
 
-  <!-- G2 -->
-  <div><div class="v-label"><span class="n">G2</span><span class="t">Date eyebrow + greeting</span></div>
+  <!-- E2 -->
+  <div><div class="v-label"><span class="n">E2</span><span class="t">Editorial restraint</span></div>
   <div class="device"><div class="scr">
     <div class="top"><span class="brand"><span class="mk"></span>ThetaNote</span><span class="topr"><span class="bell"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg></span><span class="me">WT</span></span></div>
-    <div class="hz g2"><p class="eb">Thursday 30 May</p><p class="hi">Morning, Wes.<br><span class="with">You're with CG today.</span></p><p class="sh mono">8am - 2pm</p></div>
-    <div class="fhint"><div class="gh"><b>BEHAVIOUR OF CONCERN</b><p>Unsettled in the lounge, pacing. Deep pressure helped.</p></div></div>
-  </div></div></div>
-
-  <!-- G3 -->
-  <div><div class="v-label"><span class="n">G3</span><span class="t">Greeting + avatar, hairline</span></div>
-  <div class="device"><div class="scr">
-    <div class="top"><span class="brand"><span class="mk"></span>ThetaNote</span><span class="topr"><span class="bell"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg></span><span class="me">WT</span></span></div>
-    <div class="hz g3"><div class="row"><span class="av">CG</span><span><p class="hi">Morning, Wes</p><p class="sub">With CG<span class="sep">&middot;</span><span class="mono">8am - 2pm</span></p></span></div></div>
-    <div class="fhint"><div class="gh"><b>BEHAVIOUR OF CONCERN</b><p>Unsettled in the lounge, pacing. Deep pressure helped.</p></div></div>
-  </div></div></div>
-
-  <!-- G4 -->
-  <div><div class="v-label"><span class="n">G4</span><span class="t">Greeting + peach accent</span></div>
-  <div class="device"><div class="scr">
-    <div class="top"><span class="brand"><span class="mk"></span>ThetaNote</span><span class="topr"><span class="bell"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg></span><span class="me">WT</span></span></div>
-    <div class="hz g4"><p class="hi">Good <span class="hl">morning</span>, Wes</p><p class="sub"><span class="cg">CG</span><span class="sep">&middot;</span>Thu 30 May<span class="sep">&middot;</span>8am - 2pm</p></div>
-    <div class="fhint"><div class="gh"><b>BEHAVIOUR OF CONCERN</b><p>Unsettled in the lounge, pacing. Deep pressure helped.</p></div></div>
-  </div></div></div>
-
-  <!-- G5 -->
-  <div><div class="v-label"><span class="n">G5</span><span class="t">Editorial greeting</span></div>
-  <div class="device"><div class="scr">
-    <div class="top"><span class="brand"><span class="mk"></span>ThetaNote</span><span class="topr"><span class="bell"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg></span><span class="me">WT</span></span></div>
-    <div class="hz g5"><p class="hi">Morning,<br>Wes</p><div class="meta"><span class="cg">CG</span><span class="rest">Thu 30 May &middot; 8am - 2pm</span></div></div>
+    <div class="hz e2"><p class="hi">Morning,<br>Wes</p><div class="rule"></div><div class="meta"><span class="cg">CG</span><span class="rest mono">Thu 30 May &middot; 8am - 2pm</span></div></div>
     <div class="fhint"><div class="gh"><b>BEHAVIOUR OF CONCERN</b><p>Unsettled in the lounge, pacing.</p></div></div>
   </div></div></div>
 
-  <!-- G6 -->
-  <div><div class="v-label"><span class="n">G6</span><span class="t">Soft greeting card</span></div>
+  <!-- E3 -->
+  <div><div class="v-label"><span class="n">E3</span><span class="t">Type-scale tension</span></div>
   <div class="device"><div class="scr">
     <div class="top"><span class="brand"><span class="mk"></span>ThetaNote</span><span class="topr"><span class="bell"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg></span><span class="me">WT</span></span></div>
-    <div class="hz g6"><div class="card"><span class="av">CG</span><span><p class="hi">Morning, Wes</p><p class="sub">With CG &middot; Thu 30 May &middot; 8am - 2pm</p></span></div></div>
+    <div class="hz e3"><p class="pre">Good morning, Wes</p><p class="hero">You're with CG</p><p class="meta mono"><span class="cg">Thu 30 May</span><span class="sep">&middot;</span>8am - 2pm</p></div>
+    <div class="fhint"><div class="gh"><b>BEHAVIOUR OF CONCERN</b><p>Unsettled in the lounge, pacing.</p></div></div>
+  </div></div></div>
+
+  <!-- E4 -->
+  <div><div class="v-label"><span class="n">E4</span><span class="t">Atmospheric wash</span></div>
+  <div class="device"><div class="scr">
+    <div class="e4-wash"></div>
+    <div class="top"><span class="brand"><span class="mk"></span>ThetaNote</span><span class="topr"><span class="bell"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg></span><span class="me">WT</span></span></div>
+    <div class="hz e4"><p class="hi">Morning, Wes</p><span class="sub"><span class="cg">With CG today</span><span class="pill">8am - 2pm</span></span></div>
     <div class="fhint"><div class="gh"><b>BEHAVIOUR OF CONCERN</b><p>Unsettled in the lounge, pacing.</p></div></div>
   </div></div></div>
 
