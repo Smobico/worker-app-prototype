@@ -3,187 +3,244 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#DCDCD8">
-<title>ThetaNote -- Feed palette variations (4 light)</title>
+<meta name="theme-color" content="#D7D7D2">
+<title>ThetaNote -- Shift feed LAYOUT variations (4, light, bold, polished)</title>
 <!--
-  Shift-note feed (Today home) in FOUR light palettes for Wes to compare. SAME layout + content in each;
-  only the colour tokens change (clean palette comparison). Each renders the full home context: top bar,
-  date/participant header, feed bubbles (BOC / note / med) with provenance pills, footer capture button.
-  Palettes (all light, all AA, all warm-clinical-appropriate):
-    P1 Warm Paper   -- current direction: warm-white + deep navy actions + peach capture
-    P2 Cool Clinical-- cool white + deep teal actions + amber capture (calm medical-chart)
-    P3 Soft Sage    -- warm off-white + forest-green actions + clay capture (nature-calm)
-    P4 Warm Stone   -- stone/beige + espresso ink + terracotta capture (editorial warmth)
+  FOUR LAYOUT variations of the Today shift-feed (not palette swaps). Each is a distinct layout SYSTEM for the
+  shift-note logs, with: bolder visual weight, bold body text, a tightened 5-ITEM footer nav (Today / CG /
+  Capture / Tasks / Wrap-up), and a polished pass. Same four log entries in each (BOC voice / note typed /
+  medication / note voice) so the layout is the variable. All light, all AA, warm-clinical register.
+    V1 Timeline rail   -- vertical time-spine, entries hang off coloured nodes
+    V2 Bold blocks     -- solid cards, heavy coloured type-band header per entry
+    V3 Clinical ledger -- tight rows, bold time column + type pill, max scan density
+    V4 Grouped         -- entries under bold time-of-day headers, large bold tags
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   * { box-sizing:border-box; }
-  html,body { margin:0; background:#D7D7D2; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility; -webkit-tap-highlight-color:transparent;
-    font-family:"DM Sans",-apple-system,BlinkMacSystemFont,system-ui,sans-serif; }
-  .wrap { max-width:440px; margin:0 auto; padding:28px 16px calc(40px + env(safe-area-inset-bottom,0px)); display:flex; flex-direction:column; gap:34px; }
-  .page-head { text-align:center; color:#2A2A28; padding:4px 8px 0; }
-  .page-head h1 { font-size:18px; font-weight:700; letter-spacing:-0.01em; margin:0 0 4px; }
-  .page-head p { font-size:13px; line-height:1.45; color:#5A5A55; margin:0; }
+  html,body { margin:0; background:#CFCFC9; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility;
+    -webkit-tap-highlight-color:transparent; font-family:"DM Sans",-apple-system,BlinkMacSystemFont,system-ui,sans-serif; }
+  .wrap { max-width:430px; margin:0 auto; padding:26px 14px calc(40px + env(safe-area-inset-bottom,0px)); display:flex; flex-direction:column; gap:30px; }
+  .page-head { text-align:center; color:#26261F; padding:2px 6px; }
+  .page-head h1 { font-size:18px; font-weight:700; letter-spacing:-0.02em; margin:0 0 4px; }
+  .page-head p { font-size:13px; line-height:1.45; color:#56564E; margin:0; }
+  .v-label { display:flex; align-items:baseline; gap:9px; padding:2px 4px 0; }
+  .v-label .n { font-family:"DM Mono",ui-monospace,monospace; font-size:11px; font-weight:600; letter-spacing:0.14em; color:#36362F; }
+  .v-label .t { font-size:16px; font-weight:700; letter-spacing:-0.02em; color:#1B1B16; }
+  .v-label .d { font-size:12px; color:#6A6A60; margin-left:auto; }
 
-  .v-label { display:flex; align-items:baseline; gap:8px; padding:0 4px 2px; }
-  .v-label .n { font-family:"DM Mono",ui-monospace,monospace; font-size:11px; font-weight:600; letter-spacing:0.14em; color:#3A3A36; }
-  .v-label .t { font-size:15px; font-weight:700; letter-spacing:-0.01em; color:#1F1F1C; }
-  .v-label .d { font-size:12px; color:#6A6A64; margin-left:auto; }
-
-  /* ===== ONE DEVICE = one palette. Tokens scoped per [data-pal]. Structure is identical across all. ===== */
+  /* ===== shared device shell + tokens (warm-paper base, bolder) ===== */
   .device {
     --sans:"DM Sans",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
     --mono:"DM Mono",ui-monospace,monospace;
-    border-radius:28px; overflow:hidden; box-shadow:0 18px 44px -18px rgba(20,24,30,0.5), 0 0 0 1px rgba(0,0,0,0.04);
-    background:var(--bg); color:var(--ink);
+    --bg:#FAF9F5; --raised:#FFFFFF; --muted:#EFEDE4; --line:#E4E2D7; --line-strong:#CFCcBE;
+    --ink:#14130F; --ink2:#46443C; --ink3:#757266;
+    --navy:#16306B; --boc:#B23A2E; --med:#5A6B52; --ai-bg:#E7E5F0; --ai-ink:#494279;
+    --cap:#E8893C; --cap-ink:#1A0E03; --cap-shadow:rgba(150,80,28,0.55);
+    border-radius:30px; overflow:hidden; background:var(--bg); color:var(--ink);
+    box-shadow:0 20px 48px -18px rgba(20,22,28,0.55), 0 0 0 1px rgba(0,0,0,0.05);
   }
-  .scr { display:flex; flex-direction:column; min-height:600px; background:var(--bg); }
+  .scr { display:flex; flex-direction:column; min-height:640px; background:var(--bg); }
 
-  /* top bar */
-  .top { flex-shrink:0; padding:18px 20px 6px; display:flex; align-items:center; justify-content:space-between; }
+  /* top bar -- bolder wordmark */
+  .top { flex-shrink:0; padding:18px 20px 8px; display:flex; align-items:center; justify-content:space-between; }
   .brand { display:inline-flex; align-items:center; gap:9px; }
-  .brand-mark { width:24px; height:24px; color:var(--ink); }
+  .brand-mark { width:24px; height:24px; color:var(--navy); }
   .brand-mark svg { width:100%; height:100%; }
-  .brand-name { font-weight:600; font-size:16px; letter-spacing:-0.01em; color:var(--ink); }
+  .brand-name { font-weight:700; font-size:17px; letter-spacing:-0.02em; color:var(--ink); }
   .top-actions { display:inline-flex; gap:2px; }
   .ic { width:38px; height:38px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; color:var(--ink2); position:relative; }
-  .ic svg { width:21px; height:21px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
-  .ic .badge { position:absolute; top:7px; right:7px; width:7px; height:7px; border-radius:50%; background:var(--accent); border:1.5px solid var(--bg); }
+  .ic svg { width:21px; height:21px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+  .ic .badge { position:absolute; top:7px; right:7px; width:7px; height:7px; border-radius:50%; background:var(--cap); border:1.5px solid var(--bg); }
 
-  /* date / shift header */
-  .head { flex-shrink:0; padding:10px 22px 12px; display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
-  .head .ctx { font-weight:700; font-size:18px; letter-spacing:-0.015em; color:var(--ink-deep); margin:0; }
-  .head .shift { font-family:var(--mono); font-size:12px; font-weight:500; letter-spacing:0.03em; color:var(--ink2); white-space:nowrap; }
+  /* date / shift header -- big + bold */
+  .head { flex-shrink:0; padding:6px 20px 14px; display:flex; align-items:flex-end; justify-content:space-between; gap:12px; }
+  .head .ctx { font-weight:700; font-size:21px; letter-spacing:-0.03em; color:var(--ink); margin:0; line-height:1.1; }
+  .head .ctx .sub { display:block; font-size:12px; font-weight:600; letter-spacing:0.02em; color:var(--ink3); margin-top:3px; }
+  .head .shift { font-family:var(--mono); font-size:12px; font-weight:500; letter-spacing:0.02em; color:var(--ink2); white-space:nowrap; background:var(--muted); padding:5px 10px; border-radius:999px; }
 
-  /* feed */
-  .feed { flex:1; padding:8px 20px 18px; display:flex; flex-direction:column; gap:16px; }
-  .msg { display:flex; flex-direction:column; align-items:flex-start; gap:5px; }
-  .bubble { max-width:86%; background:var(--raised); border:1px solid var(--line); border-radius:20px 20px 20px 7px; padding:12px 15px; box-shadow:0 1px 2px rgba(20,24,30,0.05); }
-  .bubble-text { font-size:15.5px; line-height:1.5; color:var(--ink); margin:0; }
-  .bubble-tag { display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9.5px; font-weight:600; letter-spacing:0.13em; text-transform:uppercase; margin:0 0 8px; }
-  .bubble-tag svg { width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
-  .bubble--boc { border:1.5px solid var(--accent); }
-  .bubble--boc .bubble-tag { color:var(--accent); }
-  .bubble--med { background:var(--muted); border-color:transparent; box-shadow:none; }
-  .bubble--med .bubble-tag { color:var(--ink2); }
-  .meta { display:flex; align-items:center; gap:8px; padding-left:8px; }
-  .time { font-family:var(--mono); font-size:10px; letter-spacing:0.04em; color:var(--ink3); font-variant-numeric:tabular-nums; }
-  .prov { display:inline-flex; align-items:center; gap:4px; font-family:var(--mono); font-size:8px; line-height:1; letter-spacing:0.12em; text-indent:0.06em; text-transform:uppercase; padding:4px 7px; border-radius:999px; }
-  .prov svg { width:9px; height:9px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
-  .prov--voice, .prov--typed { background:var(--muted); color:var(--ink2); }
-  .prov--ai { background:var(--ai-bg); color:var(--ai-ink); }
+  .feed { flex:1; overflow:hidden; }
 
-  /* footer nav + capture */
-  .tabbar { flex-shrink:0; display:grid; grid-template-columns:1fr 1fr 1fr 1fr; align-items:center; background:var(--raised); border-top:1px solid var(--line); padding:0 6px; height:64px; }
-  .tab { display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--ink3); font-weight:500; font-size:10.5px; }
-  .tab.on { color:var(--ink); }
-  .tab svg { width:23px; height:23px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
-  .newwrap { justify-self:center; display:flex; flex-direction:column; align-items:center; gap:5px; }
-  .new { width:52px; height:52px; margin-top:-18px; border-radius:50%; background:var(--cap); color:var(--cap-ink); border:3px solid var(--raised); display:inline-flex; align-items:center; justify-content:center; box-shadow:0 9px 20px -8px var(--cap-shadow), inset 0 1px 0 rgba(255,255,255,0.5); }
-  .new svg { width:25px; height:25px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
-  .new-label { font-weight:600; font-size:10.5px; color:var(--cap-ink-label); }
+  /* type-colour helpers */
+  .c-boc { color:var(--boc); } .c-note { color:var(--navy); } .c-med { color:var(--med); }
 
-  /* ============ PALETTES ============ */
-  /* P1 -- Warm Paper (current): warm-white + deep navy + peach capture */
-  [data-pal="1"] {
-    --bg:#FAFAF7; --raised:#FFFFFF; --muted:#EEEEE7; --line:#E2E1DA;
-    --ink:#0F1A2E; --ink-deep:#0B1E45; --ink2:#3A4564; --ink3:#5C6680;
-    --accent:#16306B; --ai-bg:rgba(110,122,176,0.16); --ai-ink:#3F4974;
-    --cap:#E8A87C; --cap-ink:#0F1A2E; --cap-ink-label:#8A4F22; --cap-shadow:rgba(138,79,34,0.5);
-  }
-  /* P2 -- Cool Clinical: cool white + deep teal + amber capture */
-  [data-pal="2"] {
-    --bg:#F4F8FA; --raised:#FFFFFF; --muted:#E7EFF3; --line:#D8E3E9;
-    --ink:#112433; --ink-deep:#0E2C3A; --ink2:#36505F; --ink3:#5E7384;
-    --accent:#1C6E7B; --ai-bg:rgba(54,120,150,0.14); --ai-ink:#2E5E72;
-    --cap:#E6A356; --cap-ink:#231405; --cap-ink-label:#8A5A14; --cap-shadow:rgba(138,90,20,0.5);
-  }
-  /* P3 -- Soft Sage: warm off-white + forest green + clay capture */
-  [data-pal="3"] {
-    --bg:#F5F7F0; --raised:#FFFFFF; --muted:#E9EDE0; --line:#DFE4D4;
-    --ink:#1E2620; --ink-deep:#1B3324; --ink2:#42503F; --ink3:#67715E;
-    --accent:#3C6149; --ai-bg:rgba(90,118,130,0.15); --ai-ink:#3E5562;
-    --cap:#D98C5F; --cap-ink:#2A1608; --cap-ink-label:#854D2A; --cap-shadow:rgba(133,77,42,0.5);
-  }
-  /* P4 -- Warm Stone: stone/beige + espresso ink + terracotta capture */
-  [data-pal="4"] {
-    --bg:#F8F4EE; --raised:#FFFFFF; --muted:#EFE7DA; --line:#E7DDCD;
-    --ink:#2A2520; --ink-deep:#3A2B1E; --ink2:#564B40; --ink3:#7B6F62;
-    --accent:#9C4A2E; --ai-bg:rgba(120,110,150,0.15); --ai-ink:#4A4470;
-    --cap:#C8663B; --cap-ink:#FFFFFF; --cap-ink-label:#8A451F; --cap-shadow:rgba(138,69,31,0.5);
-  }
+  /* ===== shared bottom nav -- TIGHT 5-item ===== */
+  .nav { flex-shrink:0; display:grid; grid-template-columns:repeat(5,1fr); align-items:center; background:var(--raised); border-top:1.5px solid var(--line); height:58px; padding:0 2px; }
+  .nb { display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--ink3); font-weight:600; font-size:9.5px; letter-spacing:0.01em; }
+  .nb.on { color:var(--navy); }
+  .nb svg { width:21px; height:21px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .nb-cap { color:var(--cap-ink); }
+  .nb-cap .cap-disc { width:46px; height:46px; margin-top:-16px; border-radius:50%; background:var(--cap); display:inline-flex; align-items:center; justify-content:center; box-shadow:0 8px 16px -6px var(--cap-shadow), inset 0 1px 0 rgba(255,255,255,0.55); }
+  .nb-cap .cap-disc svg { width:23px; height:23px; stroke-width:2.4; }
+  .nb-cap .nb-lab { font-size:9px; font-weight:700; color:var(--cap); margin-top:1px; }
+
+  /* ====================================================================
+     V1 -- TIMELINE RAIL
+     ==================================================================== */
+  .tl { padding:6px 18px 16px; position:relative; }
+  .tl::before { content:""; position:absolute; left:54px; top:10px; bottom:10px; width:2px; background:var(--line-strong); }
+  .tl-row { position:relative; padding:0 0 20px 70px; min-height:48px; }
+  .tl-time { position:absolute; left:0; top:1px; width:42px; text-align:right; font-family:var(--mono); font-weight:600; font-size:13px; color:var(--ink); font-variant-numeric:tabular-nums; }
+  .tl-node { position:absolute; left:48px; top:4px; width:14px; height:14px; border-radius:50%; background:var(--raised); border:3px solid var(--navy); z-index:1; }
+  .tl-row.is-boc .tl-node { border-color:var(--boc); }
+  .tl-row.is-med .tl-node { border-color:var(--med); }
+  .tl-tag { display:inline-flex; align-items:center; gap:5px; font-family:var(--mono); font-size:9px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; margin:0 0 5px; }
+  .tl-tag svg { width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+  .tl-body { font-size:15px; font-weight:600; line-height:1.45; color:var(--ink); margin:0; }
+  .tl-prov { font-family:var(--mono); font-size:8px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); margin-top:6px; display:inline-block; }
+
+  /* ====================================================================
+     V2 -- BOLD BLOCKS (solid cards, coloured header band)
+     ==================================================================== */
+  .bk { padding:8px 18px 16px; display:flex; flex-direction:column; gap:13px; }
+  .bk-card { background:var(--raised); border-radius:16px; overflow:hidden; box-shadow:0 2px 8px -3px rgba(20,22,28,0.16); border:1px solid var(--line); }
+  .bk-band { display:flex; align-items:center; justify-content:space-between; padding:9px 14px; background:var(--navy); color:#fff; }
+  .bk-card.is-boc .bk-band { background:var(--boc); }
+  .bk-card.is-med .bk-band { background:var(--med); }
+  .bk-card.is-note .bk-band { background:var(--navy); }
+  .bk-band-l { display:inline-flex; align-items:center; gap:7px; font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; }
+  .bk-band-l svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+  .bk-time { font-family:var(--mono); font-size:12px; font-weight:600; opacity:0.92; font-variant-numeric:tabular-nums; }
+  .bk-body { padding:13px 15px 14px; font-size:15.5px; font-weight:600; line-height:1.48; color:var(--ink); margin:0; }
+  .bk-prov { display:inline-flex; align-items:center; gap:5px; margin:0 15px 13px; font-family:var(--mono); font-size:8px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); background:var(--muted); padding:4px 8px; border-radius:999px; }
+  .bk-prov svg { width:10px; height:10px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+
+  /* ====================================================================
+     V3 -- CLINICAL LEDGER (tight rows, bold time column)
+     ==================================================================== */
+  .lg { padding:4px 0 12px; }
+  .lg-row { display:grid; grid-template-columns:52px 1fr auto; gap:12px; align-items:start; padding:14px 18px; border-bottom:1px solid var(--line); }
+  .lg-row:first-child { border-top:1px solid var(--line); }
+  .lg-time { font-family:var(--mono); font-weight:700; font-size:14px; color:var(--ink); font-variant-numeric:tabular-nums; padding-top:1px; }
+  .lg-main { min-width:0; }
+  .lg-tag { display:inline-flex; align-items:center; gap:5px; font-family:var(--mono); font-size:9px; font-weight:700; letter-spacing:0.13em; text-transform:uppercase; margin:0 0 4px; }
+  .lg-tag svg { width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+  .lg-body { font-size:14.5px; font-weight:600; line-height:1.4; color:var(--ink); margin:0; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .lg-right { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+  .lg-prov { width:24px; height:24px; border-radius:50%; background:var(--muted); display:inline-flex; align-items:center; justify-content:center; color:var(--ink2); }
+  .lg-prov svg { width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .lg-chev { color:var(--ink3); }
+  .lg-chev svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+
+  /* ====================================================================
+     V4 -- GROUPED (time-of-day headers, large bold tags)
+     ==================================================================== */
+  .gr { padding:6px 18px 16px; }
+  .gr-head { display:flex; align-items:center; gap:10px; margin:14px 0 10px; }
+  .gr-head:first-child { margin-top:4px; }
+  .gr-head .lab { font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--ink2); }
+  .gr-head .ln { flex:1; height:2px; background:var(--line-strong); border-radius:2px; }
+  .gr-card { background:var(--raised); border:1px solid var(--line); border-radius:14px; padding:13px 15px; margin-bottom:11px; box-shadow:0 1px 3px rgba(20,22,28,0.06); border-left:4px solid var(--navy); }
+  .gr-card.is-boc { border-left-color:var(--boc); }
+  .gr-card.is-med { border-left-color:var(--med); }
+  .gr-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:7px; }
+  .gr-tag { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700; letter-spacing:-0.01em; }
+  .gr-tag svg { width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+  .gr-time { font-family:var(--mono); font-size:11px; font-weight:600; color:var(--ink3); font-variant-numeric:tabular-nums; }
+  .gr-body { font-size:15px; font-weight:600; line-height:1.46; color:var(--ink); margin:0; }
+  .gr-prov { font-family:var(--mono); font-size:8px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); margin-top:7px; display:inline-block; }
 </style>
 </head>
 <body>
-<!-- brand mark symbol (inherits currentColor) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tn-mark" viewBox="0 0 2000 2000"><path fill="currentColor" d="M1451.618,1533.665c-114.324,149.568-286.706,232.907-475.975,225.013-39.708-1.656-76.796-7.675-114.879-16.908-72.005-17.457-171.436-65.097-223.654-114.512l-45.659-43.208c-28.308-30.436-53.221-62.368-75.117-97.784-51.789-83.768-82.656-175.66-97.77-272.538l-10.076-91.014-2.599-52.682c-2.711-54.96-1.532-108.303.773-163.187,5.217-124.199,32.953-269.386,97.186-376.201l17.868-29.713,29.951-42.188c22.508-31.704,49.899-57.875,79.405-83.448,39.801-34.496,83.041-61.267,131.148-83.376,147.114-67.611,325.546-68.342,473.204-1.002,58.908,26.865,99.95,54.84,147.903,97.517,22.597,20.111,41.578,41.685,60.817,65.038,24.624,29.889,44.363,61.887,62.493,96.069l25.632,54.815c27.093,57.94,50.443,161.494,55.682,226.247l5.068,62.641,2.653,129.463-1.468,64.327-8.328,96.761c-16.021,127.186-55.979,247.457-134.26,349.871ZM1304.187,1506.225c31.169-30.339,59.197-63.115,79.626-101.466l19.403-36.425,27.233-69.542,12.866-46.911c26.485-114.119,27.192-243.312,20.772-360.596l-4.715-49.639-12.228-78.147-18.286-66.247c-6.559-23.764-15.062-46.246-27.087-67.695l-31.954-56.998c-29.09-44.225-63.999-82.135-106.157-114.294-19.47-14.853-38.568-27.984-60.463-38.784-23.401-11.543-45.789-22.341-70.92-30.266-66.401-20.939-135.142-24.856-204.156-14.297-84.984,13.002-168.317,55.382-229.657,115.114-52.056,50.692-91.158,111.283-117.063,179.441-31.271,82.277-42.396,166.565-46.302,254.699-3.355,75.707-1.625,149.236,5.111,224.545,7.294,81.552,28.756,166.171,67.152,238.489,28.5,53.679,79.343,120.792,128.534,153.927l46.92,31.604,27.185,14.377c71.005,34.23,148.315,48.85,227.574,42.219,99.844-8.353,195.182-53.585,266.611-123.111Z"/><path fill="currentColor" d="M1328.865,1183.699c-21.305,57.516-65.175,99.194-126.807,105.449-22.486,2.282-43.474-.078-64.412-8.532-39.523-15.958-71.013-44.66-92.108-81.571l-21.742-38.043-16.883-31.15-62.661-116.73-86.507-160.07c-8.061-14.917-20.172-27.407-33.657-36.101-12.542-8.086-28.563-4.421-35.959,8.017-7.706,12.959-12.103,27.147-16.842,41.51l-9.816,29.749c-4.014,12.163-15.491,20.68-27.502,24.396-39.789,12.308-80.882-8.98-76.517-34.638l6.551-38.51c10.836-63.694,52.634-121.157,117.117-138.348,66.324-17.682,144.218,24.368,176.222,83.054l52.015,95.381,59.226,113.185,44.206,83.967,20.386,37.773c12.268,22.73,30.313,52.557,52.851,58.481,29.403,7.729,37.913-37.441,45.737-61.66l9.178-28.41c8.807-27.262,58.066-36.01,91.999-14.494,11.471,7.273,16.622,19.827,14.471,33.027-4.15,25.47-9.613,50.143-18.549,74.268Z"/></symbol></svg>
+
+<!-- SVG fragment defs reused inline below: mic / pen / pill icons declared per-use to keep each layout self-contained -->
 
 <div class="wrap">
   <div class="page-head">
-    <h1>Shift feed -- four light palettes</h1>
-    <p>Same layout and content in each. Only the colour changes. Tell me which one (or mix) feels right.</p>
+    <h1>Shift feed -- four layouts</h1>
+    <p>Different ways to lay out the logs. Bolder, bold text, tighter 5-item nav, polished. Pick a direction (or mix).</p>
   </div>
 
-  <!-- Variation template repeated x4 via data-pal -->
+  <!-- ============ V1 TIMELINE RAIL ============ -->
   <div>
-    <div class="v-label"><span class="n">P1</span><span class="t">Warm Paper</span><span class="d">navy + peach</span></div>
-    <div class="device" data-pal="1"><div class="scr">
+    <div class="v-label"><span class="n">V1</span><span class="t">Timeline rail</span><span class="d">time-spine + nodes</span></div>
+    <div class="device"><div class="scr">
       <div class="top"><span class="brand"><span class="brand-mark"><svg viewBox="0 0 2000 2000"><use href="#tn-mark"/></svg></span><span class="brand-name">ThetaNote</span></span><span class="top-actions"><span class="ic"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></span><span class="ic"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg><span class="badge"></span></span></span></div>
-      <div class="head"><p class="ctx">Thursday 30 May &middot; CG</p><span class="shift">8am - 2pm</span></div>
-      <div class="feed">
-        <div class="msg"><div class="bubble bubble--boc"><span class="bubble-tag"><svg viewBox="0 0 24 24"><path d="M12 3l9 16H3z"/><path d="M12 9v4M12 17h.01"/></svg> Behaviour of concern</span><p class="bubble-text">Became unsettled in the lounge, pacing and flapping. Offered the weighted blanket early and settled after about ten minutes of deep pressure.</p></div><div class="meta"><span class="time">11:10</span><span class="prov prov--voice"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg>Voice</span></div></div>
-        <div class="msg"><div class="bubble"><p class="bubble-text">Settled at the table after a short pace around the lounge. Accepted a drink.</p></div><div class="meta"><span class="time">09:42</span><span class="prov prov--typed"><svg viewBox="0 0 24 24"><path d="M4 20h4L18 8l-4-4L2 16z"/><path d="M13 5l4 4"/></svg>Typed</span></div></div>
-        <div class="msg"><div class="bubble bubble--med"><span class="bubble-tag"><svg viewBox="0 0 24 24"><path d="M10 4h4M12 4v4"/><rect x="6" y="8" width="12" height="12" rx="3"/><path d="M9 14h6"/></svg> Medication &middot; AC</span><p class="bubble-text">Aripiprazole 5 mg given with breakfast.</p></div><div class="meta"><span class="time">08:15</span></div></div>
-        <div class="msg"><div class="bubble"><p class="bubble-text">Woke calm, good eye contact, chose his green jumper himself.</p></div><div class="meta"><span class="time">07:50</span><span class="prov prov--voice"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg>Voice</span></div></div>
-      </div>
-      <nav class="tabbar"><span class="tab on"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Today</span><span class="tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>CG</span><span class="newwrap"><span class="new"><svg viewBox="0 0 24 24"><path d="M11 4H6.5A2.5 2.5 0 004 6.5v11A2.5 2.5 0 006.5 20h11a2.5 2.5 0 002.5-2.5V13"/><path d="M18.4 3.6a1.9 1.9 0 012.7 2.7L12.3 15l-3.6.9.9-3.6z"/></svg></span><span class="new-label">New note</span></span><span class="tab"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Tasks</span></nav>
+      <div class="head"><p class="ctx">Thursday 30 May<span class="sub">CG &middot; today</span></p><span class="shift">8am - 2pm</span></div>
+      <div class="feed"><div class="tl">
+        <div class="tl-row is-boc"><span class="tl-time">11:10</span><span class="tl-node"></span><span class="tl-tag c-boc"><svg viewBox="0 0 24 24"><path d="M12 3l9 16H3z"/><path d="M12 9v4M12 17h.01"/></svg> Behaviour of concern</span><p class="tl-body">Unsettled in the lounge, pacing and flapping. Offered the weighted blanket early; settled after ten minutes of deep pressure.</p><span class="tl-prov">Voice</span></div>
+        <div class="tl-row is-note"><span class="tl-time">09:42</span><span class="tl-node"></span><span class="tl-tag c-note"><svg viewBox="0 0 24 24"><path d="M4 20h4L18 8l-4-4L2 16z"/></svg> Note</span><p class="tl-body">Settled at the table after a short pace around the lounge. Accepted a drink.</p><span class="tl-prov">Typed</span></div>
+        <div class="tl-row is-med"><span class="tl-time">08:15</span><span class="tl-node"></span><span class="tl-tag c-med"><svg viewBox="0 0 24 24"><rect x="6" y="8" width="12" height="12" rx="3"/><path d="M10 4h4M12 4v4M9 14h6"/></svg> Medication &middot; AC</span><p class="tl-body">Aripiprazole 5 mg given with breakfast.</p></div>
+        <div class="tl-row is-note"><span class="tl-time">07:50</span><span class="tl-node"></span><span class="tl-tag c-note"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg> Note</span><p class="tl-body">Woke calm, good eye contact, chose his green jumper himself.</p><span class="tl-prov">Voice</span></div>
+      </div></div>
+      <nav class="nav">
+        <span class="nb on"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Today</span>
+        <span class="nb"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>CG</span>
+        <span class="nb nb-cap"><span class="cap-disc"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><span class="nb-lab">Capture</span></span>
+        <span class="nb"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Tasks</span>
+        <span class="nb"><svg viewBox="0 0 24 24"><path d="M5 21V4l8 3 6-2v9l-6 2-8-3"/></svg>Wrap up</span>
+      </nav>
     </div></div>
   </div>
 
+  <!-- ============ V2 BOLD BLOCKS ============ -->
   <div>
-    <div class="v-label"><span class="n">P2</span><span class="t">Cool Clinical</span><span class="d">teal + amber</span></div>
-    <div class="device" data-pal="2"><div class="scr">
+    <div class="v-label"><span class="n">V2</span><span class="t">Bold blocks</span><span class="d">solid cards + colour band</span></div>
+    <div class="device"><div class="scr">
       <div class="top"><span class="brand"><span class="brand-mark"><svg viewBox="0 0 2000 2000"><use href="#tn-mark"/></svg></span><span class="brand-name">ThetaNote</span></span><span class="top-actions"><span class="ic"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></span><span class="ic"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg><span class="badge"></span></span></span></div>
-      <div class="head"><p class="ctx">Thursday 30 May &middot; CG</p><span class="shift">8am - 2pm</span></div>
-      <div class="feed">
-        <div class="msg"><div class="bubble bubble--boc"><span class="bubble-tag"><svg viewBox="0 0 24 24"><path d="M12 3l9 16H3z"/><path d="M12 9v4M12 17h.01"/></svg> Behaviour of concern</span><p class="bubble-text">Became unsettled in the lounge, pacing and flapping. Offered the weighted blanket early and settled after about ten minutes of deep pressure.</p></div><div class="meta"><span class="time">11:10</span><span class="prov prov--voice"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg>Voice</span></div></div>
-        <div class="msg"><div class="bubble"><p class="bubble-text">Settled at the table after a short pace around the lounge. Accepted a drink.</p></div><div class="meta"><span class="time">09:42</span><span class="prov prov--typed"><svg viewBox="0 0 24 24"><path d="M4 20h4L18 8l-4-4L2 16z"/><path d="M13 5l4 4"/></svg>Typed</span></div></div>
-        <div class="msg"><div class="bubble bubble--med"><span class="bubble-tag"><svg viewBox="0 0 24 24"><path d="M10 4h4M12 4v4"/><rect x="6" y="8" width="12" height="12" rx="3"/><path d="M9 14h6"/></svg> Medication &middot; AC</span><p class="bubble-text">Aripiprazole 5 mg given with breakfast.</p></div><div class="meta"><span class="time">08:15</span></div></div>
-        <div class="msg"><div class="bubble"><p class="bubble-text">Woke calm, good eye contact, chose his green jumper himself.</p></div><div class="meta"><span class="time">07:50</span><span class="prov prov--voice"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg>Voice</span></div></div>
-      </div>
-      <nav class="tabbar"><span class="tab on"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Today</span><span class="tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>CG</span><span class="newwrap"><span class="new"><svg viewBox="0 0 24 24"><path d="M11 4H6.5A2.5 2.5 0 004 6.5v11A2.5 2.5 0 006.5 20h11a2.5 2.5 0 002.5-2.5V13"/><path d="M18.4 3.6a1.9 1.9 0 012.7 2.7L12.3 15l-3.6.9.9-3.6z"/></svg></span><span class="new-label">New note</span></span><span class="tab"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Tasks</span></nav>
+      <div class="head"><p class="ctx">Thursday 30 May<span class="sub">CG &middot; today</span></p><span class="shift">8am - 2pm</span></div>
+      <div class="feed"><div class="bk">
+        <div class="bk-card is-boc"><div class="bk-band"><span class="bk-band-l"><svg viewBox="0 0 24 24"><path d="M12 3l9 16H3z"/><path d="M12 9v4M12 17h.01"/></svg> Behaviour of concern</span><span class="bk-time">11:10</span></div><p class="bk-body">Unsettled in the lounge, pacing and flapping. Offered the weighted blanket early; settled after ten minutes of deep pressure.</p><span class="bk-prov"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg> Voice</span></div>
+        <div class="bk-card is-note"><div class="bk-band"><span class="bk-band-l"><svg viewBox="0 0 24 24"><path d="M4 20h4L18 8l-4-4L2 16z"/></svg> Note</span><span class="bk-time">09:42</span></div><p class="bk-body">Settled at the table after a short pace around the lounge. Accepted a drink.</p><span class="bk-prov"><svg viewBox="0 0 24 24"><path d="M4 20h4L18 8l-4-4L2 16z"/></svg> Typed</span></div>
+        <div class="bk-card is-med"><div class="bk-band"><span class="bk-band-l"><svg viewBox="0 0 24 24"><rect x="6" y="8" width="12" height="12" rx="3"/><path d="M10 4h4M12 4v4M9 14h6"/></svg> Medication &middot; AC</span><span class="bk-time">08:15</span></div><p class="bk-body">Aripiprazole 5 mg given with breakfast.</p></div>
+        <div class="bk-card is-note"><div class="bk-band"><span class="bk-band-l"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg> Note</span><span class="bk-time">07:50</span></div><p class="bk-body">Woke calm, good eye contact, chose his green jumper himself.</p><span class="bk-prov"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg> Voice</span></div>
+      </div></div>
+      <nav class="nav">
+        <span class="nb on"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Today</span>
+        <span class="nb"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>CG</span>
+        <span class="nb nb-cap"><span class="cap-disc"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><span class="nb-lab">Capture</span></span>
+        <span class="nb"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Tasks</span>
+        <span class="nb"><svg viewBox="0 0 24 24"><path d="M5 21V4l8 3 6-2v9l-6 2-8-3"/></svg>Wrap up</span>
+      </nav>
     </div></div>
   </div>
 
+  <!-- ============ V3 CLINICAL LEDGER ============ -->
   <div>
-    <div class="v-label"><span class="n">P3</span><span class="t">Soft Sage</span><span class="d">forest + clay</span></div>
-    <div class="device" data-pal="3"><div class="scr">
+    <div class="v-label"><span class="n">V3</span><span class="t">Clinical ledger</span><span class="d">tight rows, max scan</span></div>
+    <div class="device"><div class="scr">
       <div class="top"><span class="brand"><span class="brand-mark"><svg viewBox="0 0 2000 2000"><use href="#tn-mark"/></svg></span><span class="brand-name">ThetaNote</span></span><span class="top-actions"><span class="ic"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></span><span class="ic"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg><span class="badge"></span></span></span></div>
-      <div class="head"><p class="ctx">Thursday 30 May &middot; CG</p><span class="shift">8am - 2pm</span></div>
-      <div class="feed">
-        <div class="msg"><div class="bubble bubble--boc"><span class="bubble-tag"><svg viewBox="0 0 24 24"><path d="M12 3l9 16H3z"/><path d="M12 9v4M12 17h.01"/></svg> Behaviour of concern</span><p class="bubble-text">Became unsettled in the lounge, pacing and flapping. Offered the weighted blanket early and settled after about ten minutes of deep pressure.</p></div><div class="meta"><span class="time">11:10</span><span class="prov prov--voice"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg>Voice</span></div></div>
-        <div class="msg"><div class="bubble"><p class="bubble-text">Settled at the table after a short pace around the lounge. Accepted a drink.</p></div><div class="meta"><span class="time">09:42</span><span class="prov prov--typed"><svg viewBox="0 0 24 24"><path d="M4 20h4L18 8l-4-4L2 16z"/><path d="M13 5l4 4"/></svg>Typed</span></div></div>
-        <div class="msg"><div class="bubble bubble--med"><span class="bubble-tag"><svg viewBox="0 0 24 24"><path d="M10 4h4M12 4v4"/><rect x="6" y="8" width="12" height="12" rx="3"/><path d="M9 14h6"/></svg> Medication &middot; AC</span><p class="bubble-text">Aripiprazole 5 mg given with breakfast.</p></div><div class="meta"><span class="time">08:15</span></div></div>
-        <div class="msg"><div class="bubble"><p class="bubble-text">Woke calm, good eye contact, chose his green jumper himself.</p></div><div class="meta"><span class="time">07:50</span><span class="prov prov--voice"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg>Voice</span></div></div>
-      </div>
-      <nav class="tabbar"><span class="tab on"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Today</span><span class="tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>CG</span><span class="newwrap"><span class="new"><svg viewBox="0 0 24 24"><path d="M11 4H6.5A2.5 2.5 0 004 6.5v11A2.5 2.5 0 006.5 20h11a2.5 2.5 0 002.5-2.5V13"/><path d="M18.4 3.6a1.9 1.9 0 012.7 2.7L12.3 15l-3.6.9.9-3.6z"/></svg></span><span class="new-label">New note</span></span><span class="tab"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Tasks</span></nav>
+      <div class="head"><p class="ctx">Thursday 30 May<span class="sub">CG &middot; today</span></p><span class="shift">8am - 2pm</span></div>
+      <div class="feed"><div class="lg">
+        <div class="lg-row"><span class="lg-time">11:10</span><span class="lg-main"><span class="lg-tag c-boc"><svg viewBox="0 0 24 24"><path d="M12 3l9 16H3z"/><path d="M12 9v4M12 17h.01"/></svg> Behaviour of concern</span><p class="lg-body">Unsettled in the lounge, pacing and flapping. Offered the weighted blanket early; settled after ten minutes of deep pressure.</p></span><span class="lg-right"><span class="lg-prov"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg></span><span class="lg-chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></span></div>
+        <div class="lg-row"><span class="lg-time">09:42</span><span class="lg-main"><span class="lg-tag c-note"><svg viewBox="0 0 24 24"><path d="M4 20h4L18 8l-4-4L2 16z"/></svg> Note</span><p class="lg-body">Settled at the table after a short pace around the lounge. Accepted a drink.</p></span><span class="lg-right"><span class="lg-prov"><svg viewBox="0 0 24 24"><path d="M4 20h4L18 8l-4-4L2 16z"/></svg></span><span class="lg-chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></span></div>
+        <div class="lg-row"><span class="lg-time">08:15</span><span class="lg-main"><span class="lg-tag c-med"><svg viewBox="0 0 24 24"><rect x="6" y="8" width="12" height="12" rx="3"/><path d="M10 4h4M12 4v4M9 14h6"/></svg> Medication &middot; AC</span><p class="lg-body">Aripiprazole 5 mg given with breakfast.</p></span><span class="lg-right"><span class="lg-chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></span></div>
+        <div class="lg-row"><span class="lg-time">07:50</span><span class="lg-main"><span class="lg-tag c-note"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg> Note</span><p class="lg-body">Woke calm, good eye contact, chose his green jumper himself.</p></span><span class="lg-right"><span class="lg-prov"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg></span><span class="lg-chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span></span></div>
+      </div></div>
+      <nav class="nav">
+        <span class="nb on"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Today</span>
+        <span class="nb"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>CG</span>
+        <span class="nb nb-cap"><span class="cap-disc"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><span class="nb-lab">Capture</span></span>
+        <span class="nb"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Tasks</span>
+        <span class="nb"><svg viewBox="0 0 24 24"><path d="M5 21V4l8 3 6-2v9l-6 2-8-3"/></svg>Wrap up</span>
+      </nav>
     </div></div>
   </div>
 
+  <!-- ============ V4 GROUPED ============ -->
   <div>
-    <div class="v-label"><span class="n">P4</span><span class="t">Warm Stone</span><span class="d">espresso + terracotta</span></div>
-    <div class="device" data-pal="4"><div class="scr">
+    <div class="v-label"><span class="n">V4</span><span class="t">Grouped</span><span class="d">time-of-day headers</span></div>
+    <div class="device"><div class="scr">
       <div class="top"><span class="brand"><span class="brand-mark"><svg viewBox="0 0 2000 2000"><use href="#tn-mark"/></svg></span><span class="brand-name">ThetaNote</span></span><span class="top-actions"><span class="ic"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></span><span class="ic"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg><span class="badge"></span></span></span></div>
-      <div class="head"><p class="ctx">Thursday 30 May &middot; CG</p><span class="shift">8am - 2pm</span></div>
-      <div class="feed">
-        <div class="msg"><div class="bubble bubble--boc"><span class="bubble-tag"><svg viewBox="0 0 24 24"><path d="M12 3l9 16H3z"/><path d="M12 9v4M12 17h.01"/></svg> Behaviour of concern</span><p class="bubble-text">Became unsettled in the lounge, pacing and flapping. Offered the weighted blanket early and settled after about ten minutes of deep pressure.</p></div><div class="meta"><span class="time">11:10</span><span class="prov prov--voice"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg>Voice</span></div></div>
-        <div class="msg"><div class="bubble"><p class="bubble-text">Settled at the table after a short pace around the lounge. Accepted a drink.</p></div><div class="meta"><span class="time">09:42</span><span class="prov prov--typed"><svg viewBox="0 0 24 24"><path d="M4 20h4L18 8l-4-4L2 16z"/><path d="M13 5l4 4"/></svg>Typed</span></div></div>
-        <div class="msg"><div class="bubble bubble--med"><span class="bubble-tag"><svg viewBox="0 0 24 24"><path d="M10 4h4M12 4v4"/><rect x="6" y="8" width="12" height="12" rx="3"/><path d="M9 14h6"/></svg> Medication &middot; AC</span><p class="bubble-text">Aripiprazole 5 mg given with breakfast.</p></div><div class="meta"><span class="time">08:15</span></div></div>
-        <div class="msg"><div class="bubble"><p class="bubble-text">Woke calm, good eye contact, chose his green jumper himself.</p></div><div class="meta"><span class="time">07:50</span><span class="prov prov--voice"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg>Voice</span></div></div>
-      </div>
-      <nav class="tabbar"><span class="tab on"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Today</span><span class="tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>CG</span><span class="newwrap"><span class="new"><svg viewBox="0 0 24 24"><path d="M11 4H6.5A2.5 2.5 0 004 6.5v11A2.5 2.5 0 006.5 20h11a2.5 2.5 0 002.5-2.5V13"/><path d="M18.4 3.6a1.9 1.9 0 012.7 2.7L12.3 15l-3.6.9.9-3.6z"/></svg></span><span class="new-label">New note</span></span><span class="tab"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Tasks</span></nav>
+      <div class="head"><p class="ctx">Thursday 30 May<span class="sub">CG &middot; today</span></p><span class="shift">8am - 2pm</span></div>
+      <div class="feed"><div class="gr">
+        <div class="gr-head"><span class="lab">Midday</span><span class="ln"></span></div>
+        <div class="gr-card is-boc"><div class="gr-top"><span class="gr-tag c-boc"><svg viewBox="0 0 24 24"><path d="M12 3l9 16H3z"/><path d="M12 9v4M12 17h.01"/></svg> Behaviour of concern</span><span class="gr-time">11:10</span></div><p class="gr-body">Unsettled in the lounge, pacing and flapping. Offered the weighted blanket early; settled after ten minutes of deep pressure.</p><span class="gr-prov">Voice</span></div>
+        <div class="gr-card is-note"><div class="gr-top"><span class="gr-tag c-note"><svg viewBox="0 0 24 24"><path d="M4 20h4L18 8l-4-4L2 16z"/></svg> Note</span><span class="gr-time">09:42</span></div><p class="gr-body">Settled at the table after a short pace around the lounge. Accepted a drink.</p><span class="gr-prov">Typed</span></div>
+        <div class="gr-head"><span class="lab">Morning</span><span class="ln"></span></div>
+        <div class="gr-card is-med"><div class="gr-top"><span class="gr-tag c-med"><svg viewBox="0 0 24 24"><rect x="6" y="8" width="12" height="12" rx="3"/><path d="M10 4h4M12 4v4M9 14h6"/></svg> Medication &middot; AC</span><span class="gr-time">08:15</span></div><p class="gr-body">Aripiprazole 5 mg given with breakfast.</p></div>
+        <div class="gr-card is-note"><div class="gr-top"><span class="gr-tag c-note"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg> Note</span><span class="gr-time">07:50</span></div><p class="gr-body">Woke calm, good eye contact, chose his green jumper himself.</p><span class="gr-prov">Voice</span></div>
+      </div></div>
+      <nav class="nav">
+        <span class="nb on"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Today</span>
+        <span class="nb"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>CG</span>
+        <span class="nb nb-cap"><span class="cap-disc"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><span class="nb-lab">Capture</span></span>
+        <span class="nb"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Tasks</span>
+        <span class="nb"><svg viewBox="0 0 24 24"><path d="M5 21V4l8 3 6-2v9l-6 2-8-3"/></svg>Wrap up</span>
+      </nav>
     </div></div>
   </div>
 
