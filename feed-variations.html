@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#DCDCD8">
+<title>ThetaNote -- Feed palette variations (4 light)</title>
+<!--
+  Shift-note feed (Today home) in FOUR light palettes for Wes to compare. SAME layout + content in each;
+  only the colour tokens change (clean palette comparison). Each renders the full home context: top bar,
+  date/participant header, feed bubbles (BOC / note / med) with provenance pills, footer capture button.
+  Palettes (all light, all AA, all warm-clinical-appropriate):
+    P1 Warm Paper   -- current direction: warm-white + deep navy actions + peach capture
+    P2 Cool Clinical-- cool white + deep teal actions + amber capture (calm medical-chart)
+    P3 Soft Sage    -- warm off-white + forest-green actions + clay capture (nature-calm)
+    P4 Warm Stone   -- stone/beige + espresso ink + terracotta capture (editorial warmth)
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing:border-box; }
+  html,body { margin:0; background:#D7D7D2; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility; -webkit-tap-highlight-color:transparent;
+    font-family:"DM Sans",-apple-system,BlinkMacSystemFont,system-ui,sans-serif; }
+  .wrap { max-width:440px; margin:0 auto; padding:28px 16px calc(40px + env(safe-area-inset-bottom,0px)); display:flex; flex-direction:column; gap:34px; }
+  .page-head { text-align:center; color:#2A2A28; padding:4px 8px 0; }
+  .page-head h1 { font-size:18px; font-weight:700; letter-spacing:-0.01em; margin:0 0 4px; }
+  .page-head p { font-size:13px; line-height:1.45; color:#5A5A55; margin:0; }
+
+  .v-label { display:flex; align-items:baseline; gap:8px; padding:0 4px 2px; }
+  .v-label .n { font-family:"DM Mono",ui-monospace,monospace; font-size:11px; font-weight:600; letter-spacing:0.14em; color:#3A3A36; }
+  .v-label .t { font-size:15px; font-weight:700; letter-spacing:-0.01em; color:#1F1F1C; }
+  .v-label .d { font-size:12px; color:#6A6A64; margin-left:auto; }
+
+  /* ===== ONE DEVICE = one palette. Tokens scoped per [data-pal]. Structure is identical across all. ===== */
+  .device {
+    --sans:"DM Sans",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    --mono:"DM Mono",ui-monospace,monospace;
+    border-radius:28px; overflow:hidden; box-shadow:0 18px 44px -18px rgba(20,24,30,0.5), 0 0 0 1px rgba(0,0,0,0.04);
+    background:var(--bg); color:var(--ink);
+  }
+  .scr { display:flex; flex-direction:column; min-height:600px; background:var(--bg); }
+
+  /* top bar */
+  .top { flex-shrink:0; padding:18px 20px 6px; display:flex; align-items:center; justify-content:space-between; }
+  .brand { display:inline-flex; align-items:center; gap:9px; }
+  .brand-mark { width:24px; height:24px; color:var(--ink); }
+  .brand-mark svg { width:100%; height:100%; }
+  .brand-name { font-weight:600; font-size:16px; letter-spacing:-0.01em; color:var(--ink); }
+  .top-actions { display:inline-flex; gap:2px; }
+  .ic { width:38px; height:38px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; color:var(--ink2); position:relative; }
+  .ic svg { width:21px; height:21px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+  .ic .badge { position:absolute; top:7px; right:7px; width:7px; height:7px; border-radius:50%; background:var(--accent); border:1.5px solid var(--bg); }
+
+  /* date / shift header */
+  .head { flex-shrink:0; padding:10px 22px 12px; display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+  .head .ctx { font-weight:700; font-size:18px; letter-spacing:-0.015em; color:var(--ink-deep); margin:0; }
+  .head .shift { font-family:var(--mono); font-size:12px; font-weight:500; letter-spacing:0.03em; color:var(--ink2); white-space:nowrap; }
+
+  /* feed */
+  .feed { flex:1; padding:8px 20px 18px; display:flex; flex-direction:column; gap:16px; }
+  .msg { display:flex; flex-direction:column; align-items:flex-start; gap:5px; }
+  .bubble { max-width:86%; background:var(--raised); border:1px solid var(--line); border-radius:20px 20px 20px 7px; padding:12px 15px; box-shadow:0 1px 2px rgba(20,24,30,0.05); }
+  .bubble-text { font-size:15.5px; line-height:1.5; color:var(--ink); margin:0; }
+  .bubble-tag { display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:9.5px; font-weight:600; letter-spacing:0.13em; text-transform:uppercase; margin:0 0 8px; }
+  .bubble-tag svg { width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+  .bubble--boc { border:1.5px solid var(--accent); }
+  .bubble--boc .bubble-tag { color:var(--accent); }
+  .bubble--med { background:var(--muted); border-color:transparent; box-shadow:none; }
+  .bubble--med .bubble-tag { color:var(--ink2); }
+  .meta { display:flex; align-items:center; gap:8px; padding-left:8px; }
+  .time { font-family:var(--mono); font-size:10px; letter-spacing:0.04em; color:var(--ink3); font-variant-numeric:tabular-nums; }
+  .prov { display:inline-flex; align-items:center; gap:4px; font-family:var(--mono); font-size:8px; line-height:1; letter-spacing:0.12em; text-indent:0.06em; text-transform:uppercase; padding:4px 7px; border-radius:999px; }
+  .prov svg { width:9px; height:9px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .prov--voice, .prov--typed { background:var(--muted); color:var(--ink2); }
+  .prov--ai { background:var(--ai-bg); color:var(--ai-ink); }
+
+  /* footer nav + capture */
+  .tabbar { flex-shrink:0; display:grid; grid-template-columns:1fr 1fr 1fr 1fr; align-items:center; background:var(--raised); border-top:1px solid var(--line); padding:0 6px; height:64px; }
+  .tab { display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--ink3); font-weight:500; font-size:10.5px; }
+  .tab.on { color:var(--ink); }
+  .tab svg { width:23px; height:23px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+  .newwrap { justify-self:center; display:flex; flex-direction:column; align-items:center; gap:5px; }
+  .new { width:52px; height:52px; margin-top:-18px; border-radius:50%; background:var(--cap); color:var(--cap-ink); border:3px solid var(--raised); display:inline-flex; align-items:center; justify-content:center; box-shadow:0 9px 20px -8px var(--cap-shadow), inset 0 1px 0 rgba(255,255,255,0.5); }
+  .new svg { width:25px; height:25px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+  .new-label { font-weight:600; font-size:10.5px; color:var(--cap-ink-label); }
+
+  /* ============ PALETTES ============ */
+  /* P1 -- Warm Paper (current): warm-white + deep navy + peach capture */
+  [data-pal="1"] {
+    --bg:#FAFAF7; --raised:#FFFFFF; --muted:#EEEEE7; --line:#E2E1DA;
+    --ink:#0F1A2E; --ink-deep:#0B1E45; --ink2:#3A4564; --ink3:#5C6680;
+    --accent:#16306B; --ai-bg:rgba(110,122,176,0.16); --ai-ink:#3F4974;
+    --cap:#E8A87C; --cap-ink:#0F1A2E; --cap-ink-label:#8A4F22; --cap-shadow:rgba(138,79,34,0.5);
+  }
+  /* P2 -- Cool Clinical: cool white + deep teal + amber capture */
+  [data-pal="2"] {
+    --bg:#F4F8FA; --raised:#FFFFFF; --muted:#E7EFF3; --line:#D8E3E9;
+    --ink:#112433; --ink-deep:#0E2C3A; --ink2:#36505F; --ink3:#5E7384;
+    --accent:#1C6E7B; --ai-bg:rgba(54,120,150,0.14); --ai-ink:#2E5E72;
+    --cap:#E6A356; --cap-ink:#231405; --cap-ink-label:#8A5A14; --cap-shadow:rgba(138,90,20,0.5);
+  }
+  /* P3 -- Soft Sage: warm off-white + forest green + clay capture */
+  [data-pal="3"] {
+    --bg:#F5F7F0; --raised:#FFFFFF; --muted:#E9EDE0; --line:#DFE4D4;
+    --ink:#1E2620; --ink-deep:#1B3324; --ink2:#42503F; --ink3:#67715E;
+    --accent:#3C6149; --ai-bg:rgba(90,118,130,0.15); --ai-ink:#3E5562;
+    --cap:#D98C5F; --cap-ink:#2A1608; --cap-ink-label:#854D2A; --cap-shadow:rgba(133,77,42,0.5);
+  }
+  /* P4 -- Warm Stone: stone/beige + espresso ink + terracotta capture */
+  [data-pal="4"] {
+    --bg:#F8F4EE; --raised:#FFFFFF; --muted:#EFE7DA; --line:#E7DDCD;
+    --ink:#2A2520; --ink-deep:#3A2B1E; --ink2:#564B40; --ink3:#7B6F62;
+    --accent:#9C4A2E; --ai-bg:rgba(120,110,150,0.15); --ai-ink:#4A4470;
+    --cap:#C8663B; --cap-ink:#FFFFFF; --cap-ink-label:#8A451F; --cap-shadow:rgba(138,69,31,0.5);
+  }
+</style>
+</head>
+<body>
+<!-- brand mark symbol (inherits currentColor) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tn-mark" viewBox="0 0 2000 2000"><path fill="currentColor" d="M1451.618,1533.665c-114.324,149.568-286.706,232.907-475.975,225.013-39.708-1.656-76.796-7.675-114.879-16.908-72.005-17.457-171.436-65.097-223.654-114.512l-45.659-43.208c-28.308-30.436-53.221-62.368-75.117-97.784-51.789-83.768-82.656-175.66-97.77-272.538l-10.076-91.014-2.599-52.682c-2.711-54.96-1.532-108.303.773-163.187,5.217-124.199,32.953-269.386,97.186-376.201l17.868-29.713,29.951-42.188c22.508-31.704,49.899-57.875,79.405-83.448,39.801-34.496,83.041-61.267,131.148-83.376,147.114-67.611,325.546-68.342,473.204-1.002,58.908,26.865,99.95,54.84,147.903,97.517,22.597,20.111,41.578,41.685,60.817,65.038,24.624,29.889,44.363,61.887,62.493,96.069l25.632,54.815c27.093,57.94,50.443,161.494,55.682,226.247l5.068,62.641,2.653,129.463-1.468,64.327-8.328,96.761c-16.021,127.186-55.979,247.457-134.26,349.871ZM1304.187,1506.225c31.169-30.339,59.197-63.115,79.626-101.466l19.403-36.425,27.233-69.542,12.866-46.911c26.485-114.119,27.192-243.312,20.772-360.596l-4.715-49.639-12.228-78.147-18.286-66.247c-6.559-23.764-15.062-46.246-27.087-67.695l-31.954-56.998c-29.09-44.225-63.999-82.135-106.157-114.294-19.47-14.853-38.568-27.984-60.463-38.784-23.401-11.543-45.789-22.341-70.92-30.266-66.401-20.939-135.142-24.856-204.156-14.297-84.984,13.002-168.317,55.382-229.657,115.114-52.056,50.692-91.158,111.283-117.063,179.441-31.271,82.277-42.396,166.565-46.302,254.699-3.355,75.707-1.625,149.236,5.111,224.545,7.294,81.552,28.756,166.171,67.152,238.489,28.5,53.679,79.343,120.792,128.534,153.927l46.92,31.604,27.185,14.377c71.005,34.23,148.315,48.85,227.574,42.219,99.844-8.353,195.182-53.585,266.611-123.111Z"/><path fill="currentColor" d="M1328.865,1183.699c-21.305,57.516-65.175,99.194-126.807,105.449-22.486,2.282-43.474-.078-64.412-8.532-39.523-15.958-71.013-44.66-92.108-81.571l-21.742-38.043-16.883-31.15-62.661-116.73-86.507-160.07c-8.061-14.917-20.172-27.407-33.657-36.101-12.542-8.086-28.563-4.421-35.959,8.017-7.706,12.959-12.103,27.147-16.842,41.51l-9.816,29.749c-4.014,12.163-15.491,20.68-27.502,24.396-39.789,12.308-80.882-8.98-76.517-34.638l6.551-38.51c10.836-63.694,52.634-121.157,117.117-138.348,66.324-17.682,144.218,24.368,176.222,83.054l52.015,95.381,59.226,113.185,44.206,83.967,20.386,37.773c12.268,22.73,30.313,52.557,52.851,58.481,29.403,7.729,37.913-37.441,45.737-61.66l9.178-28.41c8.807-27.262,58.066-36.01,91.999-14.494,11.471,7.273,16.622,19.827,14.471,33.027-4.15,25.47-9.613,50.143-18.549,74.268Z"/></symbol></svg>
+
+<div class="wrap">
+  <div class="page-head">
+    <h1>Shift feed -- four light palettes</h1>
+    <p>Same layout and content in each. Only the colour changes. Tell me which one (or mix) feels right.</p>
+  </div>
+
+  <!-- Variation template repeated x4 via data-pal -->
+  <div>
+    <div class="v-label"><span class="n">P1</span><span class="t">Warm Paper</span><span class="d">navy + peach</span></div>
+    <div class="device" data-pal="1"><div class="scr">
+      <div class="top"><span class="brand"><span class="brand-mark"><svg viewBox="0 0 2000 2000"><use href="#tn-mark"/></svg></span><span class="brand-name">ThetaNote</span></span><span class="top-actions"><span class="ic"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></span><span class="ic"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg><span class="badge"></span></span></span></div>
+      <div class="head"><p class="ctx">Thursday 30 May &middot; CG</p><span class="shift">8am - 2pm</span></div>
+      <div class="feed">
+        <div class="msg"><div class="bubble bubble--boc"><span class="bubble-tag"><svg viewBox="0 0 24 24"><path d="M12 3l9 16H3z"/><path d="M12 9v4M12 17h.01"/></svg> Behaviour of concern</span><p class="bubble-text">Became unsettled in the lounge, pacing and flapping. Offered the weighted blanket early and settled after about ten minutes of deep pressure.</p></div><div class="meta"><span class="time">11:10</span><span class="prov prov--voice"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg>Voice</span></div></div>
+        <div class="msg"><div class="bubble"><p class="bubble-text">Settled at the table after a short pace around the lounge. Accepted a drink.</p></div><div class="meta"><span class="time">09:42</span><span class="prov prov--typed"><svg viewBox="0 0 24 24"><path d="M4 20h4L18 8l-4-4L2 16z"/><path d="M13 5l4 4"/></svg>Typed</span></div></div>
+        <div class="msg"><div class="bubble bubble--med"><span class="bubble-tag"><svg viewBox="0 0 24 24"><path d="M10 4h4M12 4v4"/><rect x="6" y="8" width="12" height="12" rx="3"/><path d="M9 14h6"/></svg> Medication &middot; AC</span><p class="bubble-text">Aripiprazole 5 mg given with breakfast.</p></div><div class="meta"><span class="time">08:15</span></div></div>
+        <div class="msg"><div class="bubble"><p class="bubble-text">Woke calm, good eye contact, chose his green jumper himself.</p></div><div class="meta"><span class="time">07:50</span><span class="prov prov--voice"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg>Voice</span></div></div>
+      </div>
+      <nav class="tabbar"><span class="tab on"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Today</span><span class="tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>CG</span><span class="newwrap"><span class="new"><svg viewBox="0 0 24 24"><path d="M11 4H6.5A2.5 2.5 0 004 6.5v11A2.5 2.5 0 006.5 20h11a2.5 2.5 0 002.5-2.5V13"/><path d="M18.4 3.6a1.9 1.9 0 012.7 2.7L12.3 15l-3.6.9.9-3.6z"/></svg></span><span class="new-label">New note</span></span><span class="tab"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Tasks</span></nav>
+    </div></div>
+  </div>
+
+  <div>
+    <div class="v-label"><span class="n">P2</span><span class="t">Cool Clinical</span><span class="d">teal + amber</span></div>
+    <div class="device" data-pal="2"><div class="scr">
+      <div class="top"><span class="brand"><span class="brand-mark"><svg viewBox="0 0 2000 2000"><use href="#tn-mark"/></svg></span><span class="brand-name">ThetaNote</span></span><span class="top-actions"><span class="ic"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></span><span class="ic"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg><span class="badge"></span></span></span></div>
+      <div class="head"><p class="ctx">Thursday 30 May &middot; CG</p><span class="shift">8am - 2pm</span></div>
+      <div class="feed">
+        <div class="msg"><div class="bubble bubble--boc"><span class="bubble-tag"><svg viewBox="0 0 24 24"><path d="M12 3l9 16H3z"/><path d="M12 9v4M12 17h.01"/></svg> Behaviour of concern</span><p class="bubble-text">Became unsettled in the lounge, pacing and flapping. Offered the weighted blanket early and settled after about ten minutes of deep pressure.</p></div><div class="meta"><span class="time">11:10</span><span class="prov prov--voice"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg>Voice</span></div></div>
+        <div class="msg"><div class="bubble"><p class="bubble-text">Settled at the table after a short pace around the lounge. Accepted a drink.</p></div><div class="meta"><span class="time">09:42</span><span class="prov prov--typed"><svg viewBox="0 0 24 24"><path d="M4 20h4L18 8l-4-4L2 16z"/><path d="M13 5l4 4"/></svg>Typed</span></div></div>
+        <div class="msg"><div class="bubble bubble--med"><span class="bubble-tag"><svg viewBox="0 0 24 24"><path d="M10 4h4M12 4v4"/><rect x="6" y="8" width="12" height="12" rx="3"/><path d="M9 14h6"/></svg> Medication &middot; AC</span><p class="bubble-text">Aripiprazole 5 mg given with breakfast.</p></div><div class="meta"><span class="time">08:15</span></div></div>
+        <div class="msg"><div class="bubble"><p class="bubble-text">Woke calm, good eye contact, chose his green jumper himself.</p></div><div class="meta"><span class="time">07:50</span><span class="prov prov--voice"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg>Voice</span></div></div>
+      </div>
+      <nav class="tabbar"><span class="tab on"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Today</span><span class="tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>CG</span><span class="newwrap"><span class="new"><svg viewBox="0 0 24 24"><path d="M11 4H6.5A2.5 2.5 0 004 6.5v11A2.5 2.5 0 006.5 20h11a2.5 2.5 0 002.5-2.5V13"/><path d="M18.4 3.6a1.9 1.9 0 012.7 2.7L12.3 15l-3.6.9.9-3.6z"/></svg></span><span class="new-label">New note</span></span><span class="tab"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Tasks</span></nav>
+    </div></div>
+  </div>
+
+  <div>
+    <div class="v-label"><span class="n">P3</span><span class="t">Soft Sage</span><span class="d">forest + clay</span></div>
+    <div class="device" data-pal="3"><div class="scr">
+      <div class="top"><span class="brand"><span class="brand-mark"><svg viewBox="0 0 2000 2000"><use href="#tn-mark"/></svg></span><span class="brand-name">ThetaNote</span></span><span class="top-actions"><span class="ic"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></span><span class="ic"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg><span class="badge"></span></span></span></div>
+      <div class="head"><p class="ctx">Thursday 30 May &middot; CG</p><span class="shift">8am - 2pm</span></div>
+      <div class="feed">
+        <div class="msg"><div class="bubble bubble--boc"><span class="bubble-tag"><svg viewBox="0 0 24 24"><path d="M12 3l9 16H3z"/><path d="M12 9v4M12 17h.01"/></svg> Behaviour of concern</span><p class="bubble-text">Became unsettled in the lounge, pacing and flapping. Offered the weighted blanket early and settled after about ten minutes of deep pressure.</p></div><div class="meta"><span class="time">11:10</span><span class="prov prov--voice"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg>Voice</span></div></div>
+        <div class="msg"><div class="bubble"><p class="bubble-text">Settled at the table after a short pace around the lounge. Accepted a drink.</p></div><div class="meta"><span class="time">09:42</span><span class="prov prov--typed"><svg viewBox="0 0 24 24"><path d="M4 20h4L18 8l-4-4L2 16z"/><path d="M13 5l4 4"/></svg>Typed</span></div></div>
+        <div class="msg"><div class="bubble bubble--med"><span class="bubble-tag"><svg viewBox="0 0 24 24"><path d="M10 4h4M12 4v4"/><rect x="6" y="8" width="12" height="12" rx="3"/><path d="M9 14h6"/></svg> Medication &middot; AC</span><p class="bubble-text">Aripiprazole 5 mg given with breakfast.</p></div><div class="meta"><span class="time">08:15</span></div></div>
+        <div class="msg"><div class="bubble"><p class="bubble-text">Woke calm, good eye contact, chose his green jumper himself.</p></div><div class="meta"><span class="time">07:50</span><span class="prov prov--voice"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg>Voice</span></div></div>
+      </div>
+      <nav class="tabbar"><span class="tab on"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Today</span><span class="tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>CG</span><span class="newwrap"><span class="new"><svg viewBox="0 0 24 24"><path d="M11 4H6.5A2.5 2.5 0 004 6.5v11A2.5 2.5 0 006.5 20h11a2.5 2.5 0 002.5-2.5V13"/><path d="M18.4 3.6a1.9 1.9 0 012.7 2.7L12.3 15l-3.6.9.9-3.6z"/></svg></span><span class="new-label">New note</span></span><span class="tab"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Tasks</span></nav>
+    </div></div>
+  </div>
+
+  <div>
+    <div class="v-label"><span class="n">P4</span><span class="t">Warm Stone</span><span class="d">espresso + terracotta</span></div>
+    <div class="device" data-pal="4"><div class="scr">
+      <div class="top"><span class="brand"><span class="brand-mark"><svg viewBox="0 0 2000 2000"><use href="#tn-mark"/></svg></span><span class="brand-name">ThetaNote</span></span><span class="top-actions"><span class="ic"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></span><span class="ic"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg><span class="badge"></span></span></span></div>
+      <div class="head"><p class="ctx">Thursday 30 May &middot; CG</p><span class="shift">8am - 2pm</span></div>
+      <div class="feed">
+        <div class="msg"><div class="bubble bubble--boc"><span class="bubble-tag"><svg viewBox="0 0 24 24"><path d="M12 3l9 16H3z"/><path d="M12 9v4M12 17h.01"/></svg> Behaviour of concern</span><p class="bubble-text">Became unsettled in the lounge, pacing and flapping. Offered the weighted blanket early and settled after about ten minutes of deep pressure.</p></div><div class="meta"><span class="time">11:10</span><span class="prov prov--voice"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg>Voice</span></div></div>
+        <div class="msg"><div class="bubble"><p class="bubble-text">Settled at the table after a short pace around the lounge. Accepted a drink.</p></div><div class="meta"><span class="time">09:42</span><span class="prov prov--typed"><svg viewBox="0 0 24 24"><path d="M4 20h4L18 8l-4-4L2 16z"/><path d="M13 5l4 4"/></svg>Typed</span></div></div>
+        <div class="msg"><div class="bubble bubble--med"><span class="bubble-tag"><svg viewBox="0 0 24 24"><path d="M10 4h4M12 4v4"/><rect x="6" y="8" width="12" height="12" rx="3"/><path d="M9 14h6"/></svg> Medication &middot; AC</span><p class="bubble-text">Aripiprazole 5 mg given with breakfast.</p></div><div class="meta"><span class="time">08:15</span></div></div>
+        <div class="msg"><div class="bubble"><p class="bubble-text">Woke calm, good eye contact, chose his green jumper himself.</p></div><div class="meta"><span class="time">07:50</span><span class="prov prov--voice"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/></svg>Voice</span></div></div>
+      </div>
+      <nav class="tabbar"><span class="tab on"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Today</span><span class="tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>CG</span><span class="newwrap"><span class="new"><svg viewBox="0 0 24 24"><path d="M11 4H6.5A2.5 2.5 0 004 6.5v11A2.5 2.5 0 006.5 20h11a2.5 2.5 0 002.5-2.5V13"/><path d="M18.4 3.6a1.9 1.9 0 012.7 2.7L12.3 15l-3.6.9.9-3.6z"/></svg></span><span class="new-label">New note</span></span><span class="tab"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Tasks</span></nav>
+    </div></div>
+  </div>
+
+</div>
+</body>
+</html>
