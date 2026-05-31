@@ -4,16 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#D7D7D2">
-<title>ThetaNote -- Footer nav variations (4 icon sets + 4 capture colours)</title>
+<title>ThetaNote -- Footer nav (Untitled UI icons, two weights)</title>
 <!--
-  FOUR footer-nav variations for Wes. Each shows the full 5-item bar in the live warm-paper palette, with:
-   - a DIFFERENT icon set for the 4 nav tabs (Today / CG / Tasks / Wrap up)
-   - HEAVIER icons + bolder labels than the current bar
-   - a DIFFERENT capture-button COLOUR (the pencil glyph itself is unchanged across all four)
-  Capture colours all chosen to work with the current navy-action / warm-white scheme:
-   V1 Peach (current)  V2 Terracotta  V3 Deep navy  V4 Warm amber/gold
-  Nav icon directions:
-   V1 Solid/filled glyphs    V2 Heavy stroke (2.6) outline    V3 Alternate glyph choices    V4 Icon-in-soft-tile
+  Footer nav with UNTITLED UI line icons (the set Wes asked for). 24x24, round caps/joins, geometric.
+  Glyphs: Today = home-line (house), CG = user-01, Tasks = clipboard-check, Wrap up = check-circle.
+  Capture = peach pencil (unchanged). Two bars so Wes picks the icon weight:
+    W1 = standard Untitled UI 2px stroke
+    W2 = heavier 2.5px stroke
+  Labels bold (700). Live warm-paper palette.
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,10 +29,9 @@
   .v-label .t { font-size:16px; font-weight:700; letter-spacing:-0.02em; color:#1B1B16; }
   .v-label .d { font-size:12px; color:#6A6A60; margin-left:auto; }
 
-  /* device shell: a slice of the home screen (just enough feed to ground the bar) */
   .device { --navy:#16306B; --ink:#0F1A2E; --ink2:#3A4564; --ink3:#5C6680; --bg:#FAFAF7; --raised:#FFFFFF; --line:#E2E1DA; --muted:#EEEEE7;
     border-radius:26px; overflow:hidden; background:var(--bg); box-shadow:0 16px 40px -18px rgba(20,22,28,0.5), 0 0 0 1px rgba(0,0,0,0.05); }
-  .scr { display:flex; flex-direction:column; height:300px; background:var(--bg); position:relative; }
+  .scr { display:flex; flex-direction:column; height:300px; background:var(--bg); }
   .scr-head { padding:16px 18px 6px; display:flex; align-items:baseline; justify-content:space-between; }
   .scr-head .ctx { font-weight:700; font-size:17px; letter-spacing:-0.02em; color:var(--ink); margin:0; }
   .scr-head .shift { font-family:"DM Mono",ui-monospace,monospace; font-size:11px; font-weight:500; color:var(--ink2); background:var(--muted); padding:4px 9px; border-radius:999px; }
@@ -43,120 +40,63 @@
   .ghost b { display:block; font-size:11px; font-weight:700; color:var(--navy); margin-bottom:4px; }
   .ghost p { margin:0; font-size:13px; font-weight:600; color:var(--ink); line-height:1.4; }
 
-  /* ===== the footer bar (shared skeleton; per-variation overrides below) ===== */
   .bar { display:grid; grid-template-columns:repeat(5,1fr); align-items:center; background:var(--raised); border-top:1px solid var(--line); height:62px; padding:0 4px; }
   .nb { display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--ink3); }
   .nb.on { color:var(--navy); }
-  .nb .lab { font-size:10.5px; font-weight:700; letter-spacing:0.005em; }       /* heavier label than current (was 500/10.5) */
-  .nb svg { width:23px; height:23px; }
-  .nb .icw { display:inline-flex; align-items:center; justify-content:center; }
-  /* capture (pencil) -- glyph identical across all; only --cap colour varies */
-  .nb-cap { color:var(--cap-ink); }
-  .nb-cap .disc { width:50px; height:50px; margin-top:-18px; border-radius:50%; background:var(--cap); display:inline-flex; align-items:center; justify-content:center;
-    box-shadow:0 10px 20px -7px var(--cap-sh), inset 0 1px 0 rgba(255,255,255,0.5); border:3px solid var(--raised); }
-  .nb-cap .disc svg { width:24px; height:24px; fill:none; stroke:var(--cap-ink); stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
-  .nb-cap .lab { font-size:10px; font-weight:700; color:var(--cap-lab); margin-top:1px; }
+  .nb .lab { font-size:10.5px; font-weight:700; letter-spacing:0.005em; }
+  /* Untitled UI icons: 24x24, round caps/joins, no fill */
+  .nb svg { width:23px; height:23px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; }
+  .nb-cap { color:#0F1A2E; }
+  .nb-cap .disc { width:50px; height:50px; margin-top:-18px; border-radius:50%; background:#E8A87C; display:inline-flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 20px -7px rgba(138,79,34,0.5), inset 0 1px 0 rgba(255,255,255,0.5); border:3px solid var(--raised); }
+  .nb-cap .disc svg { width:24px; height:24px; fill:none; stroke:#0F1A2E; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+  .nb-cap .lab { font-size:10px; font-weight:700; color:#8A4F22; margin-top:1px; }
 
-  /* ---- V1: SOLID / FILLED glyphs (weight via fill) + peach capture ---- */
-  .v1 .nb svg { fill:currentColor; stroke:none; }
-  .v1 { --cap:#E8A87C; --cap-ink:#0F1A2E; --cap-lab:#8A4F22; --cap-sh:rgba(138,79,34,0.5); }
-
-  /* ---- V2: HEAVY-STROKE outline (2.6) + terracotta capture ---- */
-  .v2 .nb svg { fill:none; stroke:currentColor; stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round; }
-  .v2 { --cap:#C8663B; --cap-ink:#FFFFFF; --cap-lab:#9C4A2E; --cap-sh:rgba(138,69,31,0.55); }
-
-  /* ---- V3: ALTERNATE glyphs, medium-heavy stroke (2.3) + deep navy capture ---- */
-  .v3 .nb svg { fill:none; stroke:currentColor; stroke-width:2.3; stroke-linecap:round; stroke-linejoin:round; }
-  .v3 { --cap:#16306B; --cap-ink:#FFFFFF; --cap-lab:#16306B; --cap-sh:rgba(15,26,46,0.55); }
-  .v3 .nb-cap .disc svg { stroke:#FFFFFF; }
-
-  /* ---- V4: icon in a soft rounded tile (active tile fills navy) + warm amber capture ---- */
-  .v4 .nb .icw { width:38px; height:30px; border-radius:10px; }
-  .v4 .nb.on .icw { background:rgba(22,48,107,0.10); }
-  .v4 .nb svg { fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; width:22px; height:22px; }
-  .v4 { --cap:#D99A4E; --cap-ink:#2A1B05; --cap-lab:#8A5A14; --cap-sh:rgba(138,90,20,0.5); }
+  .w1 .nb svg { stroke-width:2; }
+  .w2 .nb svg { stroke-width:2.5; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="page-head">
-    <h1>Footer nav -- four icon sets + four capture colours</h1>
-    <p>Heavier icons + bolder labels in each. The capture pencil glyph is identical throughout; only its colour changes. Pick an icon set and a capture colour (they mix).</p>
+    <h1>Footer nav -- Untitled UI icons</h1>
+    <p>Home / user / clipboard-check / check-circle, Untitled UI line set. Pick the weight. Capture pencil unchanged (peach).</p>
   </div>
 
-  <!-- ============ V1 SOLID + PEACH ============ -->
+  <!-- ===== W1 standard 2px ===== -->
   <div>
-    <div class="v-label"><span class="n">V1</span><span class="t">Solid glyphs</span><span class="d">capture: peach (current)</span></div>
-    <div class="device v1"><div class="scr">
+    <div class="v-label"><span class="n">W1</span><span class="t">Untitled UI &middot; 2px</span><span class="d">standard weight</span></div>
+    <div class="device w1"><div class="scr">
       <div class="scr-head"><p class="ctx">Thursday 30 May &middot; CG</p><span class="shift">8am - 2pm</span></div>
       <div class="scr-body">
         <div class="ghost"><b>BEHAVIOUR OF CONCERN</b><p>Unsettled in the lounge, pacing. Offered deep pressure, settled.</p></div>
         <div class="ghost"><p>Settled at the table after a short pace. Accepted a drink.</p></div>
       </div>
       <nav class="bar">
-        <span class="nb on"><span class="icw"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><rect x="3" y="4" width="18" height="5" rx="2" fill="var(--bg)"/></svg></span><span class="lab">Today</span></span>
-        <span class="nb"><span class="icw"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4.2"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"/></svg></span><span class="lab">CG</span></span>
+        <span class="nb on"><svg viewBox="0 0 24 24"><path d="M5 9.5 12 4l7 5.5V19a1 1 0 0 1-1 1h-3v-6h-6v6H6a1 1 0 0 1-1-1z"/></svg><span class="lab">Today</span></span>
+        <span class="nb"><svg viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg><span class="lab">CG</span></span>
         <span class="nb nb-cap"><span class="disc"><svg viewBox="0 0 24 24"><path d="M11 4H6.5A2.5 2.5 0 004 6.5v11A2.5 2.5 0 006.5 20h11a2.5 2.5 0 002.5-2.5V13"/><path d="M18.4 3.6a1.9 1.9 0 012.7 2.7L12.3 15l-3.6.9.9-3.6z"/></svg></span><span class="lab">New note</span></span>
-        <span class="nb"><span class="icw"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 11l2.5 2.5L16 8" stroke="var(--bg)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="lab">Tasks</span></span>
-        <span class="nb"><span class="icw"><svg viewBox="0 0 24 24"><path d="M5 21V4l8 3 6-2v9l-6 2-8-3z"/></svg></span><span class="lab">Wrap up</span></span>
+        <span class="nb"><svg viewBox="0 0 24 24"><path d="M9 4h6a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="M16 5h2a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h2"/><path d="M9.5 13.5l1.8 1.8 3.2-3.6"/></svg><span class="lab">Tasks</span></span>
+        <span class="nb"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 12l2.4 2.4L15.8 9.5"/></svg><span class="lab">Wrap up</span></span>
       </nav>
     </div></div>
   </div>
 
-  <!-- ============ V2 HEAVY STROKE + TERRACOTTA ============ -->
+  <!-- ===== W2 heavier 2.5px ===== -->
   <div>
-    <div class="v-label"><span class="n">V2</span><span class="t">Heavy outline</span><span class="d">capture: terracotta</span></div>
-    <div class="device v2"><div class="scr">
+    <div class="v-label"><span class="n">W2</span><span class="t">Untitled UI &middot; 2.5px</span><span class="d">heavier weight</span></div>
+    <div class="device w2"><div class="scr">
       <div class="scr-head"><p class="ctx">Thursday 30 May &middot; CG</p><span class="shift">8am - 2pm</span></div>
       <div class="scr-body">
         <div class="ghost"><b>BEHAVIOUR OF CONCERN</b><p>Unsettled in the lounge, pacing. Offered deep pressure, settled.</p></div>
         <div class="ghost"><p>Settled at the table after a short pace. Accepted a drink.</p></div>
       </div>
       <nav class="bar">
-        <span class="nb on"><span class="icw"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span><span class="lab">Today</span></span>
-        <span class="nb"><span class="icw"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span><span class="lab">CG</span></span>
+        <span class="nb on"><svg viewBox="0 0 24 24"><path d="M5 9.5 12 4l7 5.5V19a1 1 0 0 1-1 1h-3v-6h-6v6H6a1 1 0 0 1-1-1z"/></svg><span class="lab">Today</span></span>
+        <span class="nb"><svg viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg><span class="lab">CG</span></span>
         <span class="nb nb-cap"><span class="disc"><svg viewBox="0 0 24 24"><path d="M11 4H6.5A2.5 2.5 0 004 6.5v11A2.5 2.5 0 006.5 20h11a2.5 2.5 0 002.5-2.5V13"/><path d="M18.4 3.6a1.9 1.9 0 012.7 2.7L12.3 15l-3.6.9.9-3.6z"/></svg></span><span class="lab">New note</span></span>
-        <span class="nb"><span class="icw"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg></span><span class="lab">Tasks</span></span>
-        <span class="nb"><span class="icw"><svg viewBox="0 0 24 24"><path d="M5 21V4l8 3 6-2v9l-6 2-8-3"/></svg></span><span class="lab">Wrap up</span></span>
-      </nav>
-    </div></div>
-  </div>
-
-  <!-- ============ V3 ALTERNATE GLYPHS + NAVY ============ -->
-  <div>
-    <div class="v-label"><span class="n">V3</span><span class="t">Alternate glyphs</span><span class="d">capture: deep navy</span></div>
-    <div class="device v3"><div class="scr">
-      <div class="scr-head"><p class="ctx">Thursday 30 May &middot; CG</p><span class="shift">8am - 2pm</span></div>
-      <div class="scr-body">
-        <div class="ghost"><b>BEHAVIOUR OF CONCERN</b><p>Unsettled in the lounge, pacing. Offered deep pressure, settled.</p></div>
-        <div class="ghost"><p>Settled at the table after a short pace. Accepted a drink.</p></div>
-      </div>
-      <nav class="bar">
-        <!-- Today = calendar-day, CG = person-card, Tasks = checklist clipboard, Wrap = check-circle -->
-        <span class="nb on"><span class="icw"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M4 9h16M8 3v4M16 3v4M9 15h6"/></svg></span><span class="lab">Today</span></span>
-        <span class="nb"><span class="icw"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="11" r="2.2"/><path d="M6.2 16.5c.5-1.6 1.6-2.4 2.8-2.4s2.3.8 2.8 2.4M14 10h4M14 14h3"/></svg></span><span class="lab">CG</span></span>
-        <span class="nb nb-cap"><span class="disc"><svg viewBox="0 0 24 24"><path d="M11 4H6.5A2.5 2.5 0 004 6.5v11A2.5 2.5 0 006.5 20h11a2.5 2.5 0 002.5-2.5V13"/><path d="M18.4 3.6a1.9 1.9 0 012.7 2.7L12.3 15l-3.6.9.9-3.6z"/></svg></span><span class="lab">New note</span></span>
-        <span class="nb"><span class="icw"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 3h6v3H9z"/><path d="M9 11l1.5 1.5L13 10M9 16h5"/></svg></span><span class="lab">Tasks</span></span>
-        <span class="nb"><span class="icw"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 12l2.3 2.3L16 9"/></svg></span><span class="lab">Wrap up</span></span>
-      </nav>
-    </div></div>
-  </div>
-
-  <!-- ============ V4 SOFT TILE + AMBER ============ -->
-  <div>
-    <div class="v-label"><span class="n">V4</span><span class="t">Icon in soft tile</span><span class="d">capture: warm amber</span></div>
-    <div class="device v4"><div class="scr">
-      <div class="scr-head"><p class="ctx">Thursday 30 May &middot; CG</p><span class="shift">8am - 2pm</span></div>
-      <div class="scr-body">
-        <div class="ghost"><b>BEHAVIOUR OF CONCERN</b><p>Unsettled in the lounge, pacing. Offered deep pressure, settled.</p></div>
-        <div class="ghost"><p>Settled at the table after a short pace. Accepted a drink.</p></div>
-      </div>
-      <nav class="bar">
-        <span class="nb on"><span class="icw"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span><span class="lab">Today</span></span>
-        <span class="nb"><span class="icw"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span><span class="lab">CG</span></span>
-        <span class="nb nb-cap"><span class="disc"><svg viewBox="0 0 24 24"><path d="M11 4H6.5A2.5 2.5 0 004 6.5v11A2.5 2.5 0 006.5 20h11a2.5 2.5 0 002.5-2.5V13"/><path d="M18.4 3.6a1.9 1.9 0 012.7 2.7L12.3 15l-3.6.9.9-3.6z"/></svg></span><span class="lab">New note</span></span>
-        <span class="nb"><span class="icw"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg></span><span class="lab">Tasks</span></span>
-        <span class="nb"><span class="icw"><svg viewBox="0 0 24 24"><path d="M5 21V4l8 3 6-2v9l-6 2-8-3"/></svg></span><span class="lab">Wrap up</span></span>
+        <span class="nb"><svg viewBox="0 0 24 24"><path d="M9 4h6a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="M16 5h2a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h2"/><path d="M9.5 13.5l1.8 1.8 3.2-3.6"/></svg><span class="lab">Tasks</span></span>
+        <span class="nb"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 12l2.4 2.4L15.8 9.5"/></svg><span class="lab">Wrap up</span></span>
       </nav>
     </div></div>
   </div>
