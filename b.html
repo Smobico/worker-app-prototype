@@ -88,11 +88,17 @@
     -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility;
     -webkit-tap-highlight-color:transparent; overscroll-behavior:none; transition:background var(--motion-med) var(--ease-out); }
 
-  .app { position:fixed; inset:0; overflow:hidden; background:var(--surface-base); }
+  /* Shell sized to the DYNAMIC viewport (100dvh) so it tracks the iOS URL-bar/toolbar -- a plain
+     100%/100vh against position:fixed under-resolves on mobile Safari and leaves a strip at the bottom. */
+  .app { position:fixed; top:0; left:0; right:0; height:100vh; height:100dvh; overflow:hidden; background:var(--surface-base); }
   /* Flat clean surfaces -- no warm glow, no paper texture (matches the reference apps) */
 
   /* ===== HOME (shift feed) ===== */
   .panel { position:absolute; inset:0; z-index:1; display:flex; flex-direction:column; min-height:0; }
+  /* HARD INVARIANT (content-bleed fix, locked 2026-06-02): when a full-screen view is up, the home panel
+     is REMOVED from the layout -- not merely covered. Nothing behind = nothing can ever leak through, on any
+     device, regardless of viewport-height quirks. This rule must carry into the real app. */
+  .app:not([data-view="home"]) .panel { display:none; }
   .top { flex-shrink:0; padding:calc(var(--safe-top) + 14px) 20px 6px; display:flex; align-items:center; justify-content:space-between; }
   .brand { display:inline-flex; align-items:center; gap:9px; }
   .brand-mark { width:26px; height:26px; flex-shrink:0; }
@@ -265,7 +271,7 @@
 
   /* ============ CAPTURE -- the chat-window (Grok/Claude/ChatGPT pattern) ============ */
   .app[data-view="capture"] .drawer, .app[data-view="capture"] .drawer-backdrop { display:none !important; }
-  #view-capture { position:absolute; top:0; left:0; right:0; height:100%; z-index:30; background:var(--surface-base); display:flex; flex-direction:column; min-height:0; transform:translateY(100%); transition:transform var(--motion-med) var(--ease-out); }
+  #view-capture { position:absolute; inset:0; z-index:30; background:var(--surface-base); display:flex; flex-direction:column; min-height:0; transform:translateY(100%); transition:transform var(--motion-med) var(--ease-out); }
   .app[data-view="capture"] #view-capture { transform:translateY(0); }
   .cap-top { flex-shrink:0; padding:calc(var(--safe-top) + 12px) 10px 4px; display:grid; grid-template-columns:44px 1fr 44px; gap:8px; align-items:center; }
   /* Back/close: a visible resting button so there is always an obvious way off the capture page */
@@ -716,21 +722,8 @@
       <!-- READY: choose straight away -->
       <div class="cap-state cs-ready">
         <p class="ready-line" id="ready-line">What just happened on shift?</p>
-        <div class="cap-context">
-          <div><p class="cap-ctx-lab">When did this happen?</p><div class="cap-chips" data-single>
-            <button class="tb-chip on" type="button">Just now</button>
-            <button class="tb-chip" type="button">5 min ago</button>
-            <button class="tb-chip" type="button">30 min ago</button>
-            <button class="tb-chip" type="button">1 hr ago</button>
-            <button class="tb-chip" type="button">Set time</button>
-          </div></div>
-          <div><p class="cap-ctx-lab">Tag it (optional)</p><div class="cap-chips">
-            <button class="ctx-chip" type="button">Behaviour</button>
-            <button class="ctx-chip" type="button">Medication</button>
-            <button class="ctx-chip" type="button">Health</button>
-            <button class="ctx-chip" type="button">Daily living</button>
-          </div></div>
-        </div>
+        <!-- ready-state pre-chips removed 2026-06-02: time (and tags) are asked ONCE, conversationally,
+             in the gap-fill thread -- the ready-state chips were duplicating the thread's "When did this happen?" -->
       </div>
 
       <!-- LISTENING -->
@@ -1205,7 +1198,16 @@ On now: keen on the garden after lunch. Deep pressure early if he starts pacing.
     return null;
   }
   function threadScroll(){ var b=document.querySelector('.cap-body'); if(b) requestAnimationFrame(function(){ b.scrollTop=b.scrollHeight; }); }
-  function addCbub(side, text){ var d=document.createElement('div'); d.className='cbub cbub--'+side; d.textContent=text; thread.appendChild(d); threadScroll(); return d; }
+  function addCbub(side, text){ var d=document.createElement('div'); d.className='cbub cbub--'+side; d.textContent=text;
+    if(side==='me'){ // the worker's own note stays editable in place -- tap to fix wording; the draft reads from here
+      d.title='Tap to edit'; d.style.cursor='text';
+      d.addEventListener('click', function(){ if(d.getAttribute('contenteditable')==='true') return;
+        d.setAttribute('contenteditable','true'); d.focus();
+        try{ var r=document.createRange(); r.selectNodeContents(d); var s=getSelection(); s.removeAllRanges(); s.addRange(r); }catch(e){} });
+      d.addEventListener('blur', function(){ d.setAttribute('contenteditable','false'); });
+      d.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); d.blur(); } });
+    }
+    thread.appendChild(d); threadScroll(); return d; }
   function gapQuestions(txt){
     txt=(txt||'').toLowerCase();
     if(/agitat|pacing|\bpace\b|flap|pinch|grab|bite|unsettl|distress|escalat|lunge|lunging|\bkick|scratch|threw|\bhit\b|restrain|aggress/.test(txt))
