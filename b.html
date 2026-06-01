@@ -460,11 +460,15 @@
     overflow-y:auto; -webkit-overflow-scrolling:touch; }
   .app[data-view="signin"] #view-signin,
   .app[data-view="onboarding"] #view-onboarding,
+  .app[data-view="install"] #view-install,
+  .app[data-view="accept"] #view-accept,
   .app[data-view="addparticipant"] #view-addparticipant,
   .app[data-view="people"] #view-people,
-  .app[data-view="invite"] #view-invite { transform:translateX(0); visibility:visible; }
-  .app[data-view="signin"] .tabbar, .app[data-view="onboarding"] .tabbar, .app[data-view="addparticipant"] .tabbar,
-  .app[data-view="people"] .tabbar, .app[data-view="invite"] .tabbar { display:none; }
+  .app[data-view="invite"] #view-invite,
+  .app[data-view="handover"] #view-handover { transform:translateX(0); visibility:visible; }
+  .app[data-view="signin"] .tabbar, .app[data-view="onboarding"] .tabbar, .app[data-view="install"] .tabbar,
+  .app[data-view="accept"] .tabbar, .app[data-view="addparticipant"] .tabbar,
+  .app[data-view="people"] .tabbar, .app[data-view="invite"] .tabbar, .app[data-view="handover"] .tabbar { display:none; }
 
   .scene-top{ flex-shrink:0; display:grid; grid-template-columns:44px 1fr 44px; align-items:center; padding:calc(var(--safe-top) + 12px) 12px 4px; }
   .scene-back{ width:40px; height:40px; border:0; border-radius:50%; background:var(--surface-muted); color:var(--text-primary); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; }
@@ -504,6 +508,34 @@
   .iv-h{ font-family:var(--sans); font-weight:700; font-size:25px; letter-spacing:-0.02em; color:var(--ink-deep); margin:14px 0 6px; }
   .iv-p{ font-size:14.5px; color:var(--text-secondary); line-height:1.5; margin:0 0 6px; }
   .iv-code{ font-family:var(--mono); font-size:30px; font-weight:500; letter-spacing:0.16em; text-indent:0.08em; color:var(--ink-deep); background:var(--surface-muted); border-radius:14px; padding:22px; text-align:center; margin:18px 0; }
+  /* meds + goals repeating rows (D1.4 parity) */
+  .row-card{ background:var(--accent-soft); border-radius:6px; padding:11px 12px; margin-bottom:9px; }
+  .row-grid{ display:grid; gap:8px; align-items:center; }
+  .row-grid.cols3{ grid-template-columns:1fr 58px 78px; }
+  .row-grid.cols2{ grid-template-columns:1fr 28px; }
+  .row-inp{ font-family:var(--sans); font-size:14.5px; color:var(--text-primary); background:transparent; border:0; border-bottom:1px dashed var(--line-warm); padding:8px 2px; min-height:40px; width:100%; }
+  .row-inp:focus{ outline:none; border-bottom-color:var(--peach); }
+  .row-inp::placeholder{ color:var(--text-muted); }
+  .row-mic{ width:28px; height:28px; border-radius:50%; border:1px solid var(--peach); background:transparent; color:var(--peach-text); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+  .row-mic svg{ width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .row-add{ background:transparent; border:0; color:var(--peach-text); font-family:var(--sans); font-weight:700; font-size:13.5px; cursor:pointer; padding:6px 2px; min-height:40px; text-decoration:underline; text-decoration-style:dashed; text-underline-offset:3px; }
+  .field-eg{ font-family:var(--mono); font-size:10.5px; color:var(--text-muted); margin:0 0 9px; }
+  /* accept-invite code input */
+  .code-in{ font-family:var(--mono); font-size:27px; font-weight:500; letter-spacing:0.14em; text-indent:0.07em; text-align:center; color:var(--ink-deep); background:var(--surface-raised); border:1px solid var(--border-default); border-radius:14px; padding:20px; width:100%; text-transform:uppercase; }
+  .code-in:focus{ outline:2px solid var(--border-focus); outline-offset:1px; border-color:var(--border-focus); }
+  /* install (add to home screen) -- reuse .ob-point; glyph variant of the badge */
+  .ob-num.glyph{ background:var(--surface-muted); color:var(--text-primary); }
+  .ob-num.glyph svg{ width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+  /* capture ready-state: when + tags context rows */
+  .cap-context{ display:flex; flex-direction:column; gap:12px; padding:2px 6px 12px; }
+  .cap-ctx-lab{ font-family:var(--mono); font-size:9px; font-weight:600; letter-spacing:0.18em; text-indent:0.09em; text-transform:uppercase; color:var(--accent-ink); margin:0 0 6px; }
+  .cap-chips{ display:flex; flex-wrap:wrap; gap:6px; }
+  .tb-chip{ font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:0.02em; color:var(--text-secondary); background:var(--surface-muted); border:1px solid transparent; border-radius:999px; padding:7px 11px; cursor:pointer; min-height:36px; }
+  .tb-chip.on{ background:var(--accent-soft); border-color:var(--peach); color:var(--peach-text); }
+  /* handover scene */
+  .ho-ta{ flex:1; width:100%; font-family:var(--mono); font-size:13px; line-height:1.5; color:var(--text-primary); background:var(--surface-raised); border:1px solid var(--border-default); border-radius:14px; padding:14px; resize:none; min-height:300px; }
+  .ho-meta{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 2px 0; }
+  .ho-cap{ font-family:var(--sans); font-size:12px; color:var(--peach-text); font-weight:600; }
 </style>
 </head>
 <body>
@@ -635,6 +667,7 @@
       <h2 class="drawer-title" id="wrap-title" style="text-align:center">Wrap up this shift?</h2>
       <p class="drawer-body-txt">You captured 4 notes for CG today. The record is up to date. You can paste the shift note next.</p>
       <button class="btn-commit" type="button" id="wrap-commit">Yes, wrap up</button>
+      <button class="btn-cancel" type="button" data-go="handover" style="color:var(--peach-text); font-weight:600;">Hand over to a teammate instead</button>
       <button class="btn-cancel" type="button" id="wrap-cancel">Not yet</button>
     </div>
   </section>
@@ -683,6 +716,21 @@
       <!-- READY: choose straight away -->
       <div class="cap-state cs-ready">
         <p class="ready-line" id="ready-line">What just happened on shift?</p>
+        <div class="cap-context">
+          <div><p class="cap-ctx-lab">When did this happen?</p><div class="cap-chips" data-single>
+            <button class="tb-chip on" type="button">Just now</button>
+            <button class="tb-chip" type="button">5 min ago</button>
+            <button class="tb-chip" type="button">30 min ago</button>
+            <button class="tb-chip" type="button">1 hr ago</button>
+            <button class="tb-chip" type="button">Set time</button>
+          </div></div>
+          <div><p class="cap-ctx-lab">Tag it (optional)</p><div class="cap-chips">
+            <button class="ctx-chip" type="button">Behaviour</button>
+            <button class="ctx-chip" type="button">Medication</button>
+            <button class="ctx-chip" type="button">Health</button>
+            <button class="ctx-chip" type="button">Daily living</button>
+          </div></div>
+        </div>
       </div>
 
       <!-- LISTENING -->
@@ -770,9 +818,7 @@
   <section class="scene" id="view-signin" aria-label="Sign in">
     <div class="scene-body" style="justify-content:center;">
       <div class="si-brand">
-        <span class="si-mark"><svg viewBox="0 0 2000 2000" fill="currentColor"><use href="#tn-mark"/></svg></span>
-        <span class="si-word">ThetaNote</span>
-        <span class="si-tag">Clinical software for support work</span>
+        <img class="si-lockup" src="logo-lockup-light.svg" alt="ThetaNote -- clinical software for support work" style="width:212px; max-width:64%; height:auto;">
       </div>
       <div class="field"><label>Email</label><input type="email" value="wes@thetanote.com.au" autocomplete="username"></div>
       <div class="field"><label>Password</label><input type="password" value="passpasspass" autocomplete="current-password"></div>
@@ -780,6 +826,7 @@
     <div class="scene-dock">
       <button class="btn-peach" type="button" data-go="onboarding">Sign in</button>
       <button class="btn-ghost" type="button" data-go="onboarding">Email me a sign-in link instead</button>
+      <button class="btn-ghost" type="button" data-go="accept" style="color:var(--peach-text);">Have an invite code?</button>
     </div>
   </section>
 
@@ -793,9 +840,35 @@
       <div class="ob-point"><span class="ob-num">3</span><span class="ob-txt"><b>Paste into your roster</b><span>At shift end, copy a clean note into the system you already use.</span></span></div>
     </div>
     <div class="scene-dock">
-      <button class="btn-peach" type="button" data-go="people">Get started</button>
+      <button class="btn-peach" type="button" data-go="install">Get started</button>
       <p class="leave-foot" style="margin:0;">Tip: add to your home screen for a full-screen app.</p>
     </div>
+  </section>
+
+  <section class="scene" id="view-install" aria-label="Add to home screen">
+    <header class="scene-top"><button class="scene-back" type="button" data-go="onboarding" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span class="scene-title">Add to home screen</span><button class="scene-skip" type="button" data-go="people">Skip</button></header>
+    <div class="scene-body">
+      <h1 class="ob-h">Add ThetaNote to your home screen</h1>
+      <p class="ob-sub">Takes ten seconds. It opens full-screen like a normal app, and loads in half a second.</p>
+      <div class="ob-point"><span class="ob-num glyph"><svg viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M5 12v7a1 1 0 001 1h12a1 1 0 001-1v-7"/></svg></span><span class="ob-txt"><b>Tap the Share button</b><span>The square with the up-arrow, at the bottom of Safari.</span></span></div>
+      <div class="ob-point"><span class="ob-num glyph"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg></span><span class="ob-txt"><b>Choose "Add to Home Screen"</b><span>Scroll the share sheet if you don't see it straight away.</span></span></div>
+      <div class="ob-point"><span class="ob-num glyph"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span><span class="ob-txt"><b>Tap Add</b><span>ThetaNote lands on your home screen, ready for your next shift.</span></span></div>
+    </div>
+    <div class="scene-dock">
+      <button class="btn-peach" type="button" data-go="people">Continue</button>
+      <button class="btn-ghost" type="button" data-go="people">Not now, ask me later</button>
+    </div>
+  </section>
+
+  <section class="scene" id="view-accept" aria-label="Join your team">
+    <header class="scene-top"><button class="scene-back" type="button" data-go="signin" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span class="scene-title">Join a team</span><span></span></header>
+    <div class="scene-body">
+      <h1 class="ap-h">Join your team</h1>
+      <p class="iv-p" style="margin-top:4px;">Enter the code your team lead shared. You'll see the same participants and shifts they do.</p>
+      <input class="code-in" style="margin-top:18px;" value="TNA-4827" aria-label="Invite code">
+      <p class="field-eg" style="text-align:center; margin-top:12px;">Codes look like TNA-0000</p>
+    </div>
+    <div class="scene-dock"><button class="btn-peach" type="button" data-go="onboarding">Join team</button></div>
   </section>
 
   <section class="scene" id="view-addparticipant" aria-label="Add a participant">
@@ -815,6 +888,15 @@
       </div>
       <p class="ap-eyebrow">Anything else worth knowing?</p>
       <textarea class="ap-textarea" placeholder="How they communicate, what settles them, what to look out for. Talk or type."></textarea>
+
+      <p class="ap-eyebrow">Goals</p>
+      <div class="row-card"><div class="row-grid cols2"><input class="row-inp" placeholder="Describe a goal, in plain words"><button class="row-mic" type="button" aria-label="Dictate"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21"/></svg></button></div></div>
+      <button class="row-add" type="button">+ Add another goal</button>
+
+      <p class="ap-eyebrow">Medications</p>
+      <p class="field-eg">Example: Aripiprazole &middot; 5 mg &middot; morning</p>
+      <div class="row-card"><div class="row-grid cols3"><input class="row-inp" placeholder="Name"><input class="row-inp" placeholder="Dose"><input class="row-inp" placeholder="When"></div></div>
+      <button class="row-add" type="button">+ Add another</button>
     </div>
     <div class="scene-dock"><button class="btn-peach" type="button" data-go="people">Add participant</button></div>
   </section>
@@ -840,6 +922,28 @@
     </div>
     <div class="scene-dock">
       <button class="btn-peach" type="button" id="iv-share">Share invite</button>
+      <button class="btn-ghost" type="button" data-go="home">Done</button>
+    </div>
+  </section>
+
+  <section class="scene" id="view-handover" aria-label="Team handover">
+    <header class="scene-top"><button class="scene-back" type="button" data-go="home" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span class="scene-title">Team handover</span><span></span></header>
+    <div class="scene-body">
+      <h1 class="iv-h" style="margin-bottom:4px;">Handover to your teammate</h1>
+      <p class="iv-p">A short note for whoever's on next. The full clinical record stays in TNA, this is just the handover.</p>
+      <textarea class="ho-ta">CG - handover 2:00pm
+
+Good shift overall. Settled and engaged most of the day.
+
+Watch for: unsettled late morning (pacing, flapping) - weighted blanket + quiet room worked, reset in about 10 min. No contact.
+
+Meds: aripiprazole 5mg given 8:15am with breakfast.
+
+On now: keen on the garden after lunch. Deep pressure early if he starts pacing.</textarea>
+      <div class="ho-meta"><span class="ho-cap">Saves to TNA automatically</span><span class="prov prov--ai"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></svg>AI draft</span></div>
+    </div>
+    <div class="scene-dock">
+      <button class="btn-peach" type="button" id="ho-copy">Copy handover</button>
       <button class="btn-ghost" type="button" data-go="home">Done</button>
     </div>
   </section>
@@ -1542,14 +1646,18 @@
 (function(){
   var app=document.getElementById('app');
   if(!app) return;
-  function goView(v){ app.setAttribute('data-view', v); var sc=document.getElementById('view-'+v); if(sc) sc.scrollTop=0; }
+  function goView(v){ app.setAttribute('data-drawer','none'); app.setAttribute('data-view', v); var sc=document.getElementById('view-'+v); if(sc) sc.scrollTop=0; }
   Array.prototype.forEach.call(document.querySelectorAll('[data-go]'), function(b){
     b.addEventListener('click', function(){ goView(b.getAttribute('data-go')); });
   });
   Array.prototype.forEach.call(document.querySelectorAll('.ctx-chip'), function(c){
     c.addEventListener('click', function(){ c.classList.toggle('on'); });
   });
+  Array.prototype.forEach.call(document.querySelectorAll('.tb-chip'), function(c){
+    c.addEventListener('click', function(){ Array.prototype.forEach.call(c.parentNode.querySelectorAll('.tb-chip'), function(s){ s.classList.remove('on'); }); c.classList.add('on'); });
+  });
   var ivs=document.getElementById('iv-share'); if(ivs) ivs.addEventListener('click', function(){ ivs.textContent='Invite sent'; });
+  var hoc=document.getElementById('ho-copy'); if(hoc) hoc.addEventListener('click', function(){ var t=document.querySelector('#view-handover .ho-ta'); if(navigator.clipboard && t){ navigator.clipboard.writeText(t.value).then(function(){ hoc.textContent='Copied to clipboard'; }, function(){ hoc.textContent='Copied'; }); } else { hoc.textContent='Copied'; } });
 })();
 </script>
 <script>
