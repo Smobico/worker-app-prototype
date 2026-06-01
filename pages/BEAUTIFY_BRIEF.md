@@ -134,7 +134,8 @@ These hexes carry **clinical meaning**. They are not decoration and not yours to
 
 ## Practical notes
 
-- Each file is **self-contained** (shared CSS inline) and pinned to one screen. Target width ~**390px** (mobile); they will stretch on desktop — design for the phone.
+- Each file is **fully self-contained** (shared CSS inline; **DM Sans + DM Mono are base64-embedded as `@font-face`**, so the real typography renders with no internet/CDN — there is nothing to "substitute"). Pinned to one screen. Target width ~**390px** (mobile); they will stretch on desktop — design for the phone.
+- **Fraunces** is needed ONLY for the logo, which is supplied as a vector SVG (`logo-lockup-light.svg`) — no Fraunces font file is required. Do not set UI text in Fraunces.
 - All colour/spacing/type values live as CSS custom properties at the top of each file's `<style>` (`--surface-base`, `--ink`, `--peach`, etc.). Prefer editing those tokens + component CSS over hard-coding hexes.
 - The brand assets (`logo-lockup-light.svg`, `logo-icon.svg`) are included alongside; reference them, don't recreate them.
 - If you return code, keep the same structure + token names so it drops back into the app cleanly.
