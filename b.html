@@ -46,7 +46,9 @@
     --surface-base:#FAFAF7; --surface-raised:#FFFFFF; --surface-muted:#EEEEE7; --surface-sunk:#F2F1EA;
     --text-primary:#0F1A2E; --text-secondary:#3A4564; --text-muted:#5C6680;
     --border-default:#E2E1DA; --border-strong:#B8B6AC; --border-focus:#2670B8;
-    --accent-fill:#16306B; --accent-ink:#5C6680; --accent-soft:rgba(22,48,107,0.06); --accent-glow:rgba(47,143,158,0.16); --ink-deep:#0B1E45;
+    --accent-fill:#16306B; --accent-ink:#5C6680; --accent-soft:rgba(232,168,124,0.12); --accent-glow:rgba(47,143,158,0.16); --ink-deep:#0B1E45;
+    /* peach = THE accent (Wes 2026-06-01). navy --accent-fill kept for ink/authority commits. welfare relocation off peach pending red-team. */
+    --peach:#E8A87C; --peach-text:#A8482A; --peach-ink:#0F1A2E;
     --line-warm:rgba(15,26,46,0.08);
     --speak-bg:#16306B; --speak-ink:#FAFAF7;
     --pill-neutral-bg:#EEEEE7; --pill-neutral-ink:#3A4564;
@@ -69,7 +71,8 @@
     --surface-base:#0F1A2E; --surface-raised:#1A2540; --surface-muted:#243155; --surface-sunk:#152037;
     --text-primary:#FAFAF7; --text-secondary:#C8CCD9; --text-muted:#8A8FA3;
     --border-default:#2A3554; --border-strong:#3D4969; --border-focus:#6FA8DC;
-    --accent-fill:#FAFAF7; --accent-ink:#8A8FA3; --accent-soft:rgba(250,250,247,0.07); --accent-glow:rgba(63,182,199,0.20); --ink-deep:#FAFAF7;
+    --accent-fill:#FAFAF7; --accent-ink:#8A8FA3; --accent-soft:rgba(232,168,124,0.14); --accent-glow:rgba(63,182,199,0.20); --ink-deep:#FAFAF7;
+    --peach-text:#EDB48E; /* peach legible-as-text on dark surfaces */
     --line-warm:rgba(250,250,247,0.10);
     --speak-bg:#FAFAF7; --speak-ink:#0F1A2E;
     --pill-neutral-bg:#243155; --pill-neutral-ink:#C8CCD9;
@@ -100,10 +103,10 @@
   .top-btn:active, .top-btn:focus-visible { background:var(--surface-muted); color:var(--text-primary); }
   .top-btn:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
   .top-btn svg { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
-  .top-btn .badge { position:absolute; top:8px; right:8px; width:7px; height:7px; border-radius:50%; background:var(--accent-fill); border:1.5px solid var(--surface-base); }
+  .top-btn .badge { position:absolute; top:8px; right:8px; width:7px; height:7px; border-radius:50%; background:var(--peach); border:1.5px solid var(--surface-base); }
   /* Worker avatar top-right = the WORKER's own account/settings (Cocoon/Hers pattern, Mobbin-evidenced).
      Distinct from the CG client-profile tab in the bottom bar. */
-  .worker-avatar { width:34px; height:34px; margin-left:4px; border-radius:50%; background:var(--accent-fill); color:var(--speak-ink); border:0; cursor:pointer; font-family:var(--sans); font-weight:700; font-size:12px; letter-spacing:0.02em; display:inline-flex; align-items:center; justify-content:center; }
+  .worker-avatar { width:34px; height:34px; margin-left:4px; border-radius:50%; background:var(--peach); color:var(--peach-ink); border:0; cursor:pointer; font-family:var(--sans); font-weight:700; font-size:12px; letter-spacing:0.02em; display:inline-flex; align-items:center; justify-content:center; }
   .worker-avatar:active, .worker-avatar:focus-visible { filter:brightness(1.08); }
   .worker-avatar:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
 
@@ -141,7 +144,7 @@
   .gr-body { font-family:var(--note-font); font-size:15px; font-weight:600; line-height:1.5; color:var(--text-primary); margin:0; }
   .gr-body.clamped { display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
   .gr-foot { display:flex; align-items:center; gap:8px; margin-top:10px; }
-  .bubble-more { background:transparent; border:0; padding:8px 0 0; margin:0; font-family:var(--sans); font-weight:600; font-size:13px; color:var(--accent-fill); cursor:pointer; min-height:32px; }
+  .bubble-more { background:transparent; border:0; padding:8px 0 0; margin:0; font-family:var(--sans); font-weight:600; font-size:13px; color:var(--peach-text); cursor:pointer; min-height:32px; }
   .bubble-more:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; border-radius:6px; }
   /* Provenance pill -- the signature move: where this entry's content came from. Quiet by design (small, muted
      mono) so it reads as a record detail, not worker surveillance (H-6). Three states the worker generates:
@@ -340,11 +343,11 @@
   .cbub--me { align-self:flex-end; background:var(--accent-fill); color:var(--speak-ink); border-radius:18px 18px 6px 18px; }
   .cq-chips { align-self:flex-start; display:flex; flex-wrap:wrap; gap:8px; max-width:92%; }
   .cq-chip { font-family:var(--sans); font-size:13px; font-weight:600; color:var(--text-primary); background:var(--surface-raised); border:1.5px solid var(--border-strong); border-radius:999px; padding:9px 15px; min-height:40px; cursor:pointer; transition:transform var(--motion-fast) var(--ease-out), background var(--motion-fast), border-color var(--motion-fast); }
-  .cq-chip:active { transform:scale(0.96); background:var(--surface-muted); border-color:var(--accent-fill); }
+  .cq-chip:active { transform:scale(0.96); background:var(--surface-muted); border-color:var(--peach); }
   .cq-chip:focus-visible { outline:2px solid var(--border-focus); outline-offset:2px; }
   /* Multi-select: a chosen chip stays lit (navy fill) so the worker sees the running set; tick prepended. A worker
      can give several answers at once (e.g. "quiet space" + "firm pressure"); single-tap would lose real clinical data. */
-  .cq-chip.is-on { background:var(--accent-fill); color:var(--speak-ink); border-color:var(--accent-fill); }
+  .cq-chip.is-on { background:var(--peach); color:var(--peach-ink); border-color:var(--peach); }
   .cq-chip.is-on::before { content:"\2713\00a0"; font-weight:700; }
   .cq-done { font-family:var(--sans); font-size:13px; font-weight:700; color:#0F1A2E; background:#E8A87C; border:1.5px solid #CC865A; border-radius:999px; padding:9px 17px; min-height:40px; cursor:pointer; box-shadow:inset 0 1px 0 rgba(255,255,255,0.5); transition:transform var(--motion-fast) var(--ease-out), opacity var(--motion-fast); }
   .cq-done:active { transform:scale(0.96); }
