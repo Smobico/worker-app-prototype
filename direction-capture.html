@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TNA capture -- decided palette</title>
+<!--
+  CAPTURE SURFACE in the DECIDED palette (warm-white #FAFAF7 + navy ink + peach accent).
+  Applies the locked direction to the capture flow; does NOT redesign the capture UX.
+  Elements: voice-framing prompt (display moment, past-tense, warm) + mic stage (peach
+  ready-state; listening shifts to the reserved teal #2F8F9E) + mode row + plain-language
+  chip rail with +Add specific escape hatch + event_time (separate from logged_at, quick-sets)
+  + navy commit (authority) + draft-then-confirm cancel. Fraunces dropped (DM Sans).
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  :root{
+    --sans:"DM Sans",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    --mono:"DM Mono",ui-monospace,monospace;
+    --bg:#FAFAF7; --card:#FFFFFF; --muted:#EFEFE9; --line:#E4E3DC;
+    --ink:#0F1A2E; --ink-2:#3A4564; --ink-3:#6B7186;
+    --peach:#E89A6B; --peach-soft:#F6C7A6; --peach-deep:#A8482A; --peach-ink:#3A2415;
+    --peach-tint:rgba(232,154,107,0.12);
+    --mic-listening:#2F8F9E;     /* reserved active-listening state (teal) */
+    --shadow-card:0 1px 2px rgba(15,26,46,0.05), 0 6px 16px -10px rgba(15,26,46,0.16);
+  }
+  html{ -webkit-text-size-adjust:100%; text-rendering:optimizeLegibility; }
+  body{ margin:0; font-family:var(--sans); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    background:#22201C; color:#E9E4DA; line-height:1.5; padding:30px 18px 70px; display:flex; flex-direction:column; align-items:center; gap:20px; }
+  .cap{ max-width:680px; text-align:center; }
+  .cap h1{ font-size:21px; font-weight:700; letter-spacing:-0.02em; margin:0 0 6px; color:#FBFAF6; }
+  .cap p{ font-size:13.5px; color:#A9A399; margin:0 auto; max-width:62ch; }
+
+  .phone{ width:390px; max-width:94vw; border-radius:30px; overflow:hidden; background:var(--bg);
+    border:1px solid rgba(0,0,0,0.16); box-shadow:0 28px 60px -24px rgba(0,0,0,0.7); }
+  .app{ color:var(--ink); min-height:780px; display:flex; flex-direction:column; }
+
+  /* top bar */
+  .top{ display:grid; grid-template-columns:44px 1fr 44px; align-items:center; padding:calc(env(safe-area-inset-top,0px) + 12px) 12px 6px; }
+  .ic{ width:44px; height:44px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; color:var(--ink); background:transparent; border:0; cursor:pointer; }
+  .ic.back{ background:var(--muted); width:40px; height:40px; }
+  .ic svg{ width:20px; height:20px; }
+  .for{ text-align:center; }
+  .for .lab{ display:block; font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:0.28em; text-indent:0.14em; text-transform:uppercase; color:var(--ink-3); margin-bottom:2px; }
+  .for .name{ font-size:15px; font-weight:600; color:var(--ink); }
+
+  /* voice-framing prompt = display moment */
+  .frame{ padding:18px 26px 6px; text-align:center; }
+  .frame h2{ font-size:25px; font-weight:600; letter-spacing:-0.02em; line-height:1.22; color:var(--ink); margin:0; text-wrap:balance; }
+
+  /* mic stage */
+  .stage{ display:flex; flex-direction:column; align-items:center; gap:12px; padding:20px 20px 6px; }
+  .mic-halo{ position:relative; width:128px; height:128px; display:flex; align-items:center; justify-content:center; }
+  .mic-halo::before{ content:""; position:absolute; inset:0; border-radius:50%; background:var(--peach-tint); }
+  .mic{ width:96px; height:96px; border-radius:50%; background:var(--peach); color:var(--peach-ink); border:0; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; box-shadow:0 14px 30px -10px rgba(168,72,42,0.5), inset 0 1px 0 rgba(255,255,255,0.5); }
+  .mic svg{ width:38px; height:38px; }
+  .stage .hint{ font-size:14px; color:var(--ink-2); margin:0; }
+  .stage .hint b{ color:var(--peach-deep); font-weight:600; }
+
+  /* mode segmented */
+  .modes{ display:flex; gap:6px; justify-content:center; padding:10px 20px 2px; }
+  .mode{ font-size:12.5px; font-weight:600; color:var(--ink-2); background:var(--muted); border:1px solid transparent; border-radius:999px; padding:8px 16px; cursor:pointer; min-height:40px; }
+  .mode.on{ background:var(--peach-tint); border-color:var(--peach); color:var(--peach-deep); }
+
+  /* scroll body: chips + time */
+  .body{ flex:1; padding:14px 20px calc(env(safe-area-inset-bottom,0px) + 110px); overflow-y:auto; }
+  .eyebrow{ font-family:var(--mono); font-size:10px; font-weight:500; letter-spacing:0.2em; text-indent:0.1em; text-transform:uppercase; color:var(--ink-3); margin:18px 0 10px; }
+  .chips{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip{ font-size:13.5px; font-weight:500; color:var(--ink); background:var(--card); border:1px solid var(--line); border-radius:999px; padding:9px 15px; cursor:pointer; min-height:40px; box-shadow:0 1px 2px rgba(15,26,46,0.04); }
+  .chip.on{ background:var(--peach); border-color:var(--peach); color:var(--peach-ink); font-weight:600; }
+  .chip.add{ color:var(--peach-deep); border-style:dashed; border-color:var(--peach); background:transparent; }
+
+  /* event_time */
+  .timecard{ margin-top:22px; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:15px 16px; box-shadow:var(--shadow-card); }
+  .timecard .q{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+  .timecard .q .t{ font-size:15.5px; font-weight:600; color:var(--ink); }
+  .timecard .q .v{ font-family:var(--mono); font-size:15px; color:var(--ink); font-variant-numeric:tabular-nums; }
+  .timecard .why{ font-size:12.5px; color:var(--ink-3); margin:4px 0 12px; line-height:1.45; }
+  .quicks{ display:flex; flex-wrap:wrap; gap:7px; }
+  .q-set{ font-family:var(--mono); font-size:11.5px; color:var(--ink-2); background:var(--muted); border:0; border-radius:999px; padding:8px 12px; cursor:pointer; min-height:38px; }
+  .q-set.on{ background:var(--peach-tint); color:var(--peach-deep); }
+
+  /* fixed commit dock */
+  .dock{ position:sticky; bottom:0; background:linear-gradient(to top, var(--bg) 70%, transparent); padding:12px 20px calc(env(safe-area-inset-bottom,0px) + 16px); display:flex; flex-direction:column; gap:8px; }
+  .commit{ background:var(--ink); color:#FAFAF7; border:0; border-radius:14px; padding:16px; font-family:var(--sans); font-weight:600; font-size:15.5px; cursor:pointer; min-height:54px; box-shadow:0 10px 22px -10px rgba(15,26,46,0.5); }
+  .cancel{ background:transparent; border:0; color:var(--ink-2); font-size:14px; font-weight:500; padding:10px; cursor:pointer; min-height:44px; }
+  .draftnote{ text-align:center; font-size:11.5px; color:var(--ink-3); margin:0; }
+</style>
+</head>
+<body>
+
+<div class="cap">
+  <h1>Capture surface &mdash; decided palette</h1>
+  <p>The decided warm-white + navy + peach applied to capture. Mic is peach at rest (shifts to reserved teal while listening); selected chips + quick-sets carry the peach accent; the commit button is navy for authority. One display moment: the voice-framing prompt.</p>
+</div>
+
+<div class="phone"><div class="app">
+  <div class="top">
+    <button class="ic back" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <span class="for"><span class="lab">Capturing for</span><span class="name">CG &middot; Community access</span></span>
+    <button class="ic" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+
+  <div class="frame"><h2>What happened with CG just now?</h2></div>
+
+  <div class="stage">
+    <div class="mic-halo">
+      <button class="mic" aria-label="Hold to talk">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
+      </button>
+    </div>
+    <p class="hint"><b>Tap to talk</b> &middot; or type below</p>
+  </div>
+
+  <div class="modes">
+    <button class="mode on">Voice</button>
+    <button class="mode">Type</button>
+    <button class="mode">Quick tags</button>
+  </div>
+
+  <div class="body">
+    <p class="eyebrow">What kind of moment? &middot; pick one</p>
+    <div class="chips">
+      <button class="chip on">Behaviour</button>
+      <button class="chip">Medication</button>
+      <button class="chip">Note</button>
+      <button class="chip">Health</button>
+      <button class="chip">Daily living</button>
+      <button class="chip add">+ Add specific</button>
+    </div>
+
+    <div class="timecard">
+      <div class="q"><span class="t">When did this happen?</span><span class="v">9:25 AM</span></div>
+      <p class="why">TNA records event time, not log time, the 24-hour clock counts from when it happened.</p>
+      <div class="quicks">
+        <button class="q-set">just now</button>
+        <button class="q-set on">-5 min</button>
+        <button class="q-set">-15 min</button>
+        <button class="q-set">-30 min</button>
+        <button class="q-set">-1 hr</button>
+        <button class="q-set">Set time</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dock">
+    <button class="commit">Save to CG's record</button>
+    <button class="cancel">Cancel</button>
+    <p class="draftnote">Nothing is saved until you tap Save. Drafts are not kept.</p>
+  </div>
+</div></div>
+
+</body>
+</html>
