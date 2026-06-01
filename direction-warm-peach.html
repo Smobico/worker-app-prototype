@@ -27,17 +27,17 @@
     --sans:"DM Sans",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
     --mono:"DM Mono",ui-monospace,monospace;
 
-    /* converged warm palette */
-    --bg:#F4F1EA;            /* warm cream surface */
-    --card:#FBF9F3;          /* raised warm white, soft */
-    --card-muted:#EFEBE1;    /* tonal muted card (5MJ-style) */
-    --line:#EAE3D6;          /* warm hairline */
-    --ink:#2E2620;           /* espresso */
-    --ink-2:#5C5043;         /* warm brown-grey */
-    --ink-3:#8A7E6E;         /* muted warm */
+    /* DECIDED palette (Wes 2026-06-01): warm-white incumbent surface + navy ink + peach accent */
+    --bg:#FAFAF7;            /* warm-white (incumbent / North Star locked surface) */
+    --card:#FFFFFF;          /* raised white */
+    --card-muted:#EFEFE9;    /* muted region */
+    --line:#E4E3DC;          /* warm-white hairline border */
+    --ink:#0F1A2E;           /* warm-navy ink (incumbent) */
+    --ink-2:#3A4564;         /* secondary */
+    --ink-3:#6B7186;         /* muted */
 
-    --peach:#E89A6B;         /* the single accent: capture + touches */
-    --peach-deep:#A8482A;    /* legible peach (text/nav) */
+    --peach:#E89A6B;         /* THE accent: capture FAB + avatar + indicators + touches */
+    --peach-deep:#A8482A;    /* legible peach (accent-as-text / nav) */
     --peach-ink:#3A2415;     /* text/icon on peach */
 
     /* FIXED reserved clinical signifiers */
@@ -47,9 +47,9 @@
     --amended:#6E7AB0; --amended-ink:#3F4974;
     --welfare-rose:#D98AA0; --welfare-rose-ink:#6E2A3E;   /* welfare relocated off peach (Gate 1) */
 
-    --shadow:rgba(46,38,32,0.07);
-    --shadow-card:0 1px 2px rgba(46,38,32,0.05), 0 6px 16px -10px rgba(46,38,32,0.18);
-    --fab-shadow:0 10px 22px -8px rgba(168,72,42,0.5), inset 0 1px 0 rgba(255,255,255,0.4);
+    --shadow:rgba(15,26,46,0.06);
+    --shadow-card:0 1px 2px rgba(15,26,46,0.05), 0 6px 16px -10px rgba(15,26,46,0.16);
+    --fab-shadow:0 10px 22px -8px rgba(168,72,42,0.5), inset 0 1px 0 rgba(255,255,255,0.45);
   }
   html{ -webkit-text-size-adjust:100%; text-rendering:optimizeLegibility; }
   body{ margin:0; font-family:var(--sans); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
@@ -132,9 +132,9 @@
 <body>
 
 <div class="cap">
-  <h1>Direction &mdash; warm restraint + peach</h1>
-  <p>5 Minute Journal warmth (cream surface, espresso ink, tonal soft cards, big calm type, restraint) with peach as the single accent, the capture button + small touches, the role gold plays in 5MJ. Clinical signifiers stay reserved; welfare moved off peach to rose (Gate 1 item).</p>
-  <div class="mono">we take the warmth + restraint, NOT the streak / entry-count mechanics (H-6 surveillance anti-reference)</div>
+  <h1>Direction &mdash; warm-white + peach (DECIDED 2026-06-01)</h1>
+  <p>Incumbent warm-white surface #FAFAF7 + warm-navy ink #0F1A2E, with peach as the accent and the capture button, the one warm spot. Fraunces dropped (DM Sans). Clinical signifiers stay reserved; welfare moved off peach to rose (red-team item before lock).</p>
+  <div class="mono">surface = North Star locked warm-white &middot; peach promoted from capture-only to accent &middot; navy recedes to ink</div>
 </div>
 
 <div class="phone"><div class="app">
