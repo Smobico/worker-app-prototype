@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ThetaNote -- logo variations</title>
+<!--
+  LOGO EXPLORATION -- 2026-06-01. 10 variations on the theta + wave/capsule mark + wordmark.
+  These are OPTIONS to pick a direction from, NOT a locked mark. Current real mark shown as baseline.
+  Ink #0F1A2E, warm-white #FAFAF7, peach accent #E8A87C. Wordmark in Fraunces (brand serif) except where noted.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@500&family=DM+Sans:opsz,wght@9..40,400;9..40,700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  :root{ --ink:#0F1A2E; --paper:#FAFAF7; --card:#FFFFFF; --muted:#6B7186; --line:#E4E3DC; --peach:#E8A87C; --peach-deep:#A8482A; }
+  body{ margin:0; font-family:"DM Sans",system-ui,sans-serif; background:#22201C; color:#E9E4DA;
+    -webkit-font-smoothing:antialiased; padding:34px 20px 70px; }
+  .head{ max-width:1100px; margin:0 auto 10px; }
+  .head h1{ font-size:25px; font-weight:700; letter-spacing:-0.02em; margin:0 0 6px; color:#FBFAF6; }
+  .head p{ font-size:14px; color:#A9A399; margin:0; max-width:74ch; }
+  .baseline{ max-width:1100px; margin:18px auto 8px; background:#2C2A24; border:1px solid #3A372F; border-radius:14px; padding:16px 20px; display:flex; align-items:center; gap:22px; }
+  .baseline .lab{ font-family:"DM Mono",monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:#8C887E; }
+  .baseline .now{ background:var(--paper); border-radius:10px; padding:12px 18px; display:inline-flex; align-items:center; }
+  .baseline .now img{ height:40px; }
+  .sec{ max-width:1100px; margin:26px auto 14px; font-family:"DM Mono",monospace; font-size:11px; letter-spacing:0.22em; text-transform:uppercase; color:#8C909A; border-bottom:1px solid #2C313B; padding-bottom:8px; }
+  .grid{ max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:18px; }
+  .card{ background:var(--card); border-radius:16px; overflow:hidden; box-shadow:0 10px 26px -16px rgba(0,0,0,0.6); color:var(--ink); }
+  .lockup{ background:var(--paper); padding:34px 22px; display:flex; align-items:center; justify-content:center; gap:16px; min-height:118px; }
+  .lockup.stacked{ flex-direction:column; gap:12px; }
+  .ico{ color:var(--ink); flex-shrink:0; }
+  .ico svg{ display:block; }
+  .wm-serif{ font-family:"Fraunces",Georgia,serif; font-weight:500; font-variation-settings:'opsz' 144,'SOFT' 100,'WONK' 1; font-size:33px; letter-spacing:-0.005em; color:var(--ink); line-height:1; }
+  .wm-sans{ font-family:"DM Sans",sans-serif; font-weight:700; font-size:30px; letter-spacing:-0.035em; color:var(--ink); line-height:1; }
+  .foot{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; border-top:1px solid var(--line); background:var(--card); }
+  .meta .n{ font-family:"DM Mono",monospace; font-size:10px; color:var(--peach-deep); letter-spacing:0.06em; }
+  .meta .t{ font-size:13.5px; font-weight:600; color:var(--ink); margin-top:1px; }
+  .meta .d{ font-size:11.5px; color:var(--muted); margin-top:1px; }
+  .small{ display:flex; align-items:center; gap:10px; }
+  .small .chip{ width:30px; height:30px; border-radius:7px; background:var(--paper); border:1px solid var(--line); display:inline-flex; align-items:center; justify-content:center; color:var(--ink); }
+  .small .chip.ink{ background:var(--ink); color:var(--paper); }
+  .small .chip svg{ display:block; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>ThetaNote logo &mdash; 10 variations</h1>
+  <p>Exploration, not a lock. The theta + wave/capsule idea, kept simple, plus arrangement and wordmark options. Each shown as a lockup and at small size (the small chips test favicon/app-icon legibility). Current mark is the baseline below.</p>
+</div>
+
+<div class="baseline">
+  <span class="lab">Current</span>
+  <span class="now"><img src="logo-lockup-light.svg" alt="current ThetaNote lockup"></span>
+</div>
+
+<div class="sec">10 variations</div>
+<div class="grid" id="grid"></div>
+
+<script>
+  // shared wave (tilde) + helpers, drawn in a 0 0 64 64 box
+  var WAVE = 'M20 34 q6 -9 12 0 t12 0';            // single S tilde
+  var WAVE_WIDE = 'M13 34 q6.5 -9 13 0 t13 0 t13 0';// 1.5-wave, edge to edge
+  function ico(inner, sw, size){ size=size||56; return '<svg viewBox="0 0 64 64" width="'+size+'" height="'+size+'" fill="none" stroke="currentColor" stroke-width="'+(sw||3.4)+'" stroke-linecap="round" stroke-linejoin="round">'+inner+'</svg>'; }
+
+  // icon inner-markup builders (return the <svg ...> string at a given size)
+  var ICONS = {
+    capsule:   function(s,sw){ return ico('<ellipse cx="32" cy="32" rx="16.5" ry="23"/><path d="'+WAVE+'"/>', sw, s); },
+    circle:    function(s,sw){ return ico('<circle cx="32" cy="32" r="22"/><path d="'+WAVE+'"/>', sw, s); },
+    theta:     function(s,sw){ return ico('<circle cx="32" cy="32" r="22"/><path d="M19 32 H45"/>', sw, s); },
+    crossbar:  function(s,sw){ return ico('<circle cx="32" cy="32" r="22"/><path d="'+WAVE_WIDE+'"/>', sw, s); },
+    monoline:  function(s,sw){ return ico('<ellipse cx="32" cy="32" rx="14" ry="24"/><path d="'+WAVE+'"/>', sw||2.2, s); },
+    filled:    function(s){ return '<svg viewBox="0 0 64 64" width="'+(s||56)+'" height="'+(s||56)+'"><circle cx="32" cy="32" r="22" fill="currentColor"/><path d="'+WAVE+'" fill="none" stroke="var(--paper)" stroke-width="3.6" stroke-linecap="round"/></svg>'; },
+    peach:     function(s){ return '<svg viewBox="0 0 64 64" width="'+(s||56)+'" height="'+(s||56)+'" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="22" stroke="currentColor" stroke-width="3.4"/><path d="'+WAVE+'" stroke="#E8A87C" stroke-width="4"/></svg>'; },
+    waveform:  function(s,sw){ return ico('<circle cx="32" cy="32" r="22"/><path d="M22 30v4M28 25v14M32 21v22M36 27v10M42 30v4" stroke-width="3"/>', sw, s); }
+  };
+
+  var V = [
+    { n:'01', t:'Capsule + wave', d:'The current idea, refined. Vertical capsule, soft tilde.', ico:'capsule', wm:'serif' },
+    { n:'02', t:'Circle + wave',  d:'Rounder, more geometric than the capsule.', ico:'circle', wm:'serif' },
+    { n:'03', t:'True theta',     d:'Circle + straight bar = a literal Theta. Most minimal.', ico:'theta', wm:'serif' },
+    { n:'04', t:'Wave crossbar',  d:'The wave runs edge to edge as the theta bar. More motion.', ico:'crossbar', wm:'serif' },
+    { n:'05', t:'Monoline tall',  d:'Thinner stroke, taller capsule. Lighter, more editorial.', ico:'monoline', wm:'serif' },
+    { n:'06', t:'Solid disc',     d:'Filled ink disc, knockout wave. Bold, strong at small size.', ico:'filled', wm:'serif' },
+    { n:'07', t:'Peach wave',     d:'Ink ring + peach wave: the one brand-accent spot in the mark.', ico:'peach', wm:'serif' },
+    { n:'08', t:'Waveform',       d:'Sound bars inside the ring. Leans into voice-first capture.', ico:'waveform', wm:'serif' },
+    { n:'09', t:'Stacked lockup', d:'Circle + wave above the wordmark. For app icon / square use.', ico:'circle', wm:'serif', stacked:true },
+    { n:'10', t:'Sans wordmark',  d:'Same mark, wordmark in DM Sans. The simpler, more app-native read.', ico:'circle', wm:'sans' }
+  ];
+
+  function smallChips(iconKey){
+    var k = ICONS[iconKey];
+    return '<div class="small">'
+      + '<span class="chip">'+k(20,2.6)+'</span>'
+      + '<span class="chip ink">'+(iconKey==='filled'?'<svg viewBox="0 0 64 64" width="20" height="20"><circle cx="32" cy="32" r="22" fill="var(--paper)"/><path d="'+WAVE+'" fill="none" stroke="#0F1A2E" stroke-width="3.6" stroke-linecap="round"/></svg>':k(20,2.6))+'</span>'
+      + '</div>';
+  }
+
+  var html = V.map(function(v){
+    var iconSvg = ICONS[v.ico](56, v.ico==='monoline'?2.4:3.4);
+    var wmClass = v.wm==='sans' ? 'wm-sans' : 'wm-serif';
+    return '<div class="card">'
+      + '<div class="lockup'+(v.stacked?' stacked':'')+'">'
+      +   '<span class="ico">'+iconSvg+'</span>'
+      +   '<span class="'+wmClass+'">ThetaNote</span>'
+      + '</div>'
+      + '<div class="foot">'
+      +   '<span class="meta"><span class="n">'+v.n+'</span><div class="t">'+v.t+'</div><div class="d">'+v.d+'</div></span>'
+      +   smallChips(v.ico)
+      + '</div>'
+      + '</div>';
+  }).join('');
+  document.getElementById('grid').innerHTML = html;
+</script>
+</body>
+</html>
