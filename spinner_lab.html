@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<!-- SPINNER LAB — A/B harness to find the smooth animation technique on Wes's iPhone.
+     NOT production. Self-contained (no external CSS) so it deploys anywhere.
+     Each element type (rotating spinner / voice wave / typing dots) is shown in
+     4 variants, all animating at once. Watch on the actual device and report which
+     NUMBERS are smooth vs which vibrate. Use "Simulate loading" to busy the main
+     thread (reproduces the between-questions loading condition where it janks). -->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Spinner lab</title>
+<style>
+  :root{
+    --surface-base:#FAFAF7; --surface-raised:#FFFFFF; --text-muted:#5C6680;
+    --ink-deep:#0B1E45; --border-default:#E2E1DA; --peach-edge:#CC865A;
+    --speak-ink:#FAFAF7; --mic-listening:#2F8F9E; --sig-fact:#5A9476;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body{ margin:0; background:var(--surface-base); color:var(--ink-deep);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    padding:env(safe-area-inset-top) 14px calc(40px + env(safe-area-inset-bottom)); }
+  h1{ font-size:19px; margin:18px 2px 4px; }
+  .sub{ font-size:13.5px; line-height:1.5; color:var(--text-muted); margin:0 2px 14px; }
+  .stress{ position:sticky; top:env(safe-area-inset-top); z-index:5; display:flex; gap:10px;
+    align-items:center; background:var(--surface-base); padding:10px 2px; border-bottom:1px solid var(--border-default); margin-bottom:6px; }
+  .stress button{ flex:1; min-height:46px; border-radius:12px; border:1.5px solid var(--peach-edge);
+    background:var(--surface-raised); color:var(--ink-deep); font-size:14px; font-weight:700; cursor:pointer; }
+  .stress button.on{ background:var(--peach-edge); color:#fff; }
+  .stress .fps{ font-variant-numeric:tabular-nums; font-size:12px; color:var(--text-muted); min-width:64px; text-align:right; }
+  h2{ font-size:15px; margin:22px 2px 8px; padding-top:6px; border-top:1px solid var(--border-default); }
+  .grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .cell{ background:var(--surface-raised); border:1px solid var(--border-default); border-radius:14px;
+    padding:14px 10px 11px; display:flex; flex-direction:column; align-items:center; gap:10px; min-height:118px; justify-content:space-between; }
+  .cell .stage{ flex:1; display:flex; align-items:center; justify-content:center; }
+  .cell .lab{ font-size:12px; font-weight:700; }
+  .cell .desc{ font-size:10.5px; line-height:1.35; color:var(--text-muted); text-align:center; }
+  .num{ display:inline-flex; width:20px; height:20px; border-radius:50%; background:var(--ink-deep); color:#fff;
+    align-items:center; justify-content:center; font-size:12px; font-weight:800; margin-right:5px; }
+
+  /* ---------- ROTATING SPINNER (production: .fin-spin) ---------- */
+  .spin{ width:30px; height:30px; border-radius:50%; border:3px solid var(--border-default);
+    border-top-color:var(--peach-edge); }
+  @keyframes spinPlain{ to{ transform:rotate(360deg); } }
+  @keyframes spinZ{ from{ transform:translateZ(0) rotate(0); } to{ transform:translateZ(0) rotate(360deg); } }
+  /* S1 = current production: will-change:transform */
+  .s1{ animation:spinPlain .7s linear infinite; will-change:transform; }
+  /* S2 = no will-change (test the over-promotion hypothesis) */
+  .s2{ animation:spinPlain .7s linear infinite; }
+  /* S3 = clean single layer: translateZ kept in keyframe + backface hidden, NO will-change */
+  .s3{ animation:spinZ .7s linear infinite; backface-visibility:hidden; -webkit-backface-visibility:hidden; }
+  /* S4 = conic-gradient masked ring (no border), one clean composited layer */
+  .s4{ width:30px; height:30px; border-radius:50%;
+    background:conic-gradient(from 0deg, transparent 0 25%, var(--peach-edge) 100%);
+    -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+    mask:radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+    animation:spinZ .7s linear infinite; }
+
+  /* ---------- VOICE WAVE (production: .voice-wave i, scaleY) ---------- */
+  .wave{ display:inline-flex; align-items:center; gap:4px; height:32px; }
+  .wave i{ width:3.5px; height:28px; border-radius:2px; background:var(--mic-listening);
+    transform:scaleY(.214); transform-origin:center; }
+  @keyframes waveActive{ 0%,100%{ transform:scaleY(.214); } 50%{ transform:scaleY(1); } }
+  @keyframes waveActiveZ{ 0%,100%{ transform:translateZ(0) scaleY(.214); } 50%{ transform:translateZ(0) scaleY(1); } }
+  .wave i{ animation:waveActive .7s ease-in-out infinite; }
+  /* W1 current: will-change on each of 9 bars */
+  .w1 i{ will-change:transform; }
+  /* W2 no will-change */
+  .w2 i{ }
+  /* W3 keep translateZ layer in keyframe + backface hidden, no will-change */
+  .w3 i{ animation:waveActiveZ .7s ease-in-out infinite; backface-visibility:hidden; -webkit-backface-visibility:hidden; }
+  /* W4 will-change on the PARENT only (one layer for the group, not 9) */
+  .w4{ will-change:transform; }
+
+  /* ---------- TYPING DOTS (production: .vt-dots i, translateY+opacity) ---------- */
+  .dots{ display:inline-flex; gap:5px; padding:3px 2px; }
+  .dots i{ width:7px; height:7px; border-radius:50%; background:var(--mic-listening); }
+  @keyframes vtDot{ 0%,100%{ opacity:.3; transform:translateY(0);} 50%{ opacity:1; transform:translateY(-3px);} }
+  @keyframes vtDotZ{ 0%,100%{ opacity:.3; transform:translateZ(0) translateY(0);} 50%{ opacity:1; transform:translateZ(0) translateY(-3px);} }
+  @keyframes vtDotOpacity{ 0%,100%{ opacity:.3; } 50%{ opacity:1; } }
+  .dots i{ animation:vtDot 1s ease-in-out infinite; }
+  .dots i:nth-child(2){ animation-delay:.15s; } .dots i:nth-child(3){ animation-delay:.3s; }
+  /* D1 current: will-change:transform,opacity */
+  .d1 i{ will-change:transform,opacity; }
+  /* D2 no will-change */
+  .d2 i{ }
+  /* D3 keep translateZ layer, backface hidden, no will-change */
+  .d3 i{ animation:vtDotZ 1s ease-in-out infinite; backface-visibility:hidden; -webkit-backface-visibility:hidden; }
+  .d3 i:nth-child(2){ animation-delay:.15s; } .d3 i:nth-child(3){ animation-delay:.3s; }
+  /* D4 opacity-only (cheapest to composite; no transform jitter) */
+  .d4 i{ animation:vtDotOpacity 1s ease-in-out infinite; }
+  .d4 i:nth-child(2){ animation-delay:.15s; } .d4 i:nth-child(3){ animation-delay:.3s; }
+</style>
+</head>
+<body>
+  <h1>Spinner lab</h1>
+  <p class="sub">Watch each cell. Tell me which <b>numbers</b> spin/pulse <b>smoothly</b> and which <b>vibrate</b>.
+  Then tap <b>Simulate loading</b> (busies the phone like the real loading moment) and watch again — the bug shows worst then.</p>
+
+  <div class="stress">
+    <button id="stressBtn">Simulate loading: OFF</button>
+    <span class="fps" id="fps">— fps</span>
+  </div>
+
+  <h2>Rotating spinner <span class="desc">(the loading spinner)</span></h2>
+  <div class="grid">
+    <div class="cell"><div class="stage"><div class="spin s1"></div></div><div class="lab"><span class="num">1</span>current</div><div class="desc">border + will-change (today)</div></div>
+    <div class="cell"><div class="stage"><div class="spin s2"></div></div><div class="lab"><span class="num">2</span>no will-change</div><div class="desc">drop layer promotion</div></div>
+    <div class="cell"><div class="stage"><div class="spin s3"></div></div><div class="lab"><span class="num">3</span>clean layer</div><div class="desc">translateZ in keyframe + backface-hidden</div></div>
+    <div class="cell"><div class="stage"><div class="s4"></div></div><div class="lab"><span class="num">4</span>conic ring</div><div class="desc">masked gradient, no border</div></div>
+  </div>
+
+  <h2>Voice wave <span class="desc">(the throbber bars)</span></h2>
+  <div class="grid">
+    <div class="cell"><div class="stage"><span class="wave w1"></span></div><div class="lab"><span class="num">5</span>current</div><div class="desc">will-change on all 9 bars (today)</div></div>
+    <div class="cell"><div class="stage"><span class="wave w2"></span></div><div class="lab"><span class="num">6</span>no will-change</div><div class="desc">drop 9-layer promotion</div></div>
+    <div class="cell"><div class="stage"><span class="wave w3"></span></div><div class="lab"><span class="num">7</span>clean layer</div><div class="desc">translateZ keyframe + backface-hidden</div></div>
+    <div class="cell"><div class="stage"><span class="wave w4"></span></div><div class="lab"><span class="num">8</span>parent layer</div><div class="desc">will-change on the group, not each bar</div></div>
+  </div>
+
+  <h2>Typing dots <span class="desc">(between questions)</span></h2>
+  <div class="grid">
+    <div class="cell"><div class="stage"><span class="dots d1"><i></i><i></i><i></i></span></div><div class="lab"><span class="num">9</span>current</div><div class="desc">will-change transform+opacity (today)</div></div>
+    <div class="cell"><div class="stage"><span class="dots d2"><i></i><i></i><i></i></span></div><div class="lab"><span class="num">10</span>no will-change</div><div class="desc">drop layer promotion</div></div>
+    <div class="cell"><div class="stage"><span class="dots d3"><i></i><i></i><i></i></span></div><div class="lab"><span class="num">11</span>clean layer</div><div class="desc">translateZ keyframe + backface-hidden</div></div>
+    <div class="cell"><div class="stage"><span class="dots d4"><i></i><i></i><i></i></span></div><div class="lab"><span class="num">12</span>opacity only</div><div class="desc">no transform at all</div></div>
+  </div>
+
+  <script>
+    // FPS meter — shows the real frame rate so "smooth vs janky" is measurable, not just felt.
+    var last = performance.now(), frames = 0, fpsEl = document.getElementById('fps');
+    function tick(now){ frames++; if (now - last >= 500){ var fps = Math.round(frames * 1000 / (now - last)); fpsEl.textContent = fps + ' fps'; frames = 0; last = now; } requestAnimationFrame(tick); }
+    requestAnimationFrame(tick);
+
+    // "Simulate loading": busy the main thread in bursts (like JS working between
+    // questions). Composited animations stay smooth through this; non-composited
+    // ones drop frames and vibrate. This is the decisive test.
+    var stressOn = false, stressTimer = null;
+    var btn = document.getElementById('stressBtn');
+    function burn(){ var t = performance.now(); while (performance.now() - t < 12){ Math.sqrt(Math.random()); } }
+    btn.addEventListener('click', function(){
+      stressOn = !stressOn;
+      btn.textContent = 'Simulate loading: ' + (stressOn ? 'ON' : 'OFF');
+      btn.classList.toggle('on', stressOn);
+      if (stressOn){ stressTimer = setInterval(burn, 16); }
+      else { clearInterval(stressTimer); stressTimer = null; }
+    });
+  </script>
+</body>
+</html>
