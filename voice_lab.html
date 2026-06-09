@@ -46,6 +46,14 @@
   .fin-spin{ width:30px; height:30px; border-radius:50%; border:3px solid var(--border-default);
     border-top-color:var(--peach-edge); animation:hoSpin .7s linear infinite; will-change:transform; }
   @keyframes hoSpin{ to{ transform:rotate(360deg); } }
+
+  /* --- THE FIX: one animation always; phase changes colour + --wamp only --- */
+  .fwave{ display:inline-flex; align-items:center; gap:4px; height:32px; }
+  .fwave i{ width:3.5px; height:28px; border-radius:2px; background:var(--text-muted);
+    transform:scaleY(.214); transform-origin:center; will-change:transform; --wamp:.8; animation:wavePulse .9s ease-in-out infinite; }
+  .fwave.spk i{ background:var(--peach-edge); --wamp:.536; }
+  .fwave.lst i{ background:var(--mic-listening); --wamp:1; }
+  @keyframes wavePulse{ 0%,100%{ transform:scaleY(.214); } 50%{ transform:scaleY(var(--wamp,.8)); } }
 </style>
 </head>
 <body>
@@ -56,7 +64,8 @@
 
   <div class="meter">
     <div>FPS: <b id="fps">—</b></div>
-    <div>Wave restarts: <b class="hi" id="cWave">0</b> &nbsp; (9 bars → expect 9, then steady)</div>
+    <div>Wave restarts (OLD): <b class="hi" id="cWave">0</b> &nbsp; (broken — keeps climbing)</div>
+    <div>Wave restarts (FIXED): <b class="hi" id="cFwave">0</b> &nbsp; (the fix — should hit 9 then STOP)</div>
     <div>Dots restarts: <b class="hi" id="cDots">0</b> &nbsp; (expect 3, then steady)</div>
     <div>Spinner restarts: <b class="hi" id="cSpin">0</b> &nbsp; (expect 1, then steady)</div>
   </div>
@@ -104,6 +113,15 @@
             </div>
           </div>
           <div className="panel">
+            <h2>1b · FIXED wave (same phase flips, one animation)</h2>
+            <div className="row">
+              <span className={`fwave ${phase === 'listening' ? 'lst' : 'spk'}`} aria-hidden="true">
+                {Array.from({ length: 9 }).map((_, i) => <i key={i} style={{ animationDelay: `${i*90}ms` }}></i>)}
+              </span>
+              <span className="status">should NOT keep restarting</span>
+            </div>
+          </div>
+          <div className="panel">
             <h2>2 · Typing dots (stable, the control)</h2>
             <div className="row">
               <span className="vt-dots"><i></i><i></i><i></i></span>
@@ -139,13 +157,15 @@
     ReactDOM.createRoot(document.getElementById('root')).render(<><VoiceLike/><SpinnerProbe/></>);
 
     // --- instrumentation: count animationstart per element group ---
-    const counts = { wave:0, dots:0, spin:0 };
+    const counts = { wave:0, fwave:0, dots:0, spin:0 };
     document.addEventListener('animationstart', (e) => {
       const t = e.target;
-      if (t.closest && t.closest('.voice-wave')) counts.wave++;
+      if (t.closest && t.closest('.fwave')) counts.fwave++;
+      else if (t.closest && t.closest('.voice-wave')) counts.wave++;
       else if (t.closest && t.closest('.vt-dots')) counts.dots++;
       else if (t.classList && t.classList.contains('fin-spin')) counts.spin++;
       document.getElementById('cWave').textContent = counts.wave;
+      document.getElementById('cFwave').textContent = counts.fwave;
       document.getElementById('cDots').textContent = counts.dots;
       document.getElementById('cSpin').textContent = counts.spin;
     }, true);
