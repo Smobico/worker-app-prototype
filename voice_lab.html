@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<!-- VOICE LAB — objective re-render-restart test on the real components' behaviour.
+     React + the exact wave/dots/spinner CSS + the real per-turn re-render loop from
+     VoiceMode. The banner counts animation RESTARTS (animationstart fires once per
+     element normally; if it climbs, the animation is restarting = the bug). Self-
+     contained (no app files) so MIME/CORS can't break it on GitHub Pages. -->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Voice lab</title>
+<style>
+  :root{ --surface-base:#FAFAF7; --surface-raised:#FFFFFF; --text-muted:#5C6680; --ink-deep:#0B1E45;
+    --border-default:#E2E1DA; --peach-edge:#CC865A; --mic-listening:#2F8F9E; --sig-fact:#5A9476; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--surface-base); color:var(--ink-deep);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    padding:env(safe-area-inset-top) 14px calc(40px + env(safe-area-inset-bottom)); }
+  h1{ font-size:18px; margin:14px 2px 4px; }
+  .sub{ font-size:13px; line-height:1.5; color:var(--text-muted); margin:0 2px 12px; }
+  .meter{ position:sticky; top:env(safe-area-inset-top); z-index:9; background:var(--ink-deep); color:#fff;
+    border-radius:12px; padding:11px 13px; margin-bottom:14px; font-size:13px; line-height:1.7; }
+  .meter b{ font-variant-numeric:tabular-nums; }
+  .meter .hi{ color:#ffd9a6; }
+  .panel{ background:var(--surface-raised); border:1px solid var(--border-default); border-radius:16px; padding:16px; margin-bottom:14px; }
+  .panel h2{ font-size:14px; margin:0 0 12px; }
+  .row{ display:flex; align-items:center; gap:14px; }
+  .status{ font-size:13px; font-weight:700; color:var(--text-muted); }
+  button{ min-height:46px; padding:0 18px; border-radius:12px; border:1.5px solid var(--peach-edge);
+    background:var(--surface-raised); color:var(--ink-deep); font-size:14px; font-weight:700; cursor:pointer; }
+
+  /* --- exact production CSS (from app.css) --- */
+  .voice-wave{ display:inline-flex; align-items:center; gap:4px; height:32px; }
+  .voice-wave i{ width:3.5px; height:28px; border-radius:2px; background:var(--text-muted);
+    transform:scaleY(.214); transform-origin:center; will-change:transform; }
+  .voice-wave-speaking i{ background:var(--peach-edge); animation:waveSoft 1.3s ease-in-out infinite; }
+  .voice-wave-listening i{ background:var(--mic-listening); animation:waveActive .7s ease-in-out infinite; }
+  .voice-wave-ready i{ background:var(--sig-fact); transform:scaleY(.143); opacity:.55; }
+  @keyframes waveActive{ 0%,100%{ transform:scaleY(.214); } 50%{ transform:scaleY(1); } }
+  @keyframes waveSoft{ 0%,100%{ transform:scaleY(.214); } 50%{ transform:scaleY(.536); } }
+  .vt-dots{ display:inline-flex; gap:5px; padding:3px 2px; }
+  .vt-dots i{ width:7px; height:7px; border-radius:50%; background:var(--mic-listening);
+    animation:vtDot 1s ease-in-out infinite; will-change:transform,opacity; }
+  .vt-dots i:nth-child(2){ animation-delay:.15s; } .vt-dots i:nth-child(3){ animation-delay:.3s; }
+  @keyframes vtDot{ 0%,100%{ opacity:.3; transform:translateY(0);} 50%{ opacity:1; transform:translateY(-3px);} }
+  .fin-spin{ width:30px; height:30px; border-radius:50%; border:3px solid var(--border-default);
+    border-top-color:var(--peach-edge); animation:hoSpin .7s linear infinite; will-change:transform; }
+  @keyframes hoSpin{ to{ transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+  <h1>Voice lab — restart test</h1>
+  <p class="sub">Watch the wave, dots and spinner. The banner counts <b>animation restarts</b> — for a healthy
+  looping animation each element restarts <b>once</b> and then the number stays put. If a number keeps
+  <b>climbing</b>, that element is re-rendering/restarting = the vibrate bug. Tell me which numbers climb.</p>
+
+  <div class="meter">
+    <div>FPS: <b id="fps">—</b></div>
+    <div>Wave restarts: <b class="hi" id="cWave">0</b> &nbsp; (9 bars → expect 9, then steady)</div>
+    <div>Dots restarts: <b class="hi" id="cDots">0</b> &nbsp; (expect 3, then steady)</div>
+    <div>Spinner restarts: <b class="hi" id="cSpin">0</b> &nbsp; (expect 1, then steady)</div>
+  </div>
+
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // The exact VoiceMode re-render loop: auto-advancing turns flip the wave phase
+    // speaking<->listening every turn (which swaps the @keyframes -> restart).
+    const SCRIPT = [
+      { who:'ai',     text:'How did the morning go?' },
+      { who:'worker', text:'Good. Breakfast independently, calm.' },
+      { who:'ai',     text:'Any moments of distress?' },
+      { who:'worker', text:'A bit unsettled before lunch, settled with deep pressure.' },
+      { who:'ai',     text:'Thanks. Anything for the next shift?' },
+    ];
+
+    function VoiceLike(){
+      const [shown, setShown] = useState(0);
+      const [phase, setPhase] = useState('speaking');
+      const tRef = useRef(null);
+      useEffect(() => {
+        const i = shown % SCRIPT.length;
+        const turn = SCRIPT[i];
+        setPhase(turn.who === 'ai' ? 'speaking' : 'listening');
+        const dwell = 1400 + turn.text.length * 14;
+        tRef.current = setTimeout(() => setShown(s => s + 1), dwell);
+        return () => clearTimeout(tRef.current);
+      }, [shown]);
+      const nextTurn = SCRIPT[(shown) % SCRIPT.length];
+      return (
+        <>
+          <div className="panel">
+            <h2>1 · Voice wave (flips speaking/listening each turn)</h2>
+            <div className="row">
+              <span className={`voice-wave voice-wave-${phase}`} aria-hidden="true">
+                {Array.from({ length: 9 }).map((_, i) => <i key={i} style={{ animationDelay: `${i*90}ms` }}></i>)}
+              </span>
+              <span className="status">{phase === 'listening' ? 'Listening' : 'Speaking'}</span>
+            </div>
+          </div>
+          <div className="panel">
+            <h2>2 · Typing dots (stable, the control)</h2>
+            <div className="row">
+              <span className="vt-dots"><i></i><i></i><i></i></span>
+              <span className="status">{nextTurn.who === 'worker' ? 'worker typing…' : 'idle'}</span>
+            </div>
+          </div>
+        </>
+      );
+    }
+
+    // Save spinner with a parent that RE-RENDERS continuously (worst case): if a
+    // stable-conditional spinner survives this smoothly, re-render alone isn't its problem.
+    function SpinnerProbe(){
+      const [, force] = useState(0);
+      useEffect(() => {
+        let raf;
+        const loop = () => { force(n => n + 1); raf = requestAnimationFrame(loop); };
+        raf = requestAnimationFrame(loop);
+        return () => cancelAnimationFrame(raf);
+      }, []);
+      const saving = true; // stable conditional, exactly like the app
+      return (
+        <div className="panel">
+          <h2>3 · Save spinner, parent re-rendering every frame</h2>
+          <div className="row">
+            {saving ? <div className="fin-spin"></div> : null}
+            <span className="status">parent re-renders ~60×/s; spinner node is a stable conditional</span>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<><VoiceLike/><SpinnerProbe/></>);
+
+    // --- instrumentation: count animationstart per element group ---
+    const counts = { wave:0, dots:0, spin:0 };
+    document.addEventListener('animationstart', (e) => {
+      const t = e.target;
+      if (t.closest && t.closest('.voice-wave')) counts.wave++;
+      else if (t.closest && t.closest('.vt-dots')) counts.dots++;
+      else if (t.classList && t.classList.contains('fin-spin')) counts.spin++;
+      document.getElementById('cWave').textContent = counts.wave;
+      document.getElementById('cDots').textContent = counts.dots;
+      document.getElementById('cSpin').textContent = counts.spin;
+    }, true);
+
+    // FPS
+    let last = performance.now(), frames = 0, el = document.getElementById('fps');
+    function tick(now){ frames++; if (now-last>=500){ el.textContent = Math.round(frames*1000/(now-last)); frames=0; last=now; } requestAnimationFrame(tick); }
+    requestAnimationFrame(tick);
+  </script>
+</body>
+</html>
