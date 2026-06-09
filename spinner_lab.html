@@ -97,8 +97,11 @@
      spinner's motion forces the blur to recompute every frame -> judder. */
   .kt-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   .kt{ position:relative; height:132px; border-radius:14px; overflow:hidden; border:1px solid var(--border-default); }
-  .kt-bg{ position:absolute; inset:0; background:repeating-linear-gradient(45deg,#cfd6e6 0 9px,#eef1f7 9px 18px); }
-  .kt-bg::after{ content:"content behind content behind content behind content behind"; position:absolute; inset:0; padding:8px; font-size:15px; font-weight:800; color:#33406b; line-height:1.3; }
+  /* HEAVY, review-screen-like backdrop: a radial gradient + a dense block of
+     small text. This is what makes the per-frame re-blur expensive (the earlier
+     trivial backdrop was too cheap to trigger the jank). */
+  .kt-bg{ position:absolute; inset:0; overflow:hidden; background:radial-gradient(135% 60% at 50% -4%, #ffe3cb 0%, transparent 56%), #f4f2ec; }
+  .kt-bg::after{ content:"Client: JS  Date: 09/06/2026  Support Worker: Wes Taylor  Shift: 12:48 Ongoing. HIGHLIGHTS No behaviours of concern recorded this shift. PROGRESS NOTES JS was supported during the shift with activities in the kitchen. Throughout the period JS presented as settled and engaged appropriately with the support provided. The shift proceeded without incident, with JS maintaining a calm and regulated presentation across the afternoon."; position:absolute; inset:0; padding:7px 9px; font-size:10.5px; font-weight:600; color:#2a3556; line-height:1.5; }
   .kt-scrim{ position:absolute; inset:0; background:rgba(15,26,46,.28); display:flex; align-items:center; justify-content:center; }
   .kt-scrim.blur{ backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); }
   .kt-tag{ position:absolute; left:8px; bottom:8px; z-index:2; font-size:11px; font-weight:800; color:#fff; display:inline-flex; align-items:center; }
@@ -141,7 +144,7 @@
   </div>
 
   <h2>⭐ KEY TEST — over a blurred backdrop <span class="desc">(the real app's sheet)</span></h2>
-  <p class="sub" style="margin:0 2px 10px">13 &amp; 15 sit over <b>backdrop-filter: blur</b> (what the app does). 14 &amp; 16 are the same thing with the blur removed. If 13/15 judder and 14/16 are smooth, the fix is to drop the backdrop blur.</p>
+  <p class="sub" style="margin:0 2px 10px"><b>Now with a dense review-screen backdrop.</b> 13 &amp; 15 sit over <b>backdrop-filter: blur</b> of that heavy text (what the app does on the Saving drawer). 14 &amp; 16 have the blur removed. If 13/15 now spin <b>fast/vibrating</b> and 14/16 are smooth → that's the bug, and dropping the blur is the fix.</p>
   <div class="kt-grid">
     <div class="kt"><div class="kt-bg"></div><div class="kt-scrim blur"><div class="spin s1"></div></div><span class="kt-tag"><span class="num">13</span>spinner · blur ON</span></div>
     <div class="kt"><div class="kt-bg"></div><div class="kt-scrim"><div class="spin s1"></div></div><span class="kt-tag"><span class="num">14</span>spinner · blur OFF</span></div>
