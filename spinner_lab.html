@@ -90,12 +90,26 @@
   /* D4 opacity-only (cheapest to composite; no transform jitter) */
   .d4 i{ animation:vtDotOpacity 1s ease-in-out infinite; }
   .d4 i:nth-child(2){ animation-delay:.15s; } .d4 i:nth-child(3){ animation-delay:.3s; }
+
+  /* ---------- KEY TEST: animating element OVER a backdrop-filter layer ----------
+     Reproduces the real app: a blurred scrim (.sheet-scrim / .drawer-backdrop use
+     backdrop-filter:blur(2px)) sits behind the loading sheet. On iOS Safari the
+     spinner's motion forces the blur to recompute every frame -> judder. */
+  .kt-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .kt{ position:relative; height:132px; border-radius:14px; overflow:hidden; border:1px solid var(--border-default); }
+  .kt-bg{ position:absolute; inset:0; background:repeating-linear-gradient(45deg,#cfd6e6 0 9px,#eef1f7 9px 18px); }
+  .kt-bg::after{ content:"content behind content behind content behind content behind"; position:absolute; inset:0; padding:8px; font-size:15px; font-weight:800; color:#33406b; line-height:1.3; }
+  .kt-scrim{ position:absolute; inset:0; background:rgba(15,26,46,.28); display:flex; align-items:center; justify-content:center; }
+  .kt-scrim.blur{ backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); }
+  .kt-tag{ position:absolute; left:8px; bottom:8px; z-index:2; font-size:11px; font-weight:800; color:#fff; display:inline-flex; align-items:center; }
+  .kt-tag .num{ background:#fff; color:var(--ink-deep); }
 </style>
 </head>
 <body>
   <h1>Spinner lab</h1>
-  <p class="sub">Watch each cell. Tell me which <b>numbers</b> spin/pulse <b>smoothly</b> and which <b>vibrate</b>.
-  Then tap <b>Simulate loading</b> (busies the phone like the real loading moment) and watch again — the bug shows worst then.</p>
+  <p class="sub"><b>⭐ Start with the KEY TEST at the bottom (cells 13–16).</b> That one reproduces the real app's
+  blurred-sheet background. If 13 &amp; 15 vibrate but 14 &amp; 16 are smooth, we've found it.
+  The top sections (1–12) you already confirmed are all smooth — they're the control.</p>
 
   <div class="stress">
     <button id="stressBtn">Simulate loading: OFF</button>
@@ -112,10 +126,10 @@
 
   <h2>Voice wave <span class="desc">(the throbber bars)</span></h2>
   <div class="grid">
-    <div class="cell"><div class="stage"><span class="wave w1"></span></div><div class="lab"><span class="num">5</span>current</div><div class="desc">will-change on all 9 bars (today)</div></div>
-    <div class="cell"><div class="stage"><span class="wave w2"></span></div><div class="lab"><span class="num">6</span>no will-change</div><div class="desc">drop 9-layer promotion</div></div>
-    <div class="cell"><div class="stage"><span class="wave w3"></span></div><div class="lab"><span class="num">7</span>clean layer</div><div class="desc">translateZ keyframe + backface-hidden</div></div>
-    <div class="cell"><div class="stage"><span class="wave w4"></span></div><div class="lab"><span class="num">8</span>parent layer</div><div class="desc">will-change on the group, not each bar</div></div>
+    <div class="cell"><div class="stage"><span class="wave w1"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div><div class="lab"><span class="num">5</span>current</div><div class="desc">will-change on all 9 bars (today)</div></div>
+    <div class="cell"><div class="stage"><span class="wave w2"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div><div class="lab"><span class="num">6</span>no will-change</div><div class="desc">drop 9-layer promotion</div></div>
+    <div class="cell"><div class="stage"><span class="wave w3"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div><div class="lab"><span class="num">7</span>clean layer</div><div class="desc">translateZ keyframe + backface-hidden</div></div>
+    <div class="cell"><div class="stage"><span class="wave w4"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div><div class="lab"><span class="num">8</span>parent layer</div><div class="desc">will-change on the group, not each bar</div></div>
   </div>
 
   <h2>Typing dots <span class="desc">(between questions)</span></h2>
@@ -124,6 +138,15 @@
     <div class="cell"><div class="stage"><span class="dots d2"><i></i><i></i><i></i></span></div><div class="lab"><span class="num">10</span>no will-change</div><div class="desc">drop layer promotion</div></div>
     <div class="cell"><div class="stage"><span class="dots d3"><i></i><i></i><i></i></span></div><div class="lab"><span class="num">11</span>clean layer</div><div class="desc">translateZ keyframe + backface-hidden</div></div>
     <div class="cell"><div class="stage"><span class="dots d4"><i></i><i></i><i></i></span></div><div class="lab"><span class="num">12</span>opacity only</div><div class="desc">no transform at all</div></div>
+  </div>
+
+  <h2>⭐ KEY TEST — over a blurred backdrop <span class="desc">(the real app's sheet)</span></h2>
+  <p class="sub" style="margin:0 2px 10px">13 &amp; 15 sit over <b>backdrop-filter: blur</b> (what the app does). 14 &amp; 16 are the same thing with the blur removed. If 13/15 judder and 14/16 are smooth, the fix is to drop the backdrop blur.</p>
+  <div class="kt-grid">
+    <div class="kt"><div class="kt-bg"></div><div class="kt-scrim blur"><div class="spin s1"></div></div><span class="kt-tag"><span class="num">13</span>spinner · blur ON</span></div>
+    <div class="kt"><div class="kt-bg"></div><div class="kt-scrim"><div class="spin s1"></div></div><span class="kt-tag"><span class="num">14</span>spinner · blur OFF</span></div>
+    <div class="kt"><div class="kt-bg"></div><div class="kt-scrim blur"><span class="wave w1"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div><span class="kt-tag"><span class="num">15</span>wave · blur ON</span></div>
+    <div class="kt"><div class="kt-bg"></div><div class="kt-scrim"><span class="wave w1"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div><span class="kt-tag"><span class="num">16</span>wave · blur OFF</span></div>
   </div>
 
   <script>
